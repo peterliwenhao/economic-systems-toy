@@ -1,0 +1,14 @@
+[Unit]
+Description=Life Hub static research projects
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/lifehub_static
+ExecStart=/usr/bin/python3 -m http.server 19006 --bind 127.0.0.1 --directory /root/lifehub_static
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

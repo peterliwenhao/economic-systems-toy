@@ -1,0 +1,13 @@
+[Unit]
+Description=Reverse tunnels for Life Hub local applications
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/autossh/autossh -N -M 0 -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -R 127.0.0.1:19103:127.0.0.1:8000 -R 127.0.0.1:19104:127.0.0.1:8001 root@118.178.235.171
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

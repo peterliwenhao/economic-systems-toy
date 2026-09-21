@@ -6,7 +6,8 @@ window.COOP_DATA = {
     "question": "在资源、技术、偏好、冲击与信息预算可比的条件下，不同资源配置机制在这个 toy 环境中表现如何？",
     "updatedAt": "2026-09-21",
     "repositoryUrl": "pending-github-repository",
-    "commit": "模板示例"
+    "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
+    "commit": "c7e09fd"
   },
   "tasks": [
     {
@@ -61,6 +62,23 @@ window.COOP_DATA = {
       "links": [
         "T-001",
         "docs/team.md",
+        "docs/HANDOFF.md"
+      ]
+    },
+    {
+      "id": "H-002",
+      "date": "2026-09-21",
+      "kind": "deployment",
+      "state": "merged",
+      "title": "发布项目协作 Dashboard",
+      "summary": "将静态 Dashboard 发布到远端 9003 的 /projects/economic-systems-toy/，并把代理、静态服务和反向隧道配置纳入项目版本控制。",
+      "reason": "为三位成员和后续 Codex 会话提供可共享、可追踪的项目入口，同时保留已有 LifeOS、PaperRec 与 50example 服务。",
+      "people": [
+        "李文浩"
+      ],
+      "module": "deployment",
+      "links": [
+        "deploy/README.md",
         "docs/HANDOFF.md"
       ]
     }

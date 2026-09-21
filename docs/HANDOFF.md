@@ -8,6 +8,7 @@
 - 已建立三人团队角色、Git/Codex 协作规范、Dashboard、决策/会议模板和实验 manifest；
 - 当前唯一已启动团队任务是 **T-001：形成研究设计草案 v0.1**，负责人为张馨月；
 - 尚未进入正式代码实现或实验阶段；
+- Dashboard 已部署至 `https://118.178.235.171:9003/projects/economic-systems-toy/`；
 - GitHub 仓库信息将在创建后写回本文件与 `project/project.json`。
 
 ## 新会话应该先做什么
@@ -35,6 +36,8 @@
 - T-001 草案完成后组织一次短评审，分别确认计算/LLM 与经济学问题；
 - 不在研究设计通过前要求张馨月同时推进大规模编码和 LLM 实验。
 
+GitHub 的具体创建与推送步骤见 `docs/GITHUB_SETUP.md`。目前本地仓库已经初始化并有完整提交，不要在 GitHub 创建仓库时额外生成 README、许可证或 `.gitignore`。
+
 ## 验证命令
 
 ```bash
@@ -42,4 +45,6 @@ npm run dashboard:build
 npm run validate
 ```
 
-Dashboard 的公开展示地址和 GitHub 地址会在部署完成后补充到本文件。
+公开 Dashboard：<https://118.178.235.171:9003/projects/economic-systems-toy/>
+
+部署维护说明见 `deploy/README.md`。GitHub 地址仍待仓库创建后补充。
