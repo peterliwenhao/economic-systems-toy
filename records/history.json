@@ -22,5 +22,17 @@
     "people": ["李文浩"],
     "module": "deployment",
     "links": ["deploy/README.md", "docs/HANDOFF.md"]
+  },
+  {
+    "id": "H-003",
+    "date": "2026-09-21",
+    "kind": "governance",
+    "state": "decided",
+    "title": "采用任务分支与 PR 协作，不设长期 dev",
+    "summary": "明确所有成员及其 AI 不得在 main 上直接开发；每项任务从最新 main 建独立分支，经检查与评审后通过 PR 合并。会议前通过 PR/commit 汇总状态，不合并未完成工作。",
+    "reason": "三人小团队使用单一稳定主线可以降低长期分支漂移和重复合并成本，同时保护每位成员的独立工作区。",
+    "people": ["李文浩", "张馨月", "刘充"],
+    "module": "collaboration",
+    "links": ["docs/git-workflow.md", "docs/meetings/README.md", "T-002", "T-003"]
   }
 ]

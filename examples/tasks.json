@@ -31,5 +31,71 @@
       "完成后的简短交接摘要"
     ],
     "issueUrl": "#"
+  },
+  {
+    "id": "T-002",
+    "title": "建立私有 GitHub 仓库与协作保护",
+    "owner": "李文浩",
+    "status": "ready",
+    "priority": "P0",
+    "module": "project-setup",
+    "blocked": false,
+    "dependsOn": [],
+    "branch": "task/T-002-github-setup",
+    "goal": "把当前本地仓库接入私有 GitHub，邀请团队成员并用分支保护、PR 和权限配置落实协作规范。",
+    "scope": [
+      "GitHub private repository",
+      "project/project.json",
+      "docs/HANDOFF.md",
+      "docs/GITHUB_SETUP.md"
+    ],
+    "acceptance": [
+      "创建不带自动 README、许可证或 gitignore 的私有仓库并推送当前 main",
+      "邀请张馨月和刘充，确认二人可以分别 clone 仓库",
+      "为 main 开启保护，禁止直接 push 和 force push，并要求 PR 与至少一位 reviewer",
+      "启用 validate 检查并要求检查通过后才能合并",
+      "创建并指派 T-001 Issue，补全真实仓库和 Issue URL",
+      "确认三名成员均使用独立服务器账户和独立 clone"
+    ],
+    "evidence": [
+      "可访问的私有 GitHub 仓库",
+      "main 分支保护设置",
+      "三名成员的访问权限",
+      "T-001 GitHub Issue",
+      "已更新的项目与交接文档"
+    ],
+    "issueUrl": "#"
+  },
+  {
+    "id": "T-003",
+    "title": "完成项目启动检查与首次会议准备",
+    "owner": "李文浩",
+    "status": "proposed",
+    "priority": "P0",
+    "module": "project-setup",
+    "blocked": false,
+    "dependsOn": ["T-002"],
+    "branch": "task/T-003-project-kickoff",
+    "goal": "确认人员、访问、研究边界、评审节奏与资源均已就绪，使 T-001 可以在清晰约束下正式启动。",
+    "scope": [
+      "docs/PROJECT_STARTUP.md",
+      "docs/meetings/",
+      "docs/team.md",
+      "GitHub Issues and milestones"
+    ],
+    "acceptance": [
+      "确认张馨月和刘充均能访问各自 clone 与项目文档",
+      "确认 T-001 的截止时间、评审时间和求助渠道",
+      "与刘充确认经济学评审的可用时间或响应方式",
+      "确认模型/API、算力与费用边界，凭据不进入 Git",
+      "召开一次启动会议并记录决定、待办和负责人"
+    ],
+    "evidence": [
+      "完成的 docs/PROJECT_STARTUP.md 检查项",
+      "首次会议纪要",
+      "GitHub milestone 或已指派任务",
+      "团队成员访问确认"
+    ],
+    "issueUrl": "#"
   }
 ]
