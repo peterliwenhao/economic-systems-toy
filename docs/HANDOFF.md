@@ -17,6 +17,7 @@
 
 1. 读取根目录 `AGENTS.md`；
 2. 读取 `docs/team.md` 与 `docs/project.md`；
+   - 张馨月另读 `docs/onboarding/张馨月.md`；刘充另读 `docs/onboarding/刘充.md`；
 3. 如果执行 T-001，完整读取 `docs/tasks/T-001.md`；
 4. 检查当前 Git 分支、工作区状态和最新历史记录；
 5. 不依赖之前聊天中的隐含信息；缺失内容应写回仓库。
