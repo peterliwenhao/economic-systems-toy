@@ -1,0 +1,35 @@
+[
+  {
+    "id": "T-001",
+    "title": "形成研究设计草案 v0.1",
+    "owner": "张馨月",
+    "status": "ready",
+    "priority": "P0",
+    "module": "research-design",
+    "blocked": false,
+    "dependsOn": [],
+    "branch": "task/T-001-research-design-v0",
+    "goal": "把现有调研和讨论整理成一份可由团队评审、可指导后续实现的研究设计草案；暂不要求完成代码。",
+    "scope": [
+      "docs/tasks/T-001.md",
+      "docs/research-design-v0.1.md",
+      "docs/project.md",
+      "docs/interfaces.md"
+    ],
+    "acceptance": [
+      "归纳现有 README 与调研文档中的共识、分歧和待确认问题",
+      "明确环境状态、参与者、商品、时间步、行动、信息集和基本约束",
+      "说明市场机制与计划机制共享什么、只在哪些配置规则上不同",
+      "列出第一版指标及其经济含义，并说明信息、通信和计算预算如何保持可比",
+      "准备至少一个可手算的极小案例和一个预期失败案例",
+      "将需要李文浩或刘充确认的问题单独列出，不自行替团队做最终决定"
+    ],
+    "evidence": [
+      "docs/research-design-v0.1.md",
+      "更新后的 docs/project.md 与 docs/interfaces.md",
+      "一份待确认问题清单",
+      "完成后的简短交接摘要"
+    ],
+    "issueUrl": "#"
+  }
+]

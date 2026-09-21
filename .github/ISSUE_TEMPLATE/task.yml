@@ -1,0 +1,59 @@
+name: 科研任务
+description: 创建可执行、可交接、可验证的团队任务
+title: "[T-000] "
+labels: ["status:proposed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        创建后请补充负责人、状态、优先级和模块标签。个人调试步骤无需进入团队 Issue。
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: 这个任务交付什么，以及它为什么支持研究问题？
+    validations:
+      required: true
+  - type: input
+    id: base_commit
+    attributes:
+      label: Base commit
+      description: 开始工作所依据的完整 commit SHA。
+      placeholder: 40-character commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: 允许修改的目录、文件或接口；每行一项。
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: 依赖的任务编号；没有则写 None。
+      placeholder: T-018
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance
+      description: 用 Markdown checklist 写出可检查的完成条件。
+      placeholder: "- [ ] 返回约定格式的数据\n- [ ] 固定种子后划分可复现"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: 预期提交的测试、PR、实验 run、图表或说明。
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and open questions
+      description: 接口冲突、数据许可、算力、伦理或缺失信息。

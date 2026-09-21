@@ -1,0 +1,15 @@
+{
+  "name": "llm-economic-systems-toy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Research collaboration dashboard for an LLM economic systems toy simulation",
+  "scripts": {
+    "dashboard:build": "node scripts/build-dashboard-data.mjs --sample",
+    "dashboard:serve": "python3 -m http.server 4173 --directory dist",
+    "validate": "node scripts/validate.mjs",
+    "test": "npm run validate"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

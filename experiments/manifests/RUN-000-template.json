@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "runId": "RUN-T000-YYYYMMDD-001",
+  "taskId": "T-000",
+  "createdAt": "YYYY-MM-DDTHH:MM:SSZ",
+  "createdBy": "github-username",
+  "code": {
+    "commit": "FULL_GIT_COMMIT_SHA",
+    "branch": "task/T-000-short-name",
+    "dirty": false,
+    "diffArtifact": null
+  },
+  "data": {
+    "name": "dataset-name",
+    "version": "immutable-version-or-hash",
+    "split": "split-definition-or-hash"
+  },
+  "execution": {
+    "command": "python -m project.train --config configs/example.yaml",
+    "config": "configs/example.yaml",
+    "seeds": [1, 2, 3],
+    "environment": "lockfile/container/hash",
+    "machineOrJob": "scheduler-job-id-or-host",
+    "startedAt": "YYYY-MM-DDTHH:MM:SSZ",
+    "finishedAt": "YYYY-MM-DDTHH:MM:SSZ"
+  },
+  "results": {
+    "status": "completed",
+    "metrics": {
+      "primary_metric": 0.0
+    },
+    "artifactUri": "s3://bucket/project/RUN-T000-YYYYMMDD-001/",
+    "mlflowRunUrl": null
+  },
+  "notes": "Record anomalies, exclusions, failed seeds and interpretation limits."
+}

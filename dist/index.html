@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="LLM 经济制度 Toy Simulation 的任务、历史与协作入口" />
+    <title>LLM 经济制度 Toy Lab · 科研协作台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#todo" aria-label="返回任务总览">
+          <span class="brand-mark" aria-hidden="true">RR</span>
+          <span>
+            <strong data-project-name>Research Relay</strong>
+            <small>科研协作台</small>
+          </span>
+        </a>
+        <div class="project-snapshot" aria-label="项目快照">
+          <span class="snapshot-dot" aria-hidden="true"></span>
+          <span><b data-branch>main</b> · <span data-commit>尚未初始化</span></span>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="主要页面">
+        <button class="tab is-active" type="button" role="tab" aria-selected="true" data-route="todo">
+          <span>01</span> To-do list
+        </button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-route="history">
+          <span>02</span> 历史修改
+        </button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-route="help">
+          <span>03</span> Help
+        </button>
+      </nav>
+
+      <main id="app" tabindex="-1"></main>
+    </div>
+
+    <dialog id="task-dialog" class="task-dialog">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">任务详情</span>
+          <h2 id="dialog-title"></h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭任务详情">×</button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
