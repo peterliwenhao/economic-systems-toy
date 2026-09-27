@@ -1,7 +1,6 @@
 __pycache__/
 .pytest_cache/
 .venv/
-results/
 *.pyc
 .env
 .env.*
@@ -10,9 +9,14 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
-runs/
-artifacts/
+runs/*
+!runs/README.md
+results/*
+!results/README.md
+artifacts/*
+!artifacts/README.md
 checkpoints/
 *.ckpt
 *.pth
 .cooperation-cache/
+/.codex/local-identity.json

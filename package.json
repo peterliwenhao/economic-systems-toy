@@ -6,8 +6,11 @@
   "scripts": {
     "dashboard:build": "node scripts/build-dashboard-data.mjs --sample",
     "dashboard:serve": "python3 -m http.server 4173 --directory dist",
+    "onboard": "node scripts/onboard.mjs",
+    "whoami": "node scripts/collaborator-status.mjs",
+    "test:python": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "validate": "node scripts/validate.mjs",
-    "test": "npm run validate"
+    "test": "npm run validate && npm run test:python"
   },
   "engines": {
     "node": ">=20"

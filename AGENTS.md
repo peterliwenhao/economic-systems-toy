@@ -18,11 +18,13 @@
 
 ## 开始任务前
 
-1. 先读取 `docs/HANDOFF.md`、`docs/team.md`、`docs/project.md`、与任务相关的接口文档和最近决定。
-2. 确认任务编号、负责人、依赖、基线 commit、允许修改范围和验收条件。
-3. 发现任务信息缺失、依赖未完成或接口冲突时，先报告，不要自行扩大研究范围。
-4. 一个团队任务使用一个分支，命名为 `task/T-<编号>-<简短描述>`。
-5. 在任何写操作前运行 `git branch --show-current` 和 `git status --short --branch`。如果当前分支是 `main`，立即停止写操作；先从最新 `origin/main` 创建当前用户自己的任务分支。
+1. 读取 `.codex/local-identity.json`。若文件不存在，不得猜测操作者身份；询问当前用户姓名，然后运行 `npm run onboard -- --name <姓名>`。如果该成员有多个可领取任务，再由用户指定 `--task T-xxx`。
+2. 运行 `npm run whoami`，确认身份、任务负责人和当前分支一致。身份仅保存在当前 clone，不提交 Git。
+3. 读取 `docs/HANDOFF.md`、`docs/team.md`、`docs/project.md`、身份对应的 onboarding 文档、任务说明、相关接口文档和最近决定。
+4. 确认任务编号、负责人、依赖、基线 commit、允许修改范围和验收条件。没有分配给当前身份的 ready/in_progress 任务时，不得自行领取他人任务，应联系李文浩。
+5. 发现任务信息缺失、依赖未完成或接口冲突时，先报告，不要自行扩大研究范围。
+6. 一个团队任务使用一个分支，命名为 `task/T-<编号>-<简短描述>`。
+7. 在任何写操作前运行 `git branch --show-current` 和 `git status --short --branch`。如果当前分支是 `main`，立即停止写操作；通过 onboarding 脚本或手动从最新 `origin/main` 创建当前用户自己的任务分支。
 
 ## 实施约定
 

@@ -1,0 +1,6 @@
+{
+  "task_id": "T-004",
+  "experiment": "infrastructure-smoke",
+  "seeds": [0],
+  "notes": "Only verifies config and run recording; it does not simulate an economy."
+}

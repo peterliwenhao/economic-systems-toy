@@ -1,6 +1,6 @@
 # 项目交接入口
 
-更新时间：2026-09-21
+更新时间：2026-09-27
 
 ## 当前状态
 
@@ -9,19 +9,21 @@
 - 当前任务包括张馨月负责的 **T-001：形成研究设计草案 v0.1**，以及李文浩负责的 GitHub 建仓与项目启动任务 T-002/T-003；
 - 尚未进入正式代码实现或实验阶段；
 - Dashboard 已部署至 `https://118.178.235.171:9003/projects/economic-systems-toy/`；
-- GitHub 仓库信息将在创建后写回本文件与 `project/project.json`。
+- GitHub 仓库已创建并完成首次 `main` 推送：`git@github.com:peterliwenhao/economic-systems-toy.git`；成员接受邀请、分支保护和首个 Issue 仍需验收。
 
 ## 新会话应该先做什么
 
 任何成员或新的 Codex 会话进入本目录后：
 
 1. 读取根目录 `AGENTS.md`；
-2. 读取 `docs/team.md` 与 `docs/project.md`；
+2. 若当前 clone 尚无 `.codex/local-identity.json`，声明真实身份并运行 `npm run onboard -- --name <姓名>`；不要猜测或冒用他人身份；
+3. 运行 `npm run whoami`，确认身份、任务和分支一致；
+4. 读取 `docs/team.md`、`docs/project.md` 与 `docs/PROJECT_STRUCTURE.md`；
    - 张馨月另读 `docs/onboarding/张馨月.md`；刘充另读 `docs/onboarding/刘充.md`；
-3. 如果执行 T-001，完整读取 `docs/tasks/T-001.md`；
-4. 检查当前 Git 分支、工作区状态和最新历史记录；
-5. 完整阅读 `docs/git-workflow.md`；任何成员及其 AI 都不得在 `main` 上直接工作；
-6. 不依赖之前聊天中的隐含信息；缺失内容应写回仓库。
+5. 完整读取自己领取的任务说明；
+6. 检查当前 Git 分支、工作区状态和最新历史记录；
+7. 完整阅读 `docs/git-workflow.md`；任何成员及其 AI 都不得在 `main` 上直接工作；
+8. 不依赖之前聊天中的隐含信息；缺失内容应写回仓库。
 
 ## 张馨月当前任务
 
@@ -37,7 +39,11 @@
 - T-001 草案完成后组织一次短评审，分别确认计算/LLM 与经济学问题；
 - 不在研究设计通过前要求张馨月同时推进大规模编码和 LLM 实验。
 
-GitHub 的具体创建与推送步骤见 `docs/GITHUB_SETUP.md`。目前本地仓库已经初始化并有完整提交，不要在 GitHub 创建仓库时额外生成 README、许可证或 `.gitignore`。
+GitHub 的剩余治理步骤见 `docs/GITHUB_SETUP.md`。克隆命令：
+
+```bash
+git clone git@github.com:peterliwenhao/economic-systems-toy.git
+```
 
 ## 验证命令
 

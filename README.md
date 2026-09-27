@@ -1,6 +1,24 @@
 # LLM 市场经济与计划经济 Toy Simulation
 
-> 协作入口：[项目交接](docs/HANDOFF.md) · [团队职责](docs/team.md) · [Git 规范](docs/git-workflow.md) · [当前任务](docs/tasks/README.md) · [项目启动检查](docs/PROJECT_STARTUP.md)
+> 协作入口：[项目交接](docs/HANDOFF.md) · [项目结构](docs/PROJECT_STRUCTURE.md) · [团队职责](docs/team.md) · [Git 规范](docs/git-workflow.md) · [当前任务](docs/tasks/README.md)
+
+## 新成员 / 新 clone
+
+```bash
+git clone git@github.com:peterliwenhao/economic-systems-toy.git
+cd economic-systems-toy
+npm run onboard -- --name 张馨月
+```
+
+入场脚本会在当前 clone 写入不提交 Git 的身份文件，读取已分配任务，并在工作区干净时切换到该成员自己的任务分支。若一人有多个任务，使用 `--task T-xxx` 指定；没有已分配任务时不会擅自领取他人的任务。随后让 Codex 读取根目录 `AGENTS.md` 并运行 `npm run whoami`。
+
+基础设施 smoke run（尚不模拟经济系统）：
+
+```bash
+PYTHONPATH=src python3 -m economic_toy.run \
+  --config configs/experiments/infrastructure-smoke.json \
+  --created-by <姓名>
+```
 
 本项目研究：在同一组资源、生产技术、偏好和冲击下，比较不同资源配置机制的表现。
 

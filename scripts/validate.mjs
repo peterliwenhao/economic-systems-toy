@@ -16,7 +16,9 @@ const requiredFiles = [
   "dist/app.js",
   "dist/data.js",
   "project/project.json",
+  "project/team.json",
   "records/history.json",
+  "docs/PROJECT_STRUCTURE.md",
   "docs/project.md",
   "docs/interfaces.md",
   "docs/git-workflow.md",
@@ -46,6 +48,7 @@ const project = await readJson("project/project.json");
 const tasks = await readJson("examples/tasks.json");
 const history = await readJson("records/history.json");
 await readJson("experiments/manifests/RUN-000-template.json");
+await readJson("project/team.json");
 
 if (project) {
   for (const key of ["name", "branch", "question", "updatedAt", "repositoryUrl"]) {

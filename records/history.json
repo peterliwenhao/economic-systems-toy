@@ -34,5 +34,17 @@
     "people": ["李文浩", "张馨月", "刘充"],
     "module": "collaboration",
     "links": ["docs/git-workflow.md", "docs/meetings/README.md", "T-002", "T-003"]
+  },
+  {
+    "id": "H-004",
+    "date": "2026-09-27",
+    "kind": "project",
+    "state": "decided",
+    "title": "建立 GitHub 上游并启动项目骨架任务",
+    "summary": "私有 GitHub 仓库已创建、团队邀请已发出、启动会已召开；现从独立 T-004 分支补齐代码/run/结果结构和按身份进入任务分支的流程。",
+    "reason": "将研究代码、实验凭据、项目管理与共享知识分离，同时保证每个成员及其 Codex 在独立 clone 和任务分支上安全协作。",
+    "people": ["李文浩", "张馨月", "刘充"],
+    "module": "project-infrastructure",
+    "links": ["T-002", "T-003", "T-004", "docs/PROJECT_STRUCTURE.md", "docs/meetings/M-001-20260927-kickoff.md"]
   }
 ]

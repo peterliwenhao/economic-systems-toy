@@ -1,32 +1,32 @@
 # GitHub 建仓与协作设置
 
-本地 Git 仓库已经初始化，默认分支为 `main`，无需重新执行 `git init`。
+GitHub 仓库已创建：`git@github.com:peterliwenhao/economic-systems-toy.git`。本地 Git 仓库已经初始化，默认分支为 `main`，无需重新执行 `git init`。
 
 ## 项目负责人需要完成
 
-1. 在 GitHub 新建一个 **private** 仓库，建议名称：`llm-economic-systems-toy`；
-2. 建仓时不要勾选自动创建 README、`.gitignore` 或许可证；
-3. 把仓库 URL 和张馨月、刘充的 GitHub 用户名交给 Codex，或按下面命令连接并推送；
-4. 邀请两位成员，给张馨月创建/指派 T-001 Issue；
-5. 为 `main` 开启分支保护：通过 Pull Request 合并，并至少需要一位 reviewer。
+1. 确认张馨月、刘充已接受邀请，并将二人的 GitHub 用户名补入 `project/team.json`；
+2. 给张馨月创建/指派 T-001 Issue；
+3. 为 `main` 开启分支保护：通过 Pull Request 合并，并至少需要一位 reviewer；
+4. 将 `validate-template` 设置为 required status check；
+5. 禁止 force push 和删除 `main`。
 
 ## 连接和首次推送
 
 使用 SSH URL：
 
 ```bash
-git remote add origin git@github.com:<owner>/llm-economic-systems-toy.git
+git remote add origin git@github.com:peterliwenhao/economic-systems-toy.git
 git push -u origin main
 ```
 
 或使用 HTTPS URL：
 
 ```bash
-git remote add origin https://github.com/<owner>/llm-economic-systems-toy.git
+git remote add origin https://github.com/peterliwenhao/economic-systems-toy.git
 git push -u origin main
 ```
 
-首次推送后，把真实 URL 写入 `project/project.json` 的 `repositoryUrl`，并同步更新 `docs/HANDOFF.md`。
+当前 `main` 已完成首次推送；剩余事项是成员接受邀请、分支保护、required check 和首个 Issue。
 
 ## 首个 Issue
 

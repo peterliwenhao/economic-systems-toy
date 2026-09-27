@@ -1,0 +1,23 @@
+[
+  {
+    "name": "李文浩",
+    "aliases": ["李文浩", "peterliwenhao"],
+    "github": "peterliwenhao",
+    "role": "项目负责人；LLM 与计算方向研究顾问",
+    "onboarding": "docs/HANDOFF.md"
+  },
+  {
+    "name": "张馨月",
+    "aliases": ["张馨月", "馨月"],
+    "github": null,
+    "role": "本科生研究成员；项目主要执行负责人",
+    "onboarding": "docs/onboarding/张馨月.md"
+  },
+  {
+    "name": "刘充",
+    "aliases": ["刘充"],
+    "github": null,
+    "role": "经济学研究顾问",
+    "onboarding": "docs/onboarding/刘充.md"
+  }
+]

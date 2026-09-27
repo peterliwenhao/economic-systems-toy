@@ -2,12 +2,12 @@
 window.COOP_DATA = {
   "project": {
     "name": "LLM 经济制度 Toy Lab",
-    "branch": "main",
+    "branch": "task/T-004-project-scaffold-onboarding",
     "question": "在资源、技术、偏好、冲击与信息预算可比的条件下，不同资源配置机制在这个 toy 环境中表现如何？",
-    "updatedAt": "2026-09-21",
-    "repositoryUrl": "pending-github-repository",
+    "updatedAt": "2026-09-27",
+    "repositoryUrl": "git@github.com:peterliwenhao/economic-systems-toy.git",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "1c58db9"
+    "commit": "8603583"
   },
   "tasks": [
     {
@@ -47,7 +47,7 @@ window.COOP_DATA = {
       "id": "T-002",
       "title": "建立私有 GitHub 仓库与协作保护",
       "owner": "李文浩",
-      "status": "ready",
+      "status": "in_progress",
       "priority": "P0",
       "module": "project-setup",
       "blocked": false,
@@ -81,7 +81,7 @@ window.COOP_DATA = {
       "id": "T-003",
       "title": "完成项目启动检查与首次会议准备",
       "owner": "李文浩",
-      "status": "proposed",
+      "status": "in_progress",
       "priority": "P0",
       "module": "project-setup",
       "blocked": false,
@@ -108,6 +108,45 @@ window.COOP_DATA = {
         "首次会议纪要",
         "GitHub milestone 或已指派任务",
         "团队成员访问确认"
+      ],
+      "issueUrl": "#"
+    },
+    {
+      "id": "T-004",
+      "title": "建立代码、运行记录与成员入场骨架",
+      "owner": "李文浩",
+      "status": "in_progress",
+      "priority": "P0",
+      "module": "project-infrastructure",
+      "blocked": false,
+      "dependsOn": [],
+      "branch": "task/T-004-project-scaffold-onboarding",
+      "goal": "建立不会抢先固定研究语义的代码包、配置/run/结果结构，并让每个独立 clone 能按身份进入自己的任务分支。",
+      "scope": [
+        "src/",
+        "configs/",
+        "tests/",
+        "runs/",
+        "results/",
+        "project/team.json",
+        "scripts/onboard.mjs",
+        "docs/PROJECT_STRUCTURE.md",
+        "AGENTS.md"
+      ],
+      "acceptance": [
+        "Python 包骨架区分环境、机制、策略、LLM adapter 与评价",
+        "每次 run 自动记录完整配置、任务、操作者、commit、branch、dirty 状态与指标文件",
+        "原始 runs 和大型产物不进入 Git，小型可评审结果有明确目录",
+        "成员声明身份后可看到自己的待办并安全切到对应独立分支",
+        "没有分配任务的成员不会自动领取他人任务",
+        "CI 同时验证仓库结构与 Python run 记录测试"
+      ],
+      "evidence": [
+        "docs/PROJECT_STRUCTURE.md",
+        "通过的 npm test",
+        "一次 infrastructure smoke run",
+        "onboarding 脚本的隔离测试",
+        "task/T-004-project-scaffold-onboarding 分支与 PR"
       ],
       "issueUrl": "#"
     }
@@ -169,6 +208,28 @@ window.COOP_DATA = {
         "docs/meetings/README.md",
         "T-002",
         "T-003"
+      ]
+    },
+    {
+      "id": "H-004",
+      "date": "2026-09-27",
+      "kind": "project",
+      "state": "decided",
+      "title": "建立 GitHub 上游并启动项目骨架任务",
+      "summary": "私有 GitHub 仓库已创建、团队邀请已发出、启动会已召开；现从独立 T-004 分支补齐代码/run/结果结构和按身份进入任务分支的流程。",
+      "reason": "将研究代码、实验凭据、项目管理与共享知识分离，同时保证每个成员及其 Codex 在独立 clone 和任务分支上安全协作。",
+      "people": [
+        "李文浩",
+        "张馨月",
+        "刘充"
+      ],
+      "module": "project-infrastructure",
+      "links": [
+        "T-002",
+        "T-003",
+        "T-004",
+        "docs/PROJECT_STRUCTURE.md",
+        "docs/meetings/M-001-20260927-kickoff.md"
       ]
     }
   ]
