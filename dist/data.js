@@ -7,7 +7,7 @@ window.COOP_DATA = {
     "updatedAt": "2026-09-27",
     "repositoryUrl": "git@github.com:peterliwenhao/economic-systems-toy.git",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "8603583"
+    "commit": "15cca73"
   },
   "tasks": [
     {
@@ -115,7 +115,7 @@ window.COOP_DATA = {
       "id": "T-004",
       "title": "建立代码、运行记录与成员入场骨架",
       "owner": "李文浩",
-      "status": "in_progress",
+      "status": "review",
       "priority": "P0",
       "module": "project-infrastructure",
       "blocked": false,

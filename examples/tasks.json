@@ -102,7 +102,7 @@
     "id": "T-004",
     "title": "建立代码、运行记录与成员入场骨架",
     "owner": "李文浩",
-    "status": "in_progress",
+    "status": "review",
     "priority": "P0",
     "module": "project-infrastructure",
     "blocked": false,
