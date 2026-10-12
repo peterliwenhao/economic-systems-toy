@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>兰格计划经济模式笔记</title>
+  <style>
+    :root{--ink:#1f2933;--muted:#52606d;--line:#d9e2ec;--accent:#173f5f;--paper:#fff}
+    *{box-sizing:border-box} body{margin:0;background:#f4f7f9;color:var(--ink);font-family:"Noto Serif CJK SC","Songti SC",SimSun,serif;line-height:1.8}
+    main{max-width:960px;margin:36px auto;padding:48px 64px 64px;background:var(--paper);box-shadow:0 4px 20px rgba(31,41,51,.08)}
+    h1,h2,h3{color:#102a43;line-height:1.35} h1{margin:0 0 8px;font-size:30px;text-align:center}.subtitle{margin:0 0 40px;text-align:center;color:var(--muted);font-size:15px}
+    h2{margin:42px 0 16px;padding-bottom:7px;border-bottom:1px solid var(--line);font-size:22px}h3{margin:24px 0 8px;font-size:18px}p{margin:8px 0 14px}ul{margin:6px 0 14px;padding-left:1.5em}li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin:16px 0 20px;font-size:15px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:#eaf1f6;color:#102a43}
+    .formula{margin:16px auto;padding:11px 16px;max-width:800px;background:#f6f8fa;border-left:3px solid var(--accent);font-family:"Times New Roman","Noto Serif CJK SC",serif;font-size:18px;text-align:center;overflow-x:auto}.note{color:var(--muted);font-size:15px}.important{font-weight:700;color:#102a43}
+    @media(max-width:700px){main{margin:0;padding:28px 22px 40px}h1{font-size:25px}table{font-size:14px}}
+  </style>
+</head>
+<body><main>
+  <h1>兰格计划经济模式笔记</h1>
+  <p class="subtitle">按“生产—分配—流通—消费”整理；重点说明两套价格的联结机制</p>
+
+  <h2>一、理论定位与基本架构</h2>
+  <p>兰格模式是市场社会主义的一种分权协调方案：在生产资料公有制下，不保留私人资本所有权和资本市场，但保留消费者选择、职业选择以及部分市场价格；中央计划局（CPB）不直接为每家企业下达具体产量命令，而是以会计价格和宏观参数协调企业的分散决策。</p>
+  <h3>1. 三项制度前提</h3>
+  <ul>
+    <li><span class="important">生产资料公有制：</span>资本品及非劳动生产资源归社会所有；企业管理者是公共官员，而非私人资本家。</li>
+    <li><span class="important">消费者与劳动者自由：</span>居民在预算约束下选择消费组合；劳动者可选择职业和雇主，劳动服务市场形成工资。</li>
+    <li><span class="important">中央模拟市场：</span>CPB 为生产资料及劳动以外的稀缺资源设定会计价格，并根据短缺、过剩进行试错调整。</li>
+  </ul>
+  <h3>2. 两套价格与三类决策者</h3>
+  <table><thead><tr><th>对象</th><th>价格形成机制</th><th>主要决策</th></tr></thead><tbody>
+    <tr><td>消费品</td><td>真实市场价格</td><td>消费者选择；消费品企业据市场价格决定产量与投入</td></tr>
+    <tr><td>劳动服务</td><td>真实市场工资</td><td>劳动者选择职业；企业决定劳动需求</td></tr>
+    <tr><td>生产资料及其他非劳动资源</td><td>CPB 会计价格</td><td>企业据此核算成本；CPB 依据超额需求调整价格</td></tr>
+    <tr><td>CPB</td><td>设定会计价格、利率及积累率等宏观参数</td><td>协调资源配置，并决定社会投资与社会分红的宏观框架</td></tr>
+  </tbody></table>
+  <p class="note">兰格与马克思“两部类”的划分不可混同：马克思按产品用途区分生产资料与消费资料；兰格按协调和定价机制区分真实市场与会计价格。不能概括成“第一部类完全计划、第二部类完全市场”。</p>
+
+  <h2>二、生产：企业在既定价格下的分权决策</h2>
+  <h3>1. 两类企业</h3>
+  <table><thead><tr><th>企业类型</th><th>投入端价格</th><th>产出端价格</th></tr></thead><tbody>
+    <tr><td>生产资料企业（钢铁、煤炭、机床、电力等）</td><td>生产资料为会计价格；劳动为市场工资</td><td>生产资料产品的会计价格</td></tr>
+    <tr><td>消费品企业（食品、服装、皮鞋等）</td><td>生产资料为会计价格；劳动为市场工资</td><td>消费品市场价格</td></tr>
+  </tbody></table>
+  <p>两类企业遵循相同的基本规则，区别只在于产品价格来自 CPB 还是消费品市场。</p>
+  <h3>2. 成本最小化与产量规则</h3>
+  <p>企业把价格视为参数，在既定产量下选择成本最低的投入组合：</p>
+  <div class="formula">C<sub>j</sub>(q) = Σ<sub>k</sub> p<sub>k</sub>x<sub>kj</sub> + wL<sub>j</sub></div>
+  <p>例如，钢铁厂的成本包含铁矿石、煤炭、电力、机器服务等会计价格，以及由劳动市场形成的工资率。不存在另一个独立的“生产钢铁的价格”；生产钢铁所需耗费由成本函数表示，钢铁本身的价格是会计价格 <i>p</i><sub>steel</sub>。</p>
+  <p>兰格规定的两条企业规则是：</p>
+  <ul><li>在既定产量下，选择平均成本最低的技术与投入组合；</li><li>调整产量，直至边际成本等于产品价格：</li></ul>
+  <div class="formula">MC<sub>j</sub>(q<sub>j</sub>) = p<sub>j</sub></div>
+  <p>长期均衡还要求价格与最低平均成本相容：</p>
+  <div class="formula">p<sub>j</sub> = AC<sub>j</sub>(q<sub>j</sub>)</div>
+
+  <h3>3. 会计价格不是“成本加成价”</h3>
+  <p>煤、钢、机器、电力等价格彼此依赖，本质上是联立问题。CPB 不沿着“煤价→钢价→机器价”的单向链条加总成本，而是先公布一组试算价格向量：</p>
+  <div class="formula">p<sup>(0)</sup> = (p<sub>steel</sub>, p<sub>coal</sub>, p<sub>machine</sub>, p<sub>ore</sub>, …)</div>
+  <p>各企业同时据此选择投入和产量，形成全经济的供给与需求。CPB 寻找使超额需求向量为零的价格向量：</p>
+  <div class="formula">z(p) = D(p) − S(p) = 0</div>
+
+  <h2>三、流通与价格协调：CPB 的试错过程</h2>
+  <p>若某种生产资料短缺，说明当前会计价格偏低；若出现过剩，说明会计价格偏高。CPB 据此调整该资源价格：</p>
+  <div class="formula">D<sub>k,t</sub> &gt; S<sub>k,t</sub> ⇒ p<sub>k,t+1</sub> ↑；　D<sub>k,t</sub> &lt; S<sub>k,t</sub> ⇒ p<sub>k,t+1</sub> ↓</div>
+  <div class="formula">p<sub>t</sub> → 企业决策 → (D<sub>t</sub>, S<sub>t</sub>) → D<sub>t</sub> − S<sub>t</sub> → p<sub>t+1</sub></div>
+  <p>这一机制模拟 Walras 式试错：CPB 不预先“算出正确价格”，而是以短缺与过剩为信息，通过反复调整使价格与企业决策逐步相容。</p>
+  <p>资源在流通中并非以私人资本产权为基础交易；公有资源按照 CPB 给定的会计价格向企业核算配置，企业以其产出、投入和成本约束作出生产选择。</p>
+
+  <h2>四、分配：工资、社会分红与积累</h2>
+  <h3>1. 个人收入</h3>
+  <div class="formula">Y<sub>i</sub> = w<sub>i</sub>L<sub>i</sub> + D<sub>i</sub></div>
+  <p>其中，w<sub>i</sub>L<sub>i</sub> 为劳动收入，D<sub>i</sub> 为社会分红。社会分红应以按人头等非职业相关方式外生发放，即：</p>
+  <div class="formula">∂D<sub>i</sub> / ∂职业<sub>i</sub> = 0</div>
+  <p>原因是工资差异需要保留其信号功能：它补偿不同职业的边际反效用、劳动强度或不便利程度，从而支持劳动在职业间的有效配置；社会分红则将公共资本收益分配给全体成员，而非按资本所有权分配。</p>
+  <h3>2. 利率与积累率</h3>
+  <p>CPB 在社会分红之前可进行集体扣除以决定积累率，进而决定投资规模。利率作为资本的会计价格，承担当期资本稀缺性的配给功能；积累率则决定跨期的资本存量路径。</p>
+  <div class="formula">Y<sub>t</sub> = C<sub>t</sub> + I<sub>t</sub></div>
+  <p>消费者可直接影响当期消费 C<sub>t</sub> 的结构，但仅凭当期消费市场，不能充分决定投资 I<sub>t</sub> 的最优规模与未来消费路径。这是兰格模式中最关键的跨期协调难题。</p>
+
+  <h2>五、消费：消费者主权与市场价格</h2>
+  <p>消费者在预算约束下自由选择消费组合：</p>
+  <div class="formula">max U<sub>i</sub>(c<sub>i</sub>)　s.t.　Σ<sub>g</sub> p<sub>g</sub>c<sub>ig</sub> ≤ Y<sub>i</sub></div>
+  <p>在内部解下，消费者以收入购买各商品所获得的边际效用相等，即可实现既定收入下的效用最大化。消费品价格由该真实市场中的供求关系形成。</p>
+  <p><span class="important">消费品市场的“自由”并不意味着消费品企业可按成本加成自主报价。</span>企业首先面对市场形成的消费品价格，再将其与会计价格和工资构成的成本相比较，按成本最小化与 MC = P 决定产量与投入。</p>
+
+  <h2>六、两套价格如何联结：从最终需求到生产资料</h2>
+  <div class="formula">消费者需求 → 消费品市场价格 → 消费品企业产量 → 中间投入需求 → CPB 会计价格调整 → 企业成本与产量</div>
+  <p>例如，自行车需求上升会带动自行车产量扩大，继而提高对钢铁、橡胶和机器的派生需求。若钢铁出现超额需求：</p>
+  <div class="formula">D<sub>steel</sub> &gt; S<sub>steel</sub> ⇒ p<sub>steel</sub> ↑</div>
+  <p>较高的钢铁会计价格既表示其社会机会成本上升，也促使下游企业节约钢材、采用替代投入或调整产量。两套价格不是由一条直接公式“焊接”，而是通过企业的成本结构、投入需求和供求反馈纳入同一一般均衡过程。</p>
+  <p>若以投入产出关系表示这一传导，设 A 为中间投入系数矩阵、y 为最终需求、x 为总产出，则：</p>
+  <div class="formula">x = Ax + y，　因此　x = (I − A)<sup>−1</sup>y</div>
+  <p>最终消费需求会沿投入产出网络逐层转化为对生产资料及其他中间品的需求。</p>
+
+  <h2>七、从静态试错到动态 ABM：信息识别问题</h2>
+  <p>兰格原始机制以“物理短缺/过剩”作为价格调整信号，但静态模型未充分处理目标库存、生产时滞、订单和未满足需求。库存是状态变量：</p>
+  <div class="formula">I<sub>t</sub> = I<sub>t−1</sub> + Q<sub>t</sub> − S<sub>t</sub></div>
+  <p>仅观察库存 I<sub>t</sub>，不能判断需求偏弱还是企业主动备货。需要至少同时观察实际销售 S<sub>t</sub>、目标库存 I<sub>t</sub><sup>*</sup>、订单及缺货/积压订单。</p>
+  <div class="formula">S<sub>t</sub> = min{D<sub>t</sub>, Q<sub>t</sub> + I<sub>t−1</sub>}</div>
+  <p>供给不足时，观察到的销售量低于真实需求；因此可定义：</p>
+  <div class="formula">ObservedDemand<sub>t</sub> = Sales<sub>t</sub> + UnmetDemand<sub>t</sub></div>
+  <p>将兰格式“短缺涨价、过剩降价”动态化，可用下式作为 ABM 中的一个简化规则，而非兰格原文公式：</p>
+  <div class="formula">Δp<sub>t</sub> = α(D<sub>t</sub> − S<sub>t</sub>) − β(I<sub>t</sub> − I<sub>t</sub><sup>*</sup>)，　α, β &gt; 0</div>
+  <p>未满足需求推动会计价格或计划供给上调；高于目标水平的库存则形成反向信号。</p>
+
+  <h2>八、对 LLM-driven ABM 的可操作映射</h2>
+  <table><thead><tr><th>理论角色</th><th>ABM 对应</th><th>核心规则</th></tr></thead><tbody>
+    <tr><td>居民</td><td>Household Agent</td><td>预算约束下消费选择；职业选择；报告订单与未满足需求</td></tr>
+    <tr><td>企业经理</td><td>Firm Agent</td><td>给定价格下成本最小化、技术选择与 MC = P 的产量调整</td></tr>
+    <tr><td>消费品市场</td><td>Market Agent</td><td>撮合交易并形成消费品价格</td></tr>
+    <tr><td>CPB</td><td>Price and Planning Agent</td><td>观察生产资料短缺、过剩、库存与订单；更新会计价格及积累参数</td></tr>
+  </tbody></table>
+  <p>经典 Lange ABM 应先用固定、可解释的规则构成基准模型；之后再引入具有记忆、预测和协商能力的 LLM Agent，比较不同信息结构与决策规则对配置效率、价格稳定性、供需波动和冲击适应能力的影响。</p>
+  <p><span class="important">一句话概括：</span>兰格模式不是中央替企业计算一切，而是以公有制为前提，把消费者市场、劳动市场、生产资料会计价格和企业分权决策嵌入同一套试错式一般均衡协调机制。</p>
+</main></body></html>
