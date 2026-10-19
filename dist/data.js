@@ -7,7 +7,7 @@ window.COOP_DATA = {
     "updatedAt": "2026-09-21",
     "repositoryUrl": "pending-github-repository",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "94e88c0"
+    "commit": "d2e13fe"
   },
   "tasks": [
     {
@@ -115,7 +115,7 @@ window.COOP_DATA = {
       "id": "T-005",
       "title": "保存 v1.1 世界配置并拆分因素层级",
       "owner": "李文浩",
-      "status": "review",
+      "status": "done",
       "priority": "P0",
       "module": "world-design",
       "blocked": false,

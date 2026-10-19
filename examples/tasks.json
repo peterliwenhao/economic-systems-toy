@@ -102,7 +102,7 @@
     "id": "T-005",
     "title": "保存 v1.1 世界配置并拆分因素层级",
     "owner": "李文浩",
-    "status": "review",
+    "status": "done",
     "priority": "P0",
     "module": "world-design",
     "blocked": false,
