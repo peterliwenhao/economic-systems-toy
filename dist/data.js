@@ -2,12 +2,12 @@
 window.COOP_DATA = {
   "project": {
     "name": "LLM 经济制度 Toy Lab",
-    "branch": "task/T-005-world-config-factorization",
+    "branch": "task/T-006-assign-world-config-refinement",
     "question": "在资源、技术、偏好、冲击与信息预算可比的条件下，不同资源配置机制在这个 toy 环境中表现如何？",
     "updatedAt": "2026-09-21",
     "repositoryUrl": "pending-github-repository",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "d2e13fe"
+    "commit": "ab0b6c1"
   },
   "tasks": [
     {
@@ -139,6 +139,42 @@ window.COOP_DATA = {
         "agent ID 唯一",
         "docs/WORLD_CONFIGURATION_LAYERS.md",
         "git diff --check"
+      ],
+      "issueUrl": "#"
+    },
+    {
+      "id": "T-006",
+      "title": "评审并细化四类世界配置初版",
+      "owner": "张馨月",
+      "status": "ready",
+      "priority": "P0",
+      "module": "world-design",
+      "blocked": false,
+      "dependsOn": [
+        "T-005"
+      ],
+      "branch": "task/T-006-refine-world-config",
+      "goal": "基于已合入 main 的 v1.1 初版和数值说明材料，检查参数语义，并提出世界规则、初始化规格、初始化实现例与实验 treatment 的可执行拆分。",
+      "scope": [
+        "configs/scenarios/closed-economy-fixed-transport-v1.1.yaml",
+        "docs/WORLD_CONFIGURATION_LAYERS.md",
+        "docs/research/calibration/",
+        "docs/tasks/T-006.md"
+      ],
+      "acceptance": [
+        "核对 YAML 与数值说明材料，列出不一致、重复字段和未定义单位",
+        "确认每个顶层字段属于四类配置中的哪一类",
+        "给出拆成四个 YAML 的字段映射草案，不重新加入 actions YAML",
+        "不重新加入 transport calibration examples",
+        "对 minimum_consumption * 7、重复铁投入参数和 allocation_rule 归属给出建议",
+        "YAML 保持可解析，人口、agent ID、设施与引用关系保持一致或记录修改理由",
+        "不修改前端、Dashboard 或部署文件"
+      ],
+      "evidence": [
+        "更新后的配置分层文档",
+        "字段映射或四个 YAML 草案",
+        "YAML 解析/一致性检查结果",
+        "待李文浩与刘充确认的问题清单"
       ],
       "issueUrl": "#"
     }
