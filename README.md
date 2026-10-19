@@ -1,6 +1,6 @@
 # LLM 市场经济与计划经济 Toy Simulation
 
-> 协作入口：[项目交接](docs/HANDOFF.md) · [团队职责](docs/team.md) · [Git 规范](docs/git-workflow.md) · [当前任务](docs/tasks/README.md) · [项目启动检查](docs/PROJECT_STARTUP.md)
+> 协作入口：[项目交接](docs/HANDOFF.md) · [团队职责](docs/team.md) · [Git 规范](docs/git-workflow.md) · [当前任务](docs/tasks/README.md) · [研究资料](docs/research/README.md) · [项目启动检查](docs/PROJECT_STARTUP.md)
 
 本项目研究：在同一组资源、生产技术、偏好和冲击下，比较不同资源配置机制的表现。
 
