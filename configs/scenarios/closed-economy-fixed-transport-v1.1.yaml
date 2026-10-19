@@ -1,0 +1,532 @@
+# 固定运输损耗调整版。时间、生产、健康、主体与地块参数沿用第一版主体参数。
+# 运输损耗按“每条调拨指令”结算：同品类、同起点、同终点的请求可先合并，合并后只扣除一次固定损耗。
+# 所有时间变量继续使用 hours；所有参数均为具体校准值。
+schema_version: "1.1"
+model_name: LLM-driven closed economy ABM
+parameter_status: fixed-transport-loss adjustment calibration values
+
+global_environment:
+  economy_type: closed
+  population_count: 16
+  goods:
+    - grain
+    - iron
+  ownership: state_owned_production_assets
+  currency_enabled: false
+  labor_voucher_enabled: false
+  private_account_enabled: false
+  seasonality_enabled: false
+  vehicles_enabled: false
+  misreporting_enabled: false
+  static_storage_loss_rate: 0.0
+  random_seed: 20260927
+
+time:
+  action_round:
+    count: 1
+    duration_hours: 40.0
+  grain_maturity:
+    action_rounds: 1
+    duration_hours: 40.0
+  planning_period:
+    action_rounds: 1
+    duration_hours: 40.0
+  settlement_order:
+    - production
+    - harvest
+    - allocation
+    - circulation
+    - transport
+    - consumption
+
+map:
+  geometry: hexagonal
+  radius: 3
+  tile_count: 37
+  coordinate_system: axial_q_r
+  hex_distance_formula: (abs(dq) + abs(dr) + abs(dq + dr)) / 2
+
+physical_rules:
+  inventory_balance: inventory_next = inventory + production + inflow - input_use - consumption - outflow - loss
+  transport_loss_mode: fixed_absolute_loss_per_transfer_order
+  transport_loss_settlement_unit: one_transfer_order
+  grain_transport_loss_units_per_hex_per_transfer: 0.05
+  iron_transport_loss_units_per_hex_per_transfer: 0.02
+  transport_loss_formula: transport_loss = min(sent_quantity, fixed_loss_units_per_hex_per_transfer * distance_hex)
+  transport_arrival_formula: arrival_quantity = max(sent_quantity - fixed_loss_units_per_hex_per_transfer * distance_hex, 0)
+  consolidation_rule: same_good_same_origin_same_destination_requests_may_be_merged_before_transport_settlement
+  consolidated_transfer_loss_rule: a_merged_transfer_order_is_charged_fixed_transport_loss_once
+  minimum_arrival_quantity: 0.0
+  grain_iron_input_per_unit: 0.08
+  household_grain_capacity: 14.0
+  household_initial_grain: 7.0
+  household_iron_capacity: 0.0
+  household_initial_iron: 0.0
+  target_safety_stock_action_rounds: 7
+  health_minimum: 0.0
+  health_maximum: 10.0
+  health_initial: 8.0
+  acute_labor_floor: 0.6
+  acute_labor_nutrition_weight: 0.4
+  illness_multiplier_baseline: 1.0
+  health_labor_multiplier_steps:
+    - minimum_health: 8.0
+      multiplier: 1.0
+    - minimum_health: 6.0
+      multiplier: 0.9
+    - minimum_health: 4.0
+      multiplier: 0.75
+    - minimum_health: 2.0
+      multiplier: 0.5
+    - minimum_health: 1.0e-06
+      multiplier: 0.25
+    - minimum_health: 0.0
+      multiplier: 0.0
+  health_update_formula: >-
+    health_next = clip(health + recovery_coefficient * max(consumption - minimum_consumption, 0)
+    - shortage_damage_coefficient * max(minimum_consumption - consumption, 0)
+    - overtime_damage_per_hour * max(actual_work_hours - safe_work_hours, 0), 0, 10)
+  acute_labor_formula: acute_multiplier_next = 0.60 + 0.40 * min(1, consumption / minimum_consumption)
+  effective_labor_formula: >-
+    effective_labor_hours = actual_work_hours * sector_skill * health_multiplier
+    * acute_multiplier * illness_multiplier
+
+production_technology:
+  grain:
+    output_function: 0.32 * min(L, 60) + 0.26 * min(max(L - 60, 0), 40) + 0.18 * min(max(L - 100, 0), 30)
+    labor_input_unit: hours
+    first_segment_upper_hours: 60.0
+    second_segment_upper_hours: 100.0
+    third_segment_upper_hours: 130.0
+    first_segment_output_per_hour: 0.32
+    second_segment_output_per_hour: 0.26
+    third_segment_output_per_hour: 0.18
+    iron_input_per_grain: 0.08
+    capacity_per_farm_per_action_round: 45.0
+    maturity_hours: 40.0
+  iron:
+    output_per_effective_labor_hour: 0.95
+    labor_input_unit: hours
+    resource_depletion_enabled: false
+
+allocation_rule:
+  shortage_method: seeded_random_basic_need_allocation
+  allocation_unit: 0.01
+  random_seed: 20260927
+  household_request_formula: max(minimum_consumption * 7 - home_grain_inventory, 0)
+
+institutional_subjects:
+  - id: CENTRAL_COORDINATOR
+    subject_type: coordination_authority
+    location:
+      q: 0
+      r: 0
+    inventory_enabled: false
+    planning_period_hours: 40.0
+    allocation_random_seed: 20260927
+    may_issue_plan: true
+    may_authorize_transfer: true
+    may_modify_physical_state_directly: false
+  - id: ENVIRONMENT_ENGINE
+    subject_type: deterministic_environment
+    location: null
+    llm_based_game_master: false
+    validates_permissions: true
+    settles_production: true
+    settles_inventory: true
+    settles_transport_loss: true
+    settles_consumption: true
+    settles_health: true
+    allows_direct_llm_inventory_write: false
+    allows_direct_llm_health_write: false
+    allows_direct_llm_output_write: false
+
+facilities:
+  - id: W1
+    subject_type: public_warehouse
+    location: {q: 2, r: 0}
+    grain_capacity: 900.0
+    iron_capacity: 80.0
+    initial_grain_inventory: 784.0
+    initial_iron_inventory: 12.0
+    static_loss_rate_per_action_round: 0.0
+  - id: W2
+    subject_type: public_warehouse
+    location: {q: -2, r: 0}
+    grain_capacity: 900.0
+    iron_capacity: 80.0
+    initial_grain_inventory: 784.0
+    initial_iron_inventory: 12.0
+    static_loss_rate_per_action_round: 0.0
+  - id: G1
+    subject_type: grain_farm
+    location: {q: 3, r: 0}
+    location_productivity: 1.15
+    grain_capacity: 60.0
+    iron_capacity: 15.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 4.0
+    maximum_grain_output_per_action_round: 45.0
+    grain_maturity_hours: 40.0
+    assigned_agents: [A01, A07, A16]
+    responsible_agent: A01
+  - id: G2
+    subject_type: grain_farm
+    location: {q: 0, r: -3}
+    location_productivity: 1.05
+    grain_capacity: 60.0
+    iron_capacity: 15.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 4.0
+    maximum_grain_output_per_action_round: 45.0
+    grain_maturity_hours: 40.0
+    assigned_agents: [A03, A08, A09]
+    responsible_agent: A03
+  - id: G3
+    subject_type: grain_farm
+    location: {q: -3, r: 0}
+    location_productivity: 0.95
+    grain_capacity: 60.0
+    iron_capacity: 15.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 4.0
+    maximum_grain_output_per_action_round: 45.0
+    grain_maturity_hours: 40.0
+    assigned_agents: [A11, A13]
+    responsible_agent: A11
+  - id: G4
+    subject_type: grain_farm
+    location: {q: 0, r: 3}
+    location_productivity: 0.85
+    grain_capacity: 60.0
+    iron_capacity: 15.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 4.0
+    maximum_grain_output_per_action_round: 45.0
+    grain_maturity_hours: 40.0
+    assigned_agents: [A05, A12, A15]
+    responsible_agent: A15
+  - id: F1
+    subject_type: iron_mine
+    location: {q: 3, r: -3}
+    location_productivity: 1.1
+    grain_capacity: 0.0
+    iron_capacity: 30.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 0.0
+    maximum_iron_output_per_action_round: 30.0
+    assigned_agents: [A02, A10]
+    responsible_agent: A02
+  - id: F2
+    subject_type: iron_mine
+    location: {q: -3, r: 3}
+    location_productivity: 0.9
+    grain_capacity: 0.0
+    iron_capacity: 30.0
+    initial_grain_inventory: 0.0
+    initial_iron_inventory: 0.0
+    maximum_iron_output_per_action_round: 30.0
+    assigned_agents: [A06, A14]
+    responsible_agent: A06
+
+agents:
+  - id: A01
+    subject_type: household_agent
+    residence: {q: 1, r: 0}
+    initial_workplace: G1
+    role: grain_farm_manager
+    grain_skill: 1.25
+    iron_skill: 0.75
+    planned_work_hours: 30.0
+    minimum_consumption: 0.65
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.7
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.08
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A02
+    subject_type: household_agent
+    residence: {q: 1, r: -1}
+    initial_workplace: F1
+    role: iron_mine_manager
+    grain_skill: 0.75
+    iron_skill: 1.25
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.8
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.1
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A03
+    subject_type: household_agent
+    residence: {q: 0, r: -1}
+    initial_workplace: G2
+    role: grain_farm_manager
+    grain_skill: 1.15
+    iron_skill: 1.15
+    planned_work_hours: 30.0
+    minimum_consumption: 0.75
+    recovery_coefficient: 0.25
+    shortage_damage_coefficient: 1.0
+    safe_work_hours: 35.0
+    overtime_damage_per_hour: 0.12
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A04
+    subject_type: household_agent
+    residence: {q: -1, r: 0}
+    initial_workplace: CENTRAL_COORDINATOR
+    role: public_dispatcher
+    grain_skill: 0.85
+    iron_skill: 0.85
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.9
+    safe_work_hours: 30.0
+    overtime_damage_per_hour: 0.15
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A05
+    subject_type: household_agent
+    residence: {q: -1, r: 1}
+    initial_workplace: G4
+    role: grain_worker
+    grain_skill: 1.25
+    iron_skill: 0.75
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.8
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.1
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A06
+    subject_type: household_agent
+    residence: {q: 0, r: 1}
+    initial_workplace: F2
+    role: iron_mine_manager
+    grain_skill: 0.75
+    iron_skill: 1.25
+    planned_work_hours: 30.0
+    minimum_consumption: 0.75
+    recovery_coefficient: 0.25
+    shortage_damage_coefficient: 1.0
+    safe_work_hours: 35.0
+    overtime_damage_per_hour: 0.12
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A07
+    subject_type: household_agent
+    residence: {q: 2, r: -1}
+    initial_workplace: G1
+    role: grain_worker
+    grain_skill: 1.15
+    iron_skill: 1.15
+    planned_work_hours: 30.0
+    minimum_consumption: 0.65
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.7
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.08
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A08
+    subject_type: household_agent
+    residence: {q: 2, r: -2}
+    initial_workplace: G2
+    role: grain_worker
+    grain_skill: 0.85
+    iron_skill: 0.85
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.9
+    safe_work_hours: 30.0
+    overtime_damage_per_hour: 0.15
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A09
+    subject_type: household_agent
+    residence: {q: 1, r: -2}
+    initial_workplace: G2
+    role: grain_worker
+    grain_skill: 1.25
+    iron_skill: 0.75
+    planned_work_hours: 30.0
+    minimum_consumption: 0.75
+    recovery_coefficient: 0.25
+    shortage_damage_coefficient: 1.0
+    safe_work_hours: 35.0
+    overtime_damage_per_hour: 0.12
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A10
+    subject_type: household_agent
+    residence: {q: 0, r: -2}
+    initial_workplace: F1
+    role: iron_worker
+    grain_skill: 0.75
+    iron_skill: 1.25
+    planned_work_hours: 30.0
+    minimum_consumption: 0.65
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.7
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.08
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A11
+    subject_type: household_agent
+    residence: {q: -1, r: -1}
+    initial_workplace: G3
+    role: grain_farm_manager
+    grain_skill: 1.15
+    iron_skill: 1.15
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.9
+    safe_work_hours: 30.0
+    overtime_damage_per_hour: 0.15
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A12
+    subject_type: household_agent
+    residence: {q: -2, r: 1}
+    initial_workplace: G4
+    role: grain_worker
+    grain_skill: 0.85
+    iron_skill: 0.85
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.8
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.1
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A13
+    subject_type: household_agent
+    residence: {q: -2, r: 2}
+    initial_workplace: G3
+    role: grain_worker
+    grain_skill: 1.25
+    iron_skill: 0.75
+    planned_work_hours: 30.0
+    minimum_consumption: 0.65
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.7
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.08
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A14
+    subject_type: household_agent
+    residence: {q: -1, r: 2}
+    initial_workplace: F2
+    role: iron_worker
+    grain_skill: 0.75
+    iron_skill: 1.25
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.9
+    safe_work_hours: 30.0
+    overtime_damage_per_hour: 0.15
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A15
+    subject_type: household_agent
+    residence: {q: 0, r: 2}
+    initial_workplace: G4
+    role: grain_farm_manager
+    grain_skill: 1.15
+    iron_skill: 1.15
+    planned_work_hours: 30.0
+    minimum_consumption: 0.7
+    recovery_coefficient: 0.2
+    shortage_damage_coefficient: 0.8
+    safe_work_hours: 40.0
+    overtime_damage_per_hour: 0.1
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+  - id: A16
+    subject_type: household_agent
+    residence: {q: 1, r: 1}
+    initial_workplace: G1
+    role: grain_worker
+    grain_skill: 0.85
+    iron_skill: 0.85
+    planned_work_hours: 30.0
+    minimum_consumption: 0.75
+    recovery_coefficient: 0.25
+    shortage_damage_coefficient: 1.0
+    safe_work_hours: 35.0
+    overtime_damage_per_hour: 0.12
+    initial_health: 8.0
+    initial_grain_inventory: 7.0
+    grain_inventory_capacity: 14.0
+
+first_round_actions:
+  - {subject_id: A01, action: work, location_id: G1, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A02, action: work, location_id: F1, sector: iron, actual_work_hours: 30.0}
+  - {subject_id: A03, action: work, location_id: G2, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A04, action: coordinate, location_id: CENTRAL_COORDINATOR, actual_work_hours: 30.0}
+  - {subject_id: A05, action: work, location_id: G4, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A06, action: work, location_id: F2, sector: iron, actual_work_hours: 30.0}
+  - {subject_id: A07, action: work, location_id: G1, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A08, action: work, location_id: G2, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A09, action: work, location_id: G2, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A10, action: work, location_id: F1, sector: iron, actual_work_hours: 30.0}
+  - {subject_id: A11, action: work, location_id: G3, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A12, action: work, location_id: G4, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A13, action: work, location_id: G3, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A14, action: work, location_id: F2, sector: iron, actual_work_hours: 30.0}
+  - {subject_id: A15, action: work, location_id: G4, sector: grain, actual_work_hours: 30.0}
+  - {subject_id: A16, action: work, location_id: G1, sector: grain, actual_work_hours: 30.0}
+
+transport_calibration_examples:
+  - example_id: grain_large_shipment
+    good: grain
+    sent_quantity: 100.0
+    distance_hex: 3
+    fixed_loss_units_per_hex_per_transfer: 0.05
+    transport_loss: 0.15
+    arrival_quantity: 99.85
+    average_loss_rate: 0.0015
+  - example_id: grain_small_shipment
+    good: grain
+    sent_quantity: 1.0
+    distance_hex: 3
+    fixed_loss_units_per_hex_per_transfer: 0.05
+    transport_loss: 0.15
+    arrival_quantity: 0.85
+    average_loss_rate: 0.15
+  - example_id: iron_shipment
+    good: iron
+    sent_quantity: 10.0
+    distance_hex: 3
+    fixed_loss_units_per_hex_per_transfer: 0.02
+    transport_loss: 0.06
+    arrival_quantity: 9.94
+    average_loss_rate: 0.006
