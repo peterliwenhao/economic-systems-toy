@@ -7,7 +7,7 @@ window.COOP_DATA = {
     "updatedAt": "2026-09-21",
     "repositoryUrl": "pending-github-repository",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "8603583"
+    "commit": "76b8d80"
   },
   "tasks": [
     {
@@ -121,7 +121,7 @@ window.COOP_DATA = {
       "blocked": false,
       "dependsOn": [],
       "branch": "task/T-005-world-config-factorization",
-      "goal": "保存固定运输损耗 v1.1 完整场景，并区分世界规则、初始化规格、初始化实现例、实验处理、行为输入与校准测试。",
+      "goal": "保存固定运输损耗 v1.1 完整场景，并区分世界规则、初始化规格、初始化实现例与实验处理。",
       "scope": [
         "configs/scenarios/closed-economy-fixed-transport-v1.1.yaml",
         "docs/WORLD_CONFIGURATION_LAYERS.md",
@@ -131,11 +131,11 @@ window.COOP_DATA = {
         "用户提供的完整 YAML 已规范化保存并可解析",
         "世界规则与初始化被划分为两大概念类别",
         "初始化规格与 realized instance 被明确区分",
-        "first_round_actions 和 calibration examples 不再被误认为初始化参数",
+        "根据团队决定移除 first_round_actions 与 transport calibration examples",
         "当前 agent 技能、健康、职业与设施因素已有数量审计"
       ],
       "evidence": [
-        "PyYAML 解析出 16 agents、8 facilities、16 actions 与 3 calibration examples",
+        "PyYAML 解析出 16 agents 与 8 facilities",
         "agent ID 唯一",
         "docs/WORLD_CONFIGURATION_LAYERS.md",
         "git diff --check"

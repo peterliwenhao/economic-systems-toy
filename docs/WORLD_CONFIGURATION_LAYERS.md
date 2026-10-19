@@ -2,22 +2,23 @@
 
 ## 结论
 
-项目概念上分成两大类，工程上保存为三个工件：
+项目工程上保存为四个配置工件：
 
 1. **世界规则（World Definition）**：世界允许什么、如何演化；
-2. **初始化（Initialization）**：包含初始化规格和由它生成的实现例。
-   - **初始化规格（Initialization Spec）**：这一次怎样抽样；
-   - **初始化实现例（Realized Instance）**：给定 seed 后实际生成了谁、在哪里、拿到了什么。
+2. **初始化规格（Initialization Spec）**：这一次怎样抽样；
+3. **初始化实现例（Realized Instance）**：给定 seed 后实际生成了谁、在哪里、拿到了什么；
+4. **实验处理（Treatment）**：本次实验相对共同世界条件改变哪一种制度因素。
 
 因此，“初始化出来的每个人分配的禀赋”不是新的参数类别，而是初始化规格运行后的结果。它必须保存，才能复现，但不应与生成规则混写。
 
-## 两大类、三个工件
+## 四个配置工件
 
 | 工件 | 回答的问题 | 典型内容 | 是否随每次初始化变化 |
 |---|---|---|---|
 | A. 世界规则 | 世界如何运行？ | 时间步、地图度量、库存守恒、生产函数、健康函数、运输结算 | 通常固定；实验处理可显式替换 |
 | B1. 初始化规格 | 这次要生成什么样的世界？ | 人数、设施数量、禀赋类型数、分布、相关结构、位置规则、seed | 会变化 |
 | B2. 初始化实现例 | 这次到底生成了什么？ | A01–A16、逐人技能/健康/库存、设施坐标、人员分配 | 是 B1 的确定性输出 |
+| C. 实验处理 | 这次比较改变什么？ | 所有权、分配机制、信息条件、货币开关、运输损耗设定 | 按实验条件变化 |
 
 建议的数据流：
 
@@ -28,7 +29,9 @@ initialization_spec.yaml
           |
           |  initialize(seed)
           v
-realized_instance.yaml  --->  simulation  --->  run manifest/results
+realized_instance.yaml
+          +
+treatment.yaml          --->  simulation  --->  run manifest/results
 ```
 
 ## 你举的“禀赋”例子
@@ -89,7 +92,7 @@ agents:
 
 `configs/scenarios/closed-economy-fixed-transport-v1.1.yaml`
 
-它是一个便于审阅的“冻结完整场景”，但内部混有五种语义：
+它是一个便于审阅的“冻结完整场景”，内部需要区分以下四个配置工件：
 
 ### A. 世界规则
 
@@ -125,18 +128,6 @@ agents:
 
 这些变量是市场/计划比较和消融的 treatment，应放在实验配置中覆盖世界默认值，避免把制度差异伪装成初始化差异。
 
-### D. 行为输入
-
-- `first_round_actions`
-
-它属于固定策略 fixture 或实际 agent/LLM 输出，不属于初始化。后续应移到 `configs/actions/` 或对应 run 的输入记录。
-
-### E. 校准测试
-
-- `transport_calibration_examples`
-
-它属于 transport 单元测试/golden cases，不属于运行配置。后续应移到 `tests/fixtures/`，由测试验证公式结果。
-
 ## 建议进一步拆出的文件
 
 ```text
@@ -149,13 +140,8 @@ configs/
 │   └── seed-20260927.yaml               # B2：冻结实现例
 ├── treatments/
 │   └── fixed-transport-loss-v1.yaml     # C：制度/实验处理
-├── actions/
-│   └── first-round-fixed-work.yaml      # D：行为 fixture
 └── scenarios/
     └── closed-economy-fixed-transport-v1.1.yaml  # 当前完整快照
-
-tests/fixtures/
-└── transport-loss-cases.yaml            # E：校准测试
 ```
 
 ## 因素拆分时的实验原则
@@ -180,7 +166,7 @@ tests/fixtures/
 
 对规范化 YAML 做机器读取后得到：
 
-- 人口：16；agent ID 唯一；第一轮 action 也是 16 条；
+- 人口：16，agent ID 唯一；
 - 技能禀赋有 **4 种二元组合**，每种恰好 4 人：`(1.25, 0.75)`、`(0.75, 1.25)`、`(1.15, 1.15)`、`(0.85, 0.85)`；
 - 健康/营养参数组合也有 **4 种**，每种恰好 4 人；
 - 职业有 **5 种**：7 名 grain worker、4 名 grain farm manager、2 名 iron mine manager、2 名 iron worker、1 名 public dispatcher；
