@@ -7,7 +7,7 @@ window.COOP_DATA = {
     "updatedAt": "2026-09-21",
     "repositoryUrl": "pending-github-repository",
     "dashboardUrl": "https://118.178.235.171:9003/projects/economic-systems-toy/",
-    "commit": "76b8d80"
+    "commit": "94e88c0"
   },
   "tasks": [
     {
