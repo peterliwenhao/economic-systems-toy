@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="LLM 经济制度 Toy 项目的四个开发子系统与团队协作流程"
+    />
+    <title>四个开发子系统与协作流程</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #172033;
+        --muted: #5d687c;
+        --line: #8792a7;
+        --paper: #f5f3ed;
+        --panel: #fffdf8;
+        --engine: #e7f0ff;
+        --engine-line: #6b91cb;
+        --llm: #eee9ff;
+        --llm-line: #8c75ca;
+        --planning: #e5f5ec;
+        --planning-line: #5f9b77;
+        --market: #fff0df;
+        --market-line: #c78448;
+        --accent: #2455a4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(65, 104, 166, 0.1), transparent 32rem),
+          var(--paper);
+        font-family:
+          Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.65;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 56px 0 72px;
+      }
+
+      header {
+        max-width: 850px;
+        margin-bottom: 34px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 12px;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1.16;
+        letter-spacing: -0.04em;
+      }
+
+      header p,
+      .section-intro {
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      section {
+        margin-top: 44px;
+      }
+
+      section > h2 {
+        margin-bottom: 8px;
+        font-size: 25px;
+      }
+
+      .system-map {
+        position: relative;
+        min-height: 720px;
+        margin-top: 24px;
+      }
+
+      .connections {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .connection-line {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 2;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .connection-line.later {
+        stroke-dasharray: 8 7;
+      }
+
+      .connection-label circle {
+        fill: var(--ink);
+      }
+
+      .connection-label text {
+        fill: white;
+        font-size: 15px;
+        font-weight: 700;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+
+      .system {
+        position: absolute;
+        z-index: 2;
+        width: 41%;
+        min-height: 260px;
+        padding: 28px 30px;
+        border: 1px solid;
+        border-radius: 24px;
+        box-shadow: 0 18px 45px rgba(29, 38, 57, 0.08);
+      }
+
+      .system h3 {
+        margin-bottom: 15px;
+        font-size: 22px;
+        line-height: 1.3;
+      }
+
+      .system ol,
+      .system ul {
+        margin: 0;
+        padding-left: 21px;
+      }
+
+      .system li + li {
+        margin-top: 4px;
+      }
+
+      .engine {
+        top: 0;
+        left: 0;
+        background: var(--engine);
+        border-color: var(--engine-line);
+      }
+
+      .llm {
+        top: 0;
+        right: 0;
+        background: var(--llm);
+        border-color: var(--llm-line);
+      }
+
+      .planning {
+        bottom: 0;
+        left: 0;
+        background: var(--planning);
+        border-color: var(--planning-line);
+      }
+
+      .market {
+        right: 0;
+        bottom: 0;
+        background: var(--market);
+        border-color: var(--market-line);
+      }
+
+      .relationship-key {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 24px;
+        margin: 24px 0 0;
+        padding: 22px 26px;
+        background: rgba(255, 253, 248, 0.72);
+        border: 1px solid rgba(135, 146, 167, 0.32);
+        border-radius: 18px;
+      }
+
+      .relationship-key div {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 9px;
+        align-items: start;
+      }
+
+      .key-letter {
+        display: inline-grid;
+        width: 28px;
+        height: 28px;
+        color: white;
+        background: var(--ink);
+        border-radius: 50%;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .relationship-key p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .relationship-key strong {
+        color: var(--ink);
+      }
+
+      .workflow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+        padding: 0;
+        list-style: none;
+        counter-reset: workflow;
+      }
+
+      .workflow li {
+        position: relative;
+        min-height: 190px;
+        padding: 23px 20px;
+        background: var(--panel);
+        border: 1px solid rgba(135, 146, 167, 0.38);
+        border-radius: 18px;
+        counter-increment: workflow;
+      }
+
+      .workflow li::before {
+        content: counter(workflow, decimal-leading-zero);
+        display: block;
+        margin-bottom: 22px;
+        color: var(--accent);
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .workflow li:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        z-index: 2;
+        top: 76px;
+        right: -23px;
+        width: 30px;
+        color: var(--line);
+        background: var(--paper);
+        text-align: center;
+        font-size: 24px;
+      }
+
+      .workflow h3 {
+        margin-bottom: 8px;
+        font-size: 17px;
+      }
+
+      .workflow p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .principle {
+        margin-top: 24px;
+        padding: 19px 22px;
+        background: #172033;
+        color: #f8f6ef;
+        border-radius: 16px;
+        text-align: center;
+        font-weight: 650;
+      }
+
+      footer {
+        margin-top: 42px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      @media (max-width: 840px) {
+        main {
+          width: min(100% - 28px, 680px);
+          padding-top: 34px;
+        }
+
+        .system-map {
+          display: grid;
+          min-height: 0;
+          gap: 14px;
+        }
+
+        .connections {
+          display: none;
+        }
+
+        .system {
+          position: static;
+          width: 100%;
+          min-height: 0;
+        }
+
+        .relationship-key,
+        .workflow {
+          grid-template-columns: 1fr;
+        }
+
+        .workflow li {
+          min-height: 0;
+        }
+
+        .workflow li:not(:last-child)::after {
+          content: "↓";
+          top: auto;
+          right: 50%;
+          bottom: -24px;
+          transform: translateX(50%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">LLM Economic Systems Toy</p>
+        <h1>四个开发子系统与协作流程</h1>
+        <p>
+          四位开发成员分别负责一个边界清楚的子系统，通过共同确认的接口连接；
+          环境统一执行物理与会计结算，其他模块只提交行为、交易或计划结果。
+        </p>
+      </header>
+
+      <section aria-labelledby="systems-title">
+        <h2 id="systems-title">四个子系统</h2>
+        <p class="section-intro">每个模块由对应负责人独立实现，连线表示双方需要共同定义的接口。</p>
+
+        <div class="system-map">
+          <svg class="connections" viewBox="0 0 1140 720" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#8792a7"></path>
+              </marker>
+            </defs>
+
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 468 132 L 672 132"></path>
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 234 260 L 234 460"></path>
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 906 260 L 906 460"></path>
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 468 588 L 672 588"></path>
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 430 246 C 550 304, 590 416, 710 474"></path>
+            <path class="connection-line" marker-start="url(#arrow)" marker-end="url(#arrow)" d="M 710 246 C 590 304, 550 416, 430 474"></path>
+
+            <g class="connection-label" transform="translate(570 132)"><circle r="15"></circle><text y="1">A</text></g>
+            <g class="connection-label" transform="translate(234 360)"><circle r="15"></circle><text y="1">B</text></g>
+            <g class="connection-label" transform="translate(906 360)"><circle r="15"></circle><text y="1">E</text></g>
+            <g class="connection-label" transform="translate(570 588)"><circle r="15"></circle><text y="1">F</text></g>
+            <g class="connection-label" transform="translate(618 360)"><circle r="15"></circle><text y="1">C</text></g>
+            <g class="connection-label" transform="translate(522 360)"><circle r="15"></circle><text y="1">D</text></g>
+          </svg>
+
+          <article class="system engine">
+            <h3>① 世界环境与运行 Engine</h3>
+            <ul>
+              <li>世界初始化与状态管理</li>
+              <li>时间推进与随机种子</li>
+              <li>生产、运输、库存、消费、健康</li>
+              <li>权限校验与确定性结算</li>
+              <li>日志、快照与结果输出</li>
+            </ul>
+          </article>
+
+          <article class="system llm">
+            <h3>② Agent 与 LLM 接口</h3>
+            <ul>
+              <li>Agent Observation 构造</li>
+              <li>LLM 与规则 Policy 接口</li>
+              <li>Prompt 与结构化输出</li>
+              <li>行为、需求与劳动意愿解析</li>
+              <li>重试、缓存、费用与调用记录</li>
+            </ul>
+          </article>
+
+          <article class="system planning">
+            <h3>④ 中央计划与劳动匹配</h3>
+            <ul>
+              <li>Cockshott 中央计划局</li>
+              <li>Lange 中央计划局</li>
+              <li>劳动与岗位匹配部门</li>
+              <li>生产目标、调拨与配给计划</li>
+              <li>后期接入反馈与计划修订</li>
+            </ul>
+          </article>
+
+          <article class="system market">
+            <h3>③ 市场与价格系统</h3>
+            <ul>
+              <li>买卖报价与订单管理</li>
+              <li>撮合、交易和市场出清</li>
+              <li>一般市场价格形成</li>
+              <li>Lange 市场执行层</li>
+              <li>超额需求与价格试错反馈</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="relationship-key" aria-label="子系统交互说明">
+          <div><span class="key-letter">A</span><p><strong>Engine ↔ LLM：</strong>世界状态与 Agent 行为。</p></div>
+          <div><span class="key-letter">B</span><p><strong>Engine ↔ 计划：</strong>资源状态与计划结算。</p></div>
+          <div><span class="key-letter">C</span><p><strong>Engine ↔ 市场：</strong>市场状态与交易结算。</p></div>
+          <div><span class="key-letter">D</span><p><strong>LLM ↔ 计划：</strong>需求、技能、岗位与配给。</p></div>
+          <div><span class="key-letter">E</span><p><strong>LLM ↔ 市场：</strong>报价、购买、成交与价格反馈。</p></div>
+          <div><span class="key-letter">F</span><p><strong>市场 ↔ 计划：</strong>Lange 价格试错；后期接入 Cockshott 反馈修订。</p></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="workflow-title">
+        <h2 id="workflow-title">简单合作方式</h2>
+        <p class="section-intro">先确认模块之间如何对话，再各自实现，最后统一集成。</p>
+
+        <ol class="workflow">
+          <li>
+            <h3>各自写接口草案</h3>
+            <p>四位负责人分别说明自己模块的输入、输出、数据格式和关键假设。</p>
+          </li>
+          <li>
+            <h3>馨月组织对齐</h3>
+            <p>汇总相邻模块的接口，解决字段、流程和责任边界不一致的问题。</p>
+          </li>
+          <li>
+            <h3>项目评审</h3>
+            <p>李文浩审阅技术与实验设计，刘充审阅经济机制与假设。</p>
+          </li>
+          <li>
+            <h3>分头编写</h3>
+            <p>接口确认后，各负责人独立完成模块代码、测试和必要说明。</p>
+          </li>
+          <li>
+            <h3>馨月统一集成</h3>
+            <p>把四个模块接入同一流程，组织联调并记录需要返回修改的问题。</p>
+          </li>
+        </ol>
+
+        <p class="principle">接口先对齐、再开始实现；模块各自负责、集成统一组织。</p>
+      </section>
+
+      <footer>LLM-driven Economic Systems Toy Project · Team Architecture Note</footer>
+    </main>
+  </body>
+</html>
