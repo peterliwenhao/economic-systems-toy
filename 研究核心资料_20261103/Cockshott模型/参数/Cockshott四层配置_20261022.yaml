@@ -1,0 +1,1651 @@
+{
+  "world_rules": {
+    "global_environment": {
+      "economy_type": "closed",
+      "agent_semantics": "one_agent_equals_one_household",
+      "goods": [
+        "rice",
+        "wheat",
+        "iron"
+      ],
+      "shared_physical_world_across_institutions": true,
+      "seasonality_enabled": false,
+      "vehicles_enabled": false,
+      "misreporting_enabled": false
+    },
+    "time": {
+      "action_round": {
+        "duration_hours": 40.0,
+        "must_not_be_reinterpreted_as_hours": 8.0
+      },
+      "natural_day": {
+        "labor_cap_hours_per_household": 8.0,
+        "cap_aggregation": "sum_across_all_employers",
+        "overlap_forbidden": true,
+        "boundary_mapping_inside_action_round": null,
+        "mapping_status": "pending"
+      },
+      "prohibited_inferences": [
+        "one_action_round_equals_one_day",
+        "one_action_round_equals_8_hours",
+        "40_hours_equals_5_days"
+      ],
+      "settlement_order": [
+        "production",
+        "harvest",
+        "allocation",
+        "circulation",
+        "transport",
+        "consumption"
+      ],
+      "food_maturity": {
+        "rice": null,
+        "wheat": null,
+        "proposal_hours_each": 40.0
+      }
+    },
+    "map": {
+      "geometry": "hexagonal",
+      "coordinate_system": "axial_q_r",
+      "hex_distance_formula": "(abs(dq) + abs(dr) + abs(dq + dr)) / 2"
+    },
+    "storage": {
+      "independent_warehouse_enabled": false,
+      "enterprise_storage_capacity_mode": "unlimited",
+      "production_capacity_remains_limited": true,
+      "household_iron_capacity": 0.0,
+      "inventory_conservation_required": true,
+      "household_food_capacity": {
+        "scope": "rice_plus_wheat_combined_proposal",
+        "formula": "n * mean_initial_household_basic_food_requirement",
+        "reference_population": "initial_16_households_fixed_proposal",
+        "reference_consumption_time_unit": null,
+        "n": null,
+        "capacity": null,
+        "proposal": {
+          "n": 12,
+          "reference_requirement_mean": 0.7,
+          "capacity": 8.4,
+          "status": "assistant_proposal_pending_user_confirmation",
+          "reason": "above_initial_total_food_7_without_capacity_shrinking_during_shortage"
+        },
+        "overflow_handling": null
+      }
+    },
+    "transport": {
+      "goods_transport_enabled": true,
+      "labor_commute": {
+        "remote_labor_commute_time_hours": 0.0,
+        "remote_labor_commute_cost": 0.0,
+        "does_not_disable_goods_transport": true
+      },
+      "loss_mode": "fixed_absolute_loss_per_transfer_order",
+      "settlement_unit": "one_transfer_order",
+      "loss_units_per_hex_per_transfer": {
+        "rice": null,
+        "wheat": null,
+        "iron": 0.02
+      },
+      "loss_formula": "min(Q_send_x, ell_x * d)",
+      "arrival_formula": "max(Q_send_x - ell_x * d, 0)",
+      "consolidation_rule": "same_good_same_origin_same_destination_requests_may_be_merged_before_settlement",
+      "merged_order_charged_once": true,
+      "food_loss_proposal": {
+        "rice": 0.05,
+        "wheat": 0.05,
+        "status": "inherited_grain_rate_proposal_pending_confirmation"
+      }
+    },
+    "labor": {
+      "multiple_employers_per_day_allowed": true,
+      "daily_total_work_cap_hours": 8.0,
+      "time_overlap_forbidden": true,
+      "work_schedule_requires_day_or_timestamp": true,
+      "initial_round_schedule": null,
+      "initial_round_schedule_status": "disabled_until_day_boundary_mapping_is_defined",
+      "old_30_hour_first_round_actions_valid": false
+    },
+    "consumption_and_health": {
+      "health_minimum": 0.0,
+      "health_maximum": 10.0,
+      "household_observes_own_health": true,
+      "exit_health_threshold": 0.0,
+      "idle_consumption_enabled": true,
+      "idle_consumption_coefficient": null,
+      "idle_consumption_unit": null,
+      "idle_vs_basal_metabolism_relation": null,
+      "idle_consumption_status": "pending_calibration",
+      "acute_labor_floor": 0.6,
+      "acute_labor_nutrition_weight": 0.4,
+      "illness_multiplier_baseline": 1.0,
+      "health_labor_multiplier_steps": [
+        {
+          "minimum_health": 8.0,
+          "multiplier": 1.0
+        },
+        {
+          "minimum_health": 6.0,
+          "multiplier": 0.9
+        },
+        {
+          "minimum_health": 4.0,
+          "multiplier": 0.75
+        },
+        {
+          "minimum_health": 2.0,
+          "multiplier": 0.5
+        },
+        {
+          "minimum_health": 1e-06,
+          "multiplier": 0.25
+        },
+        {
+          "minimum_health": 0.0,
+          "multiplier": 0.0
+        }
+      ],
+      "health_update_formula": "clip(H + nutrition_recovery - shortage_damage - work_health_cost, 0, 10)",
+      "work_health_cost_per_hour": null,
+      "work_health_cost_status": "pending_recalibration_for_daily_labor_clock",
+      "acute_labor_formula": "0.60 + 0.40 * min(1, consumption / minimum_consumption)",
+      "effective_labor_formula": "actual_work_hours * true_sector_skill * health_multiplier * acute_multiplier * illness_multiplier",
+      "food_aggregation_rule": null,
+      "rice_wheat_substitution_rule": null
+    },
+    "skill_information": {
+      "true_skill_known_by_environment": true,
+      "true_skill_initially_known_by_household": true,
+      "household_subjective_skill_estimate_enabled": false,
+      "subjective_estimate_initial_center": "own_true_endowments",
+      "subjective_estimate_error_distribution": null,
+      "subjective_learning_rate": null,
+      "decision_uses_subjective_skill": false,
+      "production_settlement_uses_true_skill": true,
+      "decision_information_source": "own_true_endowments",
+      "household_initially_knows_all_own_endowments": true
+    },
+    "household_exit": {
+      "destroy_household_money": true,
+      "destroy_household_physical_inventory": true,
+      "destroy_enterprise_assets": false,
+      "share_treatment": "cancel_exiting_household_shares_then_normalize_survivors",
+      "survivor_share_formula": "alpha_i_prime = alpha_i / sum(alpha_j for j in surviving_shareholders)",
+      "simultaneous_exit_rule": "batch_cancel_then_single_normalization",
+      "all_shareholders_exit_rule": null,
+      "all_shareholders_exit_status": "pending"
+    },
+    "physical_rules": {
+      "inventory_balance": "I_next = I + production + inflow - input_use - consumption - outflow - transport_loss - storage_decay - exit_destruction",
+      "minimum_arrival_quantity": 0.0
+    },
+    "production_technology": {
+      "iron": {
+        "output_per_effective_labor_hour": 0.95,
+        "labor_input_unit": "effective_hours_per_action_round",
+        "capacity_per_mine_per_action_round": 30.0,
+        "resource_depletion_enabled": false,
+        "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+      },
+      "actual_output_source": "deterministic_physical_production_engine",
+      "labor_contract_cannot_create_output": true,
+      "rice": {
+        "parameters": null,
+        "proposal_inherit_legacy_grain_technology": {
+          "output_function": "0.32*min(L,60)+0.26*min(max(L-60,0),40)+0.18*min(max(L-100,0),30)",
+          "labor_input_unit": "effective_hours_per_action_round",
+          "segment_upper_hours": [
+            60.0,
+            100.0,
+            130.0
+          ],
+          "segment_output_per_hour": [
+            0.32,
+            0.26,
+            0.18
+          ],
+          "iron_input_per_grain": 0.08,
+          "capacity_per_farm_per_action_round": 45.0,
+          "maturity_hours": 40.0,
+          "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+        }
+      },
+      "wheat": {
+        "parameters": null,
+        "proposal_inherit_legacy_grain_technology": {
+          "output_function": "0.32*min(L,60)+0.26*min(max(L-60,0),40)+0.18*min(max(L-100,0),30)",
+          "labor_input_unit": "effective_hours_per_action_round",
+          "segment_upper_hours": [
+            60.0,
+            100.0,
+            130.0
+          ],
+          "segment_output_per_hour": [
+            0.32,
+            0.26,
+            0.18
+          ],
+          "iron_input_per_grain": 0.08,
+          "capacity_per_farm_per_action_round": 45.0,
+          "maturity_hours": 40.0,
+          "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+        }
+      }
+    },
+    "enterprise_parameters": {
+      "G1": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G2": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G3": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G4": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "F1": {
+        "maximum_output_per_action_round": 30.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "F2": {
+        "maximum_output_per_action_round": 30.0,
+        "storage_capacity_mode": "unlimited"
+      }
+    },
+    "household_interfaces": {
+      "A01": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A02": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A03": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A04": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A05": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A06": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A07": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A08": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A09": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A10": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A11": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A12": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A13": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A14": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A15": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A16": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      }
+    },
+    "storage_decay": {
+      "enabled": true,
+      "same_rates_for_households_and_enterprises": true,
+      "rates_per_40_hours": {
+        "rice": null,
+        "wheat": null,
+        "iron": null
+      },
+      "proposal": {
+        "rice": 0.02,
+        "wheat": 0.02,
+        "iron": 0.001,
+        "period_hours": 40,
+        "status": "simulation_design_not_empirical_pending_confirmation"
+      },
+      "proposed_elapsed_time_formula": "I_after = I_before * (1-rate_40h) ** (elapsed_hours/40)",
+      "settlement_order": null,
+      "in_transit_coverage": null,
+      "loss_ledger_required": true
+    },
+    "food_recovery_endowment": {
+      "types": [
+        "rice_fast",
+        "wheat_fast",
+        "both_fast",
+        "both_slow"
+      ],
+      "type_definitions": {
+        "rice_fast": {
+          "rice": "fast",
+          "wheat": "slow"
+        },
+        "wheat_fast": {
+          "rice": "slow",
+          "wheat": "fast"
+        },
+        "both_fast": {
+          "rice": "fast",
+          "wheat": "fast"
+        },
+        "both_slow": {
+          "rice": "slow",
+          "wheat": "slow"
+        }
+      },
+      "fast_recovery_coefficient": null,
+      "slow_recovery_coefficient": null,
+      "coefficient_constraint": "fast > slow >= 0",
+      "combination_recovery_formula": null,
+      "separate_from_production_skills": true,
+      "household_knows_own_type": true
+    },
+    "food_utility": {
+      "separate_from_health_recovery": true,
+      "strictly_increasing_each_good": true,
+      "mixed_bundle_better_at_same_total": true,
+      "monotonicity_requirement": "For r,w>=0 and delta>0: U(r+delta,w)>U(r,w), U(r,w+delta)>U(r,w)",
+      "mixing_requirement": "For Q>0 and 0<x<Q: U(x,Q-x)>max(U(Q,0),U(0,Q))",
+      "utility_function": null,
+      "parameters": null,
+      "health_need_not_increase_without_bound": true,
+      "legacy_preference_weights_active": false
+    }
+  },
+  "scenario": {
+    "population_count": 16,
+    "map": {
+      "radius": 3,
+      "tile_count": 37
+    },
+    "enterprises": {
+      "G1": {
+        "id": "G1",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 3,
+          "r": 0
+        },
+        "location_productivity": 1.15,
+        "output_good": null,
+        "proposed_output_good": "rice",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G2": {
+        "id": "G2",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 0,
+          "r": -3
+        },
+        "location_productivity": 1.05,
+        "output_good": null,
+        "proposed_output_good": "wheat",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G3": {
+        "id": "G3",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": -3,
+          "r": 0
+        },
+        "location_productivity": 0.95,
+        "output_good": null,
+        "proposed_output_good": "wheat",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G4": {
+        "id": "G4",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 0,
+          "r": 3
+        },
+        "location_productivity": 0.85,
+        "output_good": null,
+        "proposed_output_good": "rice",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "F1": {
+        "id": "F1",
+        "enterprise_type": "iron_mine",
+        "location": {
+          "q": 3,
+          "r": -3
+        },
+        "location_productivity": 1.1
+      },
+      "F2": {
+        "id": "F2",
+        "enterprise_type": "iron_mine",
+        "location": {
+          "q": -3,
+          "r": 3
+        },
+        "location_productivity": 0.9
+      }
+    },
+    "households": {
+      "A01": {
+        "id": "A01",
+        "residence": {
+          "q": 1,
+          "r": 0
+        }
+      },
+      "A02": {
+        "id": "A02",
+        "residence": {
+          "q": 1,
+          "r": -1
+        }
+      },
+      "A03": {
+        "id": "A03",
+        "residence": {
+          "q": 0,
+          "r": -1
+        }
+      },
+      "A04": {
+        "id": "A04",
+        "residence": {
+          "q": -1,
+          "r": 0
+        }
+      },
+      "A05": {
+        "id": "A05",
+        "residence": {
+          "q": -1,
+          "r": 1
+        }
+      },
+      "A06": {
+        "id": "A06",
+        "residence": {
+          "q": 0,
+          "r": 1
+        }
+      },
+      "A07": {
+        "id": "A07",
+        "residence": {
+          "q": 2,
+          "r": -1
+        }
+      },
+      "A08": {
+        "id": "A08",
+        "residence": {
+          "q": 2,
+          "r": -2
+        }
+      },
+      "A09": {
+        "id": "A09",
+        "residence": {
+          "q": 1,
+          "r": -2
+        }
+      },
+      "A10": {
+        "id": "A10",
+        "residence": {
+          "q": 0,
+          "r": -2
+        }
+      },
+      "A11": {
+        "id": "A11",
+        "residence": {
+          "q": -1,
+          "r": -1
+        }
+      },
+      "A12": {
+        "id": "A12",
+        "residence": {
+          "q": -2,
+          "r": 1
+        }
+      },
+      "A13": {
+        "id": "A13",
+        "residence": {
+          "q": -2,
+          "r": 2
+        }
+      },
+      "A14": {
+        "id": "A14",
+        "residence": {
+          "q": -1,
+          "r": 2
+        }
+      },
+      "A15": {
+        "id": "A15",
+        "residence": {
+          "q": 0,
+          "r": 2
+        }
+      },
+      "A16": {
+        "id": "A16",
+        "residence": {
+          "q": 1,
+          "r": 1
+        }
+      }
+    },
+    "food_specialization": {
+      "rice_producer_count": 2,
+      "wheat_producer_count": 2,
+      "iron_producer_count": 2,
+      "id_assignment": "proposal_only",
+      "proposed_location_productivity_sums": {
+        "rice": 2.0,
+        "wheat": 2.0
+      }
+    }
+  },
+  "initial_state": {
+    "generation": {
+      "random_seed": 20260927,
+      "method": null,
+      "food_endowments": {
+        "method": "production_skill_assignment_v1_legacy_preference_part_disabled",
+        "scope": "current_16_households_fixed_assignment",
+        "status": "production_skills_retained_preferences_superseded",
+        "household_order": [
+          "A01",
+          "A02",
+          "A03",
+          "A04",
+          "A05",
+          "A06",
+          "A07",
+          "A08",
+          "A09",
+          "A10",
+          "A11",
+          "A12",
+          "A13",
+          "A14",
+          "A15",
+          "A16"
+        ],
+        "skill_relative_spread": 0.2,
+        "preferred_food_weight": null,
+        "assignment_formula": "combination = (zero_based_index // 4 + zero_based_index % 4) % 4; rice_specialist = combination < 2; no active preference assignment",
+        "skill_formula": "favored_skill = legacy_grain_skill * (1 + skill_relative_spread); other_skill = legacy_grain_skill * (1 - skill_relative_spread)",
+        "preference_formula": "disabled_replaced_by_recovery_types_and_separate_utility",
+        "other_population_sizes": "requires_redesign_of_balanced_assignment"
+      },
+      "food_recovery_type_assignment": {
+        "method": null,
+        "type_counts": null,
+        "status": "pending_assignment_no_assumed_equal_groups"
+      },
+      "randomness_recording": {
+        "record_every_run": true,
+        "base_seed_reference": "/initial_state/generation/random_seed",
+        "required_run_record_fields": [
+          "run_id",
+          "configuration_sha256",
+          "configuration_version",
+          "base_seed",
+          "rng_algorithm_and_version",
+          "named_stream_seeds",
+          "initialization_output_sha256",
+          "model_provider_and_version",
+          "model_sampling_parameters",
+          "model_seed_if_supported",
+          "model_seed_support_status"
+        ],
+        "named_streams": [
+          "initialization",
+          "scheduling",
+          "allocation"
+        ],
+        "rng_algorithm": null,
+        "stream_seed_derivation": null,
+        "record_realized_initial_state": true,
+        "llm_replay_guaranteed_by_seed": false,
+        "implementation_status": "specification_only_runtime_not_implemented"
+      }
+    },
+    "legacy_warehouse_inventory_migration": {
+      "status": "pending_destination_rule",
+      "must_not_delete_or_zero_inventory": true,
+      "migration_is_accounting_only_until_decided": true,
+      "transport_loss_during_migration": null,
+      "records": [
+        {
+          "legacy_warehouse_id": "W1",
+          "grain": 784.0,
+          "iron": 12.0,
+          "destination_enterprise_id": null
+        },
+        {
+          "legacy_warehouse_id": "W2",
+          "grain": 784.0,
+          "iron": 12.0,
+          "destination_enterprise_id": null
+        }
+      ],
+      "conservation_totals": {
+        "grain": 1568.0,
+        "iron": 24.0
+      },
+      "legacy_grain_conversion": {
+        "status": "pending",
+        "rice": null,
+        "wheat": null,
+        "constraint": "rice + wheat = legacy grain 1568 before physical losses; do not duplicate inventory"
+      }
+    },
+    "defaults": {
+      "household_health": 8.0,
+      "household_initial_iron": 0.0,
+      "household_initial_total_food": 7.0,
+      "rice_wheat_initial_split": null
+    },
+    "enterprises": {
+      "G1": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G2": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G3": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G4": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "F1": {
+        "initial_iron_inventory": 0.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "F2": {
+        "initial_iron_inventory": 0.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      }
+    },
+    "historical_reference": {
+      "households": {
+        "A01": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A02": {
+          "legacy_initial_affiliation": "F1",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A03": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A04": {
+          "legacy_initial_affiliation": "CENTRAL_COORDINATOR",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A05": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A06": {
+          "legacy_initial_affiliation": "F2",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A07": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A08": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A09": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A10": {
+          "legacy_initial_affiliation": "F1",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A11": {
+          "legacy_initial_affiliation": "G3",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A12": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A13": {
+          "legacy_initial_affiliation": "G3",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A14": {
+          "legacy_initial_affiliation": "F2",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A15": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A16": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 0.85
+        }
+      }
+    },
+    "households": {
+      "A01": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.5,
+          "wheat": 1.0
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A02": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.9,
+          "wheat": 0.6
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A03": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 0.92,
+          "wheat": 1.38
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A04": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 0.68,
+          "wheat": 1.02
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A05": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.5,
+          "wheat": 1.0
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A06": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.6,
+          "wheat": 0.9
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A07": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 0.92,
+          "wheat": 1.38
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A08": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 1.02,
+          "wheat": 0.68
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A09": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.0,
+          "wheat": 1.5
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A10": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.6,
+          "wheat": 0.9
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A11": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 1.38,
+          "wheat": 0.92
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A12": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 1.02,
+          "wheat": 0.68
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A13": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.0,
+          "wheat": 1.5
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A14": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.9,
+          "wheat": 0.6
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A15": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 1.38,
+          "wheat": 0.92
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A16": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 0.68,
+          "wheat": 1.02
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      }
+    },
+    "institution_specific": {
+      "cockshott": {
+        "initial_grade": "B",
+        "initial_credit": 0,
+        "proposal": {
+          "initial_grade": "B",
+          "initial_credit": 0,
+          "status": "adopted_under_user_delegation"
+        },
+        "generation_method": null,
+        "generated_state": null
+      }
+    }
+  },
+  "treatment": {
+    "selected_institution": "cockshott",
+    "experiment_overrides": {},
+    "ownership": {
+      "production_assets": "social",
+      "personal_consumption_goods": true,
+      "personal_housing": true,
+      "private_shares": false
+    },
+    "employment": {
+      "employer": "community",
+      "contract_office": "employment_office",
+      "household_choice_required": true,
+      "project_member_acceptance_required": true,
+      "redeployment_responsibility": "community",
+      "contract_duration": null,
+      "initial_project_membership_rule": null,
+      "unmatched_support": "basic_nutrition_guarantee",
+      "contract_performance": {
+        "default_action_enabled": false,
+        "both_parties_must_perform": true,
+        "fixed_output_guarantee": false,
+        "exit_or_incapacity_resolution": null
+      }
+    },
+    "information": {
+      "intentional_deception": false,
+      "honest_skill_error_allowed": true,
+      "true_skill_visible_to_decision_agents": "own_household_only_others_subject_to_disclosure",
+      "household_knows_all_own_endowments": true,
+      "own_endowment_error_enabled": false,
+      "other_agents_automatically_know_household_true_endowments": false
+    },
+    "referendum": {
+      "determines": [
+        "C",
+        "G",
+        "I",
+        "B"
+      ],
+      "budget_identity": "L_net = C + G + I + B",
+      "net_labor_definition": null,
+      "voting_rule": null,
+      "frequency": null,
+      "emergency_authorization": null
+    },
+    "abc": {
+      "enabled": true,
+      "interpretation": "personal_income_reward",
+      "coefficients": {
+        "A": 1.2,
+        "B": 1.0,
+        "C": 0.8
+      },
+      "effort_action": "voluntary_labor_participation_in_verified_feasible_suitable_opportunities",
+      "evaluation_rule": {
+        "ratio": "sum(actual_hours)/sum(eligible_opportunity_hours)",
+        "A_min": 0.9,
+        "B_min": 0.6,
+        "zero_opportunity": "retain_grade",
+        "exclude": [
+          "health_excused",
+          "project_cancelled",
+          "resource_blocked",
+          "no_suitable_accepted_project"
+        ],
+        "forbid_hidden_skill_or_output_attribution_evidence": true
+      },
+      "independent_review": true,
+      "independent_appeal": true,
+      "evaluation_period": 4,
+      "effective_date_rule": "next_round_after_independent_review",
+      "proposal": {
+        "coefficients": {
+          "A": 1.2,
+          "B": 1.0,
+          "C": 0.8
+        },
+        "grade_frozen_before_work": true,
+        "status": "adopted_under_user_delegation"
+      },
+      "coefficient_mode": "fixed_grade_coefficients",
+      "appeal": {
+        "submission_deadline_rounds": 1,
+        "review_due_rounds_after_submission": 1,
+        "interim": "prior_grade",
+        "underpayment": "top_up",
+        "retroactive_output_based_clawback": false
+      }
+    },
+    "cpb": {
+      "implementation": "independent_llm_decision_layer",
+      "planning_horizon": 3,
+      "solver": null,
+      "forecast_rule": null,
+      "computation_budget": null,
+      "may_override_referendum": false,
+      "may_finally_decide_grade_appeals": false,
+      "eta_decision": {
+        "owner": "cpb",
+        "executor": "cma",
+        "parameter_role": "price_adjustment_response_strength",
+        "runtime_value": null,
+        "per_good": true,
+        "allowed_range": [
+          0,
+          0.5
+        ],
+        "decision_frequency": "once_before_each_round_sales",
+        "fallback": {
+          "first_round": 0.1,
+          "later": "previous_valid_value",
+          "max_retries": 2
+        },
+        "log_required": true,
+        "retroactive_price_change": false
+      },
+      "final_demand": {
+        "symbol": "y",
+        "goods_order": [
+          "rice",
+          "wheat",
+          "iron"
+        ],
+        "reference_balance": "x = A*x + y",
+        "actual_balance": "x + I0 = A*x + y_use + I1 + losses",
+        "net_definition": "y = y_use + I1 - I0",
+        "intermediate_iron_not_final_demand": true,
+        "demand_wishes_not_automatically_feasible": true,
+        "time_feasibility_check_required": true,
+        "mapping_from_political_budget": null
+      },
+      "discount": 0.95
+    },
+    "cma": {
+      "may_issue_labor_income": false,
+      "may_release_unauthorized_reserve": false,
+      "allocation_rule": null,
+      "pricing_rule": null,
+      "order_schedule": "three_joint_food_quote_opportunities_per_round",
+      "proposal_joint_food_phase": true,
+      "proposal_status": "pending_confirmation",
+      "cross_food_budget_reservation": true,
+      "refund_rule": null,
+      "max_price_updates_per_round": 2
+    },
+    "credit": {
+      "transferable_for_private_employment": false,
+      "redemption_cancels_credit": true,
+      "tax_rate": null,
+      "total_fund_rule": "variable_issuance_under_fixed_grade_coefficients",
+      "expiry_rule": {
+        "valid_rounds": 5,
+        "includes_issue_round": true,
+        "expires_at": "start_of_issue_round_plus_5",
+        "redemption_order": "earliest_expiry_first",
+        "status": "user_confirmed_20261103"
+      },
+      "exit_settlement_order": null
+    },
+    "cost_accounting": {
+      "mu": null,
+      "decay_cost_allocation": null,
+      "reference_value_rule": null
+    },
+    "health_timing": {
+      "production_health": "round_start",
+      "consumption_health_effect": "next_round",
+      "cross_day_sampling_alignment": null,
+      "nutrition_multiplier_observation_period": null,
+      "avoid_duplicate_work_metabolism": true
+    },
+    "self_employment": {
+      "enabled_in_current_baseline": false,
+      "status": "extension_pending",
+      "shares_daily_work_cap": true,
+      "service_technology": null,
+      "settlement_rule": null
+    },
+    "template_activation": {
+      "market_model": false,
+      "legacy_plan_models": false,
+      "ai_enhanced_plan_equivalence": null
+    },
+    "submodels": {
+      "efficiency_priority": {
+        "label": "强调效率",
+        "efficiency_weight": 0.8,
+        "equity_weight": 0.2,
+        "status": "user_confirmed"
+      },
+      "equity_priority": {
+        "label": "强调公平",
+        "efficiency_weight": 0.2,
+        "equity_weight": 0.8,
+        "status": "user_confirmed"
+      },
+      "balanced": {
+        "label": "一半一半",
+        "efficiency_weight": 0.5,
+        "equity_weight": 0.5,
+        "requires_common_normalization": true,
+        "status": "user_confirmed"
+      }
+    },
+    "objective_design": {
+      "aggregation_method": "weighted_sum",
+      "proposal": "weighted_sum_of_normalized_efficiency_and_equity",
+      "efficiency_metric": "total_actual_consumption_utility",
+      "equity_metric": "equal_weight_three_normalized_dimensions",
+      "normalization": {
+        "efficiency": "E/(E+E_ref)",
+        "E_ref_formula": null,
+        "reference_value": null,
+        "reference_status": "pending_new_shared_utility_and_reference_bundle",
+        "equity": "each component in [0,1]; equal weights",
+        "same_across_models": true
+      },
+      "evaluation_horizon": 40,
+      "active_submodel": null,
+      "comparison_submodels": [
+        "efficiency_priority",
+        "equity_priority",
+        "balanced"
+      ],
+      "common_constraints_preserved": [
+        "referendum",
+        "community_employment",
+        "abc",
+        "independent_review",
+        "physical_constraints"
+      ],
+      "referendum_target_interface": "independent_value_treatments_same_referendum_rules_and_other_settings",
+      "paired_design": "same_initial_endowments_physics_seed_information_cpb_implementation_and_abc",
+      "equity_dimensions": {
+        "income_equality": 0.3333333333333333,
+        "consumption_utility_equality": 0.3333333333333333,
+        "basic_nutrition_fulfillment": 0.3333333333333333
+      },
+      "equity_statistics": {
+        "income": "one_minus_gini_after_tax_labor_credit_income",
+        "utility": "one_minus_gini_actual_consumption_utility",
+        "nutrition": "min_capped_basic_need_fulfillment_initial_cohort",
+        "all_zero_distribution_score": 0,
+        "exit_values": 0,
+        "income_excludes_in_kind_support": true
+      },
+      "independent_run_states": true
+    },
+    "production_attribution": {
+      "enabled": true,
+      "purpose": "record_only",
+      "owner": "environment",
+      "audience": [
+        "researcher_audit"
+      ],
+      "agent_visible": false,
+      "feeds_income": false,
+      "feeds_abc": false,
+      "feeds_allocation": false,
+      "feeds_cpb_decisions": false,
+      "plan_vs_actual_separate": true,
+      "basis": "actual_hours_times_full_true_effective_productivity",
+      "proposal_basis": "actual_hours_times_full_true_effective_productivity",
+      "proposal_formula": "q_i = Q_actual * l_i / sum(l); l_i = h_actual_i * e_true_i",
+      "status": "design_ai_assigned_calibratable",
+      "zero_denominator": "no_division; if Q=0 record_quantity=0 and share=null; if Q>0 trace_original_batch_or_raise_exception",
+      "delayed_harvest": "attribute_to_original_labor_batch",
+      "not_marginal_causal_contribution": true
+    },
+    "nutrition_guarantee": {
+      "enabled": true,
+      "scope": [
+        "verified_unmatched",
+        "health_incapacitated"
+      ],
+      "all_submodels_same": true,
+      "eligibility_details": "verified_involuntary_unmatched_or_health_no_feasible_task_including_partial; excludes_voluntary_refusal_of_all_suitable_tasks; independent_review",
+      "entitlement_formula": "max(B_i - actual_edible_available_nutrition_i, 0)",
+      "delivery_schedule": "reserve_G_before_sales; finalize_gap_after_ordinary_purchases; deliver_before_consumption",
+      "shortage_priority": "lexicographic_max_min_eligible_fulfillment_then_total_fulfillment_then_preference_then_transport_loss_then_fixed_id",
+      "proposal": {
+        "mode": "in_kind_food_top_up_to_basic_nutrition_gap",
+        "budget_category": "G",
+        "no_duplicate_C_accounting": true,
+        "eligible_inventory_and_purchases_considered": true,
+        "shortage_rule": "maximize_minimum_fulfillment_among_eligible_subject_to_public_authorization",
+        "status": "adopted_under_user_delegation"
+      },
+      "physical_shortfall_must_be_recorded": true,
+      "state": "design_ai_assigned_calibratable"
+    },
+    "consumption_design_confirmation": {
+      "substitution": null,
+      "utility_and_nutrition_separate": true,
+      "status": "superseded_linear_utility_by_shared_world_20261103",
+      "utility_function": null,
+      "source": "/world_rules/food_utility",
+      "recovery_source": "/world_rules/food_recovery_endowment",
+      "nutrition_equivalence": {
+        "rice": 1.0,
+        "wheat": 1.0
+      },
+      "nutrition_equivalence_role": "legacy_local_nutrition_measure_not_health_recovery_function",
+      "same_for_all_submodels": true,
+      "not_value_treatment_difference": true
+    }
+  },
+  "_meta": {
+    "schema_version": "4.0",
+    "release": "Cockshott模型设计_20261022",
+    "completed_date": "2026-10-23",
+    "role": "current_primary_design",
+    "not_simulator": true,
+    "shared_baseline": {
+      "path": "codex_package/model_spec/基础世界参数_20261022_03.yaml",
+      "sha256": "14fa093c11e4f89053105a8a5d43db8605b6708b165e04a639ad6ca5ebe45f41",
+      "release": "基础世界参数_20261022_03"
+    },
+    "parameter_status": {
+      "execution_ready": false,
+      "execution_blockers": [
+        "natural_day_boundary_mapping_inside_40_hour_action_round",
+        "idle_consumption_coefficient",
+        "legacy_warehouse_inventory_destination",
+        "food_consumption_units_and_substitution",
+        "rice_wheat_initial_inventory_split",
+        "legacy_grain_conversion",
+        "storage_and_decay_proposal_confirmation",
+        "food_recovery_type_assignment_and_coefficients",
+        "food_utility_function_and_parameters",
+        "mandatory_contract_exit_or_incapacity_resolution",
+        "rng_algorithm_stream_derivation_and_run_logging",
+        "W01_clock_idle_and_sampling",
+        "W02_food_utility_nutrition_and_subjective_skills",
+        "W03_food_technology_and_sites",
+        "W04_capacity",
+        "W05_decay",
+        "W06_inventory_migration_and_transport",
+        "C01_cpb",
+        "C02_referendum",
+        "C03_abc",
+        "C04_credit_cost",
+        "C05_cma",
+        "C06_matching_support",
+        "C11_y_policy_to_physical_mapping",
+        "shared_consumption_amendment_sync",
+        "E_ref_requires_confirmed_shared_basic_need_unit",
+        "institutional_executor_not_implemented",
+        "cockshott_new_utility_reference_bundle_and_score_connection"
+      ],
+      "self_employment": "disabled_extension_not_baseline_blocker"
+    },
+    "parameter_governance": {
+      "classification_source": "codex_package/model_spec/参数分类说明_20261022_03.md",
+      "shared_fields": "Inherit classifications and confirmation states from the referenced baseline _meta.parameter_governance; no numeric change.",
+      "local_entries": [
+        {
+          "paths": [
+            "/treatment/ownership",
+            "/treatment/information",
+            "/treatment/employment/employer",
+            "/treatment/abc/enabled",
+            "/treatment/abc/independent_review",
+            "/treatment/abc/independent_appeal"
+          ],
+          "class": "A",
+          "status": "confirmed_in_conversation"
+        },
+        {
+          "paths": [
+            "/treatment/abc/proposal",
+            "/initial_state/institution_specific/cockshott/proposal",
+            "/treatment/cma/proposal_joint_food_phase"
+          ],
+          "class": "C",
+          "status": "pending_confirmation"
+        },
+        {
+          "paths": [
+            "/treatment/cpb/implementation",
+            "/treatment/abc/interpretation",
+            "/treatment/credit/total_fund_rule",
+            "/treatment/cma/allocation_rule",
+            "/treatment/referendum/voting_rule"
+          ],
+          "class": "F",
+          "status": "pending"
+        },
+        {
+          "paths": [
+            "/treatment/submodels",
+            "/treatment/cpb/eta_decision/owner",
+            "/treatment/cpb/final_demand",
+            "/treatment/production_attribution/purpose"
+          ],
+          "class": "A",
+          "status": "user_confirmed_structure_details_pending"
+        },
+        {
+          "paths": [
+            "/treatment/cpb/eta_decision/runtime_value"
+          ],
+          "class": "D",
+          "status": "cpb_runtime_choice_not_fixed_parameter"
+        },
+        {
+          "paths": [
+            "/treatment/production_attribution/proposal_basis",
+            "/treatment/objective_design/proposal"
+          ],
+          "class": "C",
+          "status": "implementation_proposal"
+        },
+        {
+          "paths": [
+            "/treatment/objective_design/normalization",
+            "/treatment/objective_design/efficiency_metric",
+            "/treatment/objective_design/equity_metric",
+            "/treatment/cpb/eta_decision/allowed_range"
+          ],
+          "class": "F",
+          "status": "pending"
+        },
+        {
+          "paths": [
+            "/treatment/submodels",
+            "/treatment/objective_design/efficiency_metric",
+            "/treatment/objective_design/equity_dimensions",
+            "/treatment/cpb/implementation",
+            "/treatment/abc/coefficient_mode",
+            "/treatment/nutrition_guarantee/enabled"
+          ],
+          "class": "A",
+          "status": "user_confirmed"
+        },
+        {
+          "paths": [
+            "/treatment/nutrition_guarantee/proposal"
+          ],
+          "class": "C",
+          "status": "pending_review"
+        },
+        {
+          "paths": [
+            "/treatment/abc/coefficients",
+            "/treatment/abc/evaluation_rule",
+            "/treatment/objective_design/normalization",
+            "/treatment/nutrition_guarantee",
+            "/treatment/cpb/eta_decision",
+            "/initial_state/institution_specific/cockshott"
+          ],
+          "class": "B+C",
+          "status": "design_ai_assigned_calibratable",
+          "authorization": "用户：你为我设置就行；技术细节按同一基准设置，不改变三组只差价值权重的原则。"
+        },
+        {
+          "paths": [
+            "/treatment/consumption_design_confirmation/utility_function",
+            "/treatment/objective_design/normalization/E_ref_formula"
+          ],
+          "class": "F",
+          "status": "pending_new_shared_utility",
+          "authorization": "2026-11-03共同世界优先，旧线性效用停用"
+        }
+      ],
+      "null_policy": "unresolved_not_zero",
+      "runtime_states": "D; not fixed parameters",
+      "derived_values": "E; must follow confirmed inputs"
+    },
+    "inactive_shared_templates": [
+      "world_rules.household_exit.share_treatment",
+      "world_rules.household_exit.survivor_share_formula",
+      "world_rules.household_exit.simultaneous_exit_rule",
+      "world_rules.household_exit.all_shareholders_exit_rule"
+    ],
+    "inactive_template_reason": "共同文件的股权退出条款仅在有股份的制度生效；Cockshott无私人股份，保留来源快照但不激活。",
+    "generation_note": "初始化生成方法与实际初值分开；未生成可执行初始状态。",
+    "updated_date": "2026-11-03",
+    "pending_shared_world_amendments": [
+      "local_nutrition_equivalence_alignment_pending"
+    ],
+    "superseded_consumption_design_20261024": {
+      "substitution": "perfect_substitutes",
+      "individual_preferences": true,
+      "utility_and_nutrition_separate": true,
+      "status": "user_delegated_design_pending_shared_world_sync",
+      "utility_function": "theta_R*c_R + theta_W*c_W",
+      "nutrition_equivalence": {
+        "rice": 1.0,
+        "wheat": 1.0
+      },
+      "proposal": {
+        "utility": "theta_R*c_R + theta_W*c_W",
+        "nutrition": "nu_R*c_R + nu_W*c_W",
+        "status": "adopted_pending_shared_world_sync",
+        "corner_solutions_possible": true
+      },
+      "same_for_all_submodels": true,
+      "not_value_treatment_difference": true
+    },
+    "shared_world_sync": {
+      "date": "2026-11-03",
+      "status": "specification_synced",
+      "note": "2026-11-03共同世界同步：自然恢复禀赋为米快、麦快、都快、都慢四类，逐户类别和快慢系数待定。消费效用与健康恢复分开；同总量搭配优于单品，增加任一种食品提高效用，具体函数待定。旧0.65/0.35权重停用，生产技能保留；家庭初始知道自身真实禀赋，其他主体不自动获得个体真值。合同成立后双方必须履约，无违约行动，不保证固定产量；退出/失能处置待定。每次运行记录配置哈希、随机种子、随机流、实际初态和模型采样信息；当前基础种子20260927。",
+      "code_gate": "linear_utility_disabled_pending_confirmed_function"
+    }
+  }
+}

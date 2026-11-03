@@ -1,0 +1,4664 @@
+{
+  "world_rules": {
+    "global_environment": {
+      "economy_type": "closed",
+      "agent_semantics": "one_agent_equals_one_household",
+      "goods": [
+        "rice",
+        "wheat",
+        "iron"
+      ],
+      "shared_physical_world_across_institutions": true,
+      "seasonality_enabled": false,
+      "vehicles_enabled": false,
+      "misreporting_enabled": false
+    },
+    "time": {
+      "action_round": {
+        "duration_hours": 40.0,
+        "must_not_be_reinterpreted_as_hours": 8.0
+      },
+      "natural_day": {
+        "labor_cap_hours_per_household": 8.0,
+        "cap_aggregation": "sum_across_all_employers",
+        "overlap_forbidden": true,
+        "boundary_mapping_inside_action_round": null,
+        "mapping_status": "pending"
+      },
+      "prohibited_inferences": [
+        "one_action_round_equals_one_day",
+        "one_action_round_equals_8_hours",
+        "40_hours_equals_5_days"
+      ],
+      "settlement_order": [
+        "production",
+        "harvest",
+        "allocation",
+        "circulation",
+        "transport",
+        "consumption"
+      ],
+      "food_maturity": {
+        "rice": null,
+        "wheat": null,
+        "proposal_hours_each": 40.0
+      }
+    },
+    "map": {
+      "geometry": "hexagonal",
+      "coordinate_system": "axial_q_r",
+      "hex_distance_formula": "(abs(dq) + abs(dr) + abs(dq + dr)) / 2"
+    },
+    "storage": {
+      "independent_warehouse_enabled": false,
+      "enterprise_storage_capacity_mode": "unlimited",
+      "production_capacity_remains_limited": true,
+      "household_iron_capacity": 0.0,
+      "inventory_conservation_required": true,
+      "household_food_capacity": {
+        "scope": "rice_plus_wheat_combined_proposal",
+        "formula": "n * mean_initial_household_basic_food_requirement",
+        "reference_population": "initial_16_households_fixed_proposal",
+        "reference_consumption_time_unit": null,
+        "n": null,
+        "capacity": null,
+        "proposal": {
+          "n": 12,
+          "reference_requirement_mean": 0.7,
+          "capacity": 8.4,
+          "status": "assistant_proposal_pending_user_confirmation",
+          "reason": "above_initial_total_food_7_without_capacity_shrinking_during_shortage"
+        },
+        "overflow_handling": null
+      }
+    },
+    "transport": {
+      "goods_transport_enabled": true,
+      "labor_commute": {
+        "remote_labor_commute_time_hours": 0.0,
+        "remote_labor_commute_cost": 0.0,
+        "does_not_disable_goods_transport": true
+      },
+      "loss_mode": "fixed_absolute_loss_per_transfer_order",
+      "settlement_unit": "one_transfer_order",
+      "loss_units_per_hex_per_transfer": {
+        "rice": null,
+        "wheat": null,
+        "iron": 0.02
+      },
+      "loss_formula": "min(Q_send_x, ell_x * d)",
+      "arrival_formula": "max(Q_send_x - ell_x * d, 0)",
+      "consolidation_rule": "same_good_same_origin_same_destination_requests_may_be_merged_before_settlement",
+      "merged_order_charged_once": true,
+      "food_loss_proposal": {
+        "rice": 0.05,
+        "wheat": 0.05,
+        "status": "inherited_grain_rate_proposal_pending_confirmation"
+      }
+    },
+    "labor": {
+      "multiple_employers_per_day_allowed": true,
+      "daily_total_work_cap_hours": 8.0,
+      "time_overlap_forbidden": true,
+      "work_schedule_requires_day_or_timestamp": true,
+      "initial_round_schedule": null,
+      "initial_round_schedule_status": "disabled_until_day_boundary_mapping_is_defined",
+      "old_30_hour_first_round_actions_valid": false
+    },
+    "consumption_and_health": {
+      "health_minimum": 0.0,
+      "health_maximum": 10.0,
+      "household_observes_own_health": true,
+      "exit_health_threshold": 0.0,
+      "idle_consumption_enabled": true,
+      "idle_consumption_coefficient": null,
+      "idle_consumption_unit": null,
+      "idle_vs_basal_metabolism_relation": null,
+      "idle_consumption_status": "pending_calibration",
+      "acute_labor_floor": 0.6,
+      "acute_labor_nutrition_weight": 0.4,
+      "illness_multiplier_baseline": 1.0,
+      "health_labor_multiplier_steps": [
+        {
+          "minimum_health": 8.0,
+          "multiplier": 1.0
+        },
+        {
+          "minimum_health": 6.0,
+          "multiplier": 0.9
+        },
+        {
+          "minimum_health": 4.0,
+          "multiplier": 0.75
+        },
+        {
+          "minimum_health": 2.0,
+          "multiplier": 0.5
+        },
+        {
+          "minimum_health": 1e-06,
+          "multiplier": 0.25
+        },
+        {
+          "minimum_health": 0.0,
+          "multiplier": 0.0
+        }
+      ],
+      "health_update_formula": "clip(H + nutrition_recovery - shortage_damage - work_health_cost, 0, 10)",
+      "work_health_cost_per_hour": null,
+      "work_health_cost_status": "pending_recalibration_for_daily_labor_clock",
+      "acute_labor_formula": "0.60 + 0.40 * min(1, consumption / minimum_consumption)",
+      "effective_labor_formula": "actual_work_hours * true_sector_skill * health_multiplier * acute_multiplier * illness_multiplier",
+      "food_aggregation_rule": null,
+      "rice_wheat_substitution_rule": null
+    },
+    "skill_information": {
+      "true_skill_known_by_environment": true,
+      "true_skill_initially_known_by_household": true,
+      "household_subjective_skill_estimate_enabled": false,
+      "subjective_estimate_initial_center": "own_true_endowments",
+      "subjective_estimate_error_distribution": null,
+      "subjective_learning_rate": null,
+      "decision_uses_subjective_skill": false,
+      "production_settlement_uses_true_skill": true,
+      "decision_information_source": "own_true_endowments",
+      "household_initially_knows_all_own_endowments": true
+    },
+    "household_exit": {
+      "destroy_household_money": true,
+      "destroy_household_physical_inventory": true,
+      "destroy_enterprise_assets": false,
+      "share_treatment": "cancel_exiting_household_shares_then_normalize_survivors",
+      "survivor_share_formula": "alpha_i_prime = alpha_i / sum(alpha_j for j in surviving_shareholders)",
+      "simultaneous_exit_rule": "batch_cancel_then_single_normalization",
+      "all_shareholders_exit_rule": null,
+      "all_shareholders_exit_status": "pending"
+    },
+    "physical_rules": {
+      "inventory_balance": "I_next = I + production + inflow - input_use - consumption - outflow - transport_loss - storage_decay - exit_destruction",
+      "minimum_arrival_quantity": 0.0
+    },
+    "production_technology": {
+      "iron": {
+        "output_per_effective_labor_hour": 0.95,
+        "labor_input_unit": "effective_hours_per_action_round",
+        "capacity_per_mine_per_action_round": 30.0,
+        "resource_depletion_enabled": false,
+        "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+      },
+      "actual_output_source": "deterministic_physical_production_engine",
+      "labor_contract_cannot_create_output": true,
+      "rice": {
+        "parameters": null,
+        "proposal_inherit_legacy_grain_technology": {
+          "output_function": "0.32*min(L,60)+0.26*min(max(L-60,0),40)+0.18*min(max(L-100,0),30)",
+          "labor_input_unit": "effective_hours_per_action_round",
+          "segment_upper_hours": [
+            60.0,
+            100.0,
+            130.0
+          ],
+          "segment_output_per_hour": [
+            0.32,
+            0.26,
+            0.18
+          ],
+          "iron_input_per_grain": 0.08,
+          "capacity_per_farm_per_action_round": 45.0,
+          "maturity_hours": 40.0,
+          "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+        }
+      },
+      "wheat": {
+        "parameters": null,
+        "proposal_inherit_legacy_grain_technology": {
+          "output_function": "0.32*min(L,60)+0.26*min(max(L-60,0),40)+0.18*min(max(L-100,0),30)",
+          "labor_input_unit": "effective_hours_per_action_round",
+          "segment_upper_hours": [
+            60.0,
+            100.0,
+            130.0
+          ],
+          "segment_output_per_hour": [
+            0.32,
+            0.26,
+            0.18
+          ],
+          "iron_input_per_grain": 0.08,
+          "capacity_per_farm_per_action_round": 45.0,
+          "maturity_hours": 40.0,
+          "numeric_status": "retained_not_recalibrated_under_new_day_mapping"
+        }
+      }
+    },
+    "enterprise_parameters": {
+      "G1": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G2": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G3": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "G4": {
+        "maximum_output_per_action_round": 45.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "F1": {
+        "maximum_output_per_action_round": 30.0,
+        "storage_capacity_mode": "unlimited"
+      },
+      "F2": {
+        "maximum_output_per_action_round": 30.0,
+        "storage_capacity_mode": "unlimited"
+      }
+    },
+    "household_interfaces": {
+      "A01": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A02": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A03": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A04": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A05": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A06": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A07": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A08": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A09": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A10": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A11": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A12": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A13": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A14": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A15": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      },
+      "A16": {
+        "true_skill_initially_known_to_household": true,
+        "food_storage_capacity_source": "/world_rules/storage/household_food_capacity"
+      }
+    },
+    "storage_decay": {
+      "enabled": true,
+      "same_rates_for_households_and_enterprises": true,
+      "rates_per_40_hours": {
+        "rice": null,
+        "wheat": null,
+        "iron": null
+      },
+      "proposal": {
+        "rice": 0.02,
+        "wheat": 0.02,
+        "iron": 0.001,
+        "period_hours": 40,
+        "status": "simulation_design_not_empirical_pending_confirmation"
+      },
+      "proposed_elapsed_time_formula": "I_after = I_before * (1-rate_40h) ** (elapsed_hours/40)",
+      "settlement_order": null,
+      "in_transit_coverage": null,
+      "loss_ledger_required": true
+    },
+    "food_recovery_endowment": {
+      "types": [
+        "rice_fast",
+        "wheat_fast",
+        "both_fast",
+        "both_slow"
+      ],
+      "type_definitions": {
+        "rice_fast": {
+          "rice": "fast",
+          "wheat": "slow"
+        },
+        "wheat_fast": {
+          "rice": "slow",
+          "wheat": "fast"
+        },
+        "both_fast": {
+          "rice": "fast",
+          "wheat": "fast"
+        },
+        "both_slow": {
+          "rice": "slow",
+          "wheat": "slow"
+        }
+      },
+      "fast_recovery_coefficient": null,
+      "slow_recovery_coefficient": null,
+      "coefficient_constraint": "fast > slow >= 0",
+      "combination_recovery_formula": null,
+      "separate_from_production_skills": true,
+      "household_knows_own_type": true
+    },
+    "food_utility": {
+      "separate_from_health_recovery": true,
+      "strictly_increasing_each_good": true,
+      "mixed_bundle_better_at_same_total": true,
+      "monotonicity_requirement": "For r,w>=0 and delta>0: U(r+delta,w)>U(r,w), U(r,w+delta)>U(r,w)",
+      "mixing_requirement": "For Q>0 and 0<x<Q: U(x,Q-x)>max(U(Q,0),U(0,Q))",
+      "utility_function": null,
+      "parameters": null,
+      "health_need_not_increase_without_bound": true,
+      "legacy_preference_weights_active": false
+    }
+  },
+  "scenario": {
+    "population_count": 16,
+    "map": {
+      "radius": 3,
+      "tile_count": 37
+    },
+    "enterprises": {
+      "G1": {
+        "id": "G1",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 3,
+          "r": 0
+        },
+        "location_productivity": 1.15,
+        "output_good": null,
+        "proposed_output_good": "rice",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G2": {
+        "id": "G2",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 0,
+          "r": -3
+        },
+        "location_productivity": 1.05,
+        "output_good": null,
+        "proposed_output_good": "wheat",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G3": {
+        "id": "G3",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": -3,
+          "r": 0
+        },
+        "location_productivity": 0.95,
+        "output_good": null,
+        "proposed_output_good": "wheat",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "G4": {
+        "id": "G4",
+        "enterprise_type": "specialized_food_producer",
+        "location": {
+          "q": 0,
+          "r": 3
+        },
+        "location_productivity": 0.85,
+        "output_good": null,
+        "proposed_output_good": "rice",
+        "specialization_status": "two_rice_two_wheat_confirmed_id_assignment_proposed"
+      },
+      "F1": {
+        "id": "F1",
+        "enterprise_type": "iron_mine",
+        "location": {
+          "q": 3,
+          "r": -3
+        },
+        "location_productivity": 1.1
+      },
+      "F2": {
+        "id": "F2",
+        "enterprise_type": "iron_mine",
+        "location": {
+          "q": -3,
+          "r": 3
+        },
+        "location_productivity": 0.9
+      }
+    },
+    "households": {
+      "A01": {
+        "id": "A01",
+        "residence": {
+          "q": 1,
+          "r": 0
+        }
+      },
+      "A02": {
+        "id": "A02",
+        "residence": {
+          "q": 1,
+          "r": -1
+        }
+      },
+      "A03": {
+        "id": "A03",
+        "residence": {
+          "q": 0,
+          "r": -1
+        }
+      },
+      "A04": {
+        "id": "A04",
+        "residence": {
+          "q": -1,
+          "r": 0
+        }
+      },
+      "A05": {
+        "id": "A05",
+        "residence": {
+          "q": -1,
+          "r": 1
+        }
+      },
+      "A06": {
+        "id": "A06",
+        "residence": {
+          "q": 0,
+          "r": 1
+        }
+      },
+      "A07": {
+        "id": "A07",
+        "residence": {
+          "q": 2,
+          "r": -1
+        }
+      },
+      "A08": {
+        "id": "A08",
+        "residence": {
+          "q": 2,
+          "r": -2
+        }
+      },
+      "A09": {
+        "id": "A09",
+        "residence": {
+          "q": 1,
+          "r": -2
+        }
+      },
+      "A10": {
+        "id": "A10",
+        "residence": {
+          "q": 0,
+          "r": -2
+        }
+      },
+      "A11": {
+        "id": "A11",
+        "residence": {
+          "q": -1,
+          "r": -1
+        }
+      },
+      "A12": {
+        "id": "A12",
+        "residence": {
+          "q": -2,
+          "r": 1
+        }
+      },
+      "A13": {
+        "id": "A13",
+        "residence": {
+          "q": -2,
+          "r": 2
+        }
+      },
+      "A14": {
+        "id": "A14",
+        "residence": {
+          "q": -1,
+          "r": 2
+        }
+      },
+      "A15": {
+        "id": "A15",
+        "residence": {
+          "q": 0,
+          "r": 2
+        }
+      },
+      "A16": {
+        "id": "A16",
+        "residence": {
+          "q": 1,
+          "r": 1
+        }
+      }
+    },
+    "food_specialization": {
+      "rice_producer_count": 2,
+      "wheat_producer_count": 2,
+      "iron_producer_count": 2,
+      "id_assignment": "proposal_only",
+      "proposed_location_productivity_sums": {
+        "rice": 2.0,
+        "wheat": 2.0
+      }
+    }
+  },
+  "initial_state": {
+    "generation": {
+      "random_seed": 20260927,
+      "method": null,
+      "food_endowments": {
+        "method": "production_skill_assignment_v1_legacy_preference_part_disabled",
+        "scope": "current_16_households_fixed_assignment",
+        "status": "production_skills_retained_preferences_superseded",
+        "household_order": [
+          "A01",
+          "A02",
+          "A03",
+          "A04",
+          "A05",
+          "A06",
+          "A07",
+          "A08",
+          "A09",
+          "A10",
+          "A11",
+          "A12",
+          "A13",
+          "A14",
+          "A15",
+          "A16"
+        ],
+        "skill_relative_spread": 0.2,
+        "preferred_food_weight": null,
+        "assignment_formula": "combination = (zero_based_index // 4 + zero_based_index % 4) % 4; rice_specialist = combination < 2; no active preference assignment",
+        "skill_formula": "favored_skill = legacy_grain_skill * (1 + skill_relative_spread); other_skill = legacy_grain_skill * (1 - skill_relative_spread)",
+        "preference_formula": "disabled_replaced_by_recovery_types_and_separate_utility",
+        "other_population_sizes": "requires_redesign_of_balanced_assignment"
+      },
+      "food_recovery_type_assignment": {
+        "method": null,
+        "type_counts": null,
+        "status": "pending_assignment_no_assumed_equal_groups"
+      },
+      "randomness_recording": {
+        "record_every_run": true,
+        "base_seed_reference": "/initial_state/generation/random_seed",
+        "required_run_record_fields": [
+          "run_id",
+          "configuration_sha256",
+          "configuration_version",
+          "base_seed",
+          "rng_algorithm_and_version",
+          "named_stream_seeds",
+          "initialization_output_sha256",
+          "model_provider_and_version",
+          "model_sampling_parameters",
+          "model_seed_if_supported",
+          "model_seed_support_status"
+        ],
+        "named_streams": [
+          "initialization",
+          "scheduling",
+          "allocation"
+        ],
+        "rng_algorithm": null,
+        "stream_seed_derivation": null,
+        "record_realized_initial_state": true,
+        "llm_replay_guaranteed_by_seed": false,
+        "implementation_status": "specification_only_runtime_not_implemented"
+      }
+    },
+    "legacy_warehouse_inventory_migration": {
+      "status": "pending_destination_rule",
+      "must_not_delete_or_zero_inventory": true,
+      "migration_is_accounting_only_until_decided": true,
+      "transport_loss_during_migration": null,
+      "records": [
+        {
+          "legacy_warehouse_id": "W1",
+          "grain": 784.0,
+          "iron": 12.0,
+          "destination_enterprise_id": null
+        },
+        {
+          "legacy_warehouse_id": "W2",
+          "grain": 784.0,
+          "iron": 12.0,
+          "destination_enterprise_id": null
+        }
+      ],
+      "conservation_totals": {
+        "grain": 1568.0,
+        "iron": 24.0
+      },
+      "legacy_grain_conversion": {
+        "status": "pending",
+        "rice": null,
+        "wheat": null,
+        "constraint": "rice + wheat = legacy grain 1568 before physical losses; do not duplicate inventory"
+      }
+    },
+    "defaults": {
+      "household_health": 8.0,
+      "household_initial_iron": 0.0,
+      "household_initial_total_food": 7.0,
+      "rice_wheat_initial_split": null
+    },
+    "enterprises": {
+      "G1": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G2": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G3": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "G4": {
+        "initial_iron_inventory": 4.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "F1": {
+        "initial_iron_inventory": 0.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      },
+      "F2": {
+        "initial_iron_inventory": 0.0,
+        "initial_rice_inventory": 0.0,
+        "initial_wheat_inventory": 0.0
+      }
+    },
+    "historical_reference": {
+      "households": {
+        "A01": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A02": {
+          "legacy_initial_affiliation": "F1",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A03": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A04": {
+          "legacy_initial_affiliation": "CENTRAL_COORDINATOR",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A05": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A06": {
+          "legacy_initial_affiliation": "F2",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A07": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A08": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A09": {
+          "legacy_initial_affiliation": "G2",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A10": {
+          "legacy_initial_affiliation": "F1",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A11": {
+          "legacy_initial_affiliation": "G3",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A12": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 0.85
+        },
+        "A13": {
+          "legacy_initial_affiliation": "G3",
+          "legacy_true_grain_skill": 1.25
+        },
+        "A14": {
+          "legacy_initial_affiliation": "F2",
+          "legacy_true_grain_skill": 0.75
+        },
+        "A15": {
+          "legacy_initial_affiliation": "G4",
+          "legacy_true_grain_skill": 1.15
+        },
+        "A16": {
+          "legacy_initial_affiliation": "G1",
+          "legacy_true_grain_skill": 0.85
+        }
+      }
+    },
+    "households": {
+      "A01": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.5,
+          "wheat": 1.0
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A02": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.9,
+          "wheat": 0.6
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A03": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 0.92,
+          "wheat": 1.38
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A04": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 0.68,
+          "wheat": 1.02
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A05": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.5,
+          "wheat": 1.0
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A06": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.6,
+          "wheat": 0.9
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A07": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 0.92,
+          "wheat": 1.38
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A08": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 1.02,
+          "wheat": 0.68
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A09": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.0,
+          "wheat": 1.5
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A10": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.6,
+          "wheat": 0.9
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A11": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 1.38,
+          "wheat": 0.92
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A12": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 1.02,
+          "wheat": 0.68
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A13": {
+        "true_skill": {
+          "iron": 0.75,
+          "rice": 1.0,
+          "wheat": 1.5
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.65,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.7,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A14": {
+        "true_skill": {
+          "iron": 1.25,
+          "rice": 0.9,
+          "wheat": 0.6
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.9,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A15": {
+        "true_skill": {
+          "iron": 1.15,
+          "rice": 1.38,
+          "wheat": 0.92
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.7,
+        "recovery_coefficient": 0.2,
+        "shortage_damage_coefficient": 0.8,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      },
+      "A16": {
+        "true_skill": {
+          "iron": 0.85,
+          "rice": 0.68,
+          "wheat": 1.02
+        },
+        "subjective_skill_initial": null,
+        "minimum_consumption": 0.75,
+        "recovery_coefficient": 0.25,
+        "shortage_damage_coefficient": 1.0,
+        "initial_health": 8.0,
+        "initial_total_food_inventory": 7.0,
+        "initial_rice_inventory": null,
+        "initial_wheat_inventory": null,
+        "consumption_endowment": {
+          "rice": null,
+          "wheat": null,
+          "interpretation": "legacy_preference_weight_fields_inactive_use_food_recovery_type_and_world_utility"
+        },
+        "food_recovery_type": null
+      }
+    },
+    "institution_specific": {
+      "market_model": {
+        "households": {
+          "A01": {
+            "initial_cash": 0.0
+          },
+          "A02": {
+            "initial_cash": 0.0
+          },
+          "A03": {
+            "initial_cash": 0.0
+          },
+          "A04": {
+            "initial_cash": 0.0
+          },
+          "A05": {
+            "initial_cash": 0.0
+          },
+          "A06": {
+            "initial_cash": 0.0
+          },
+          "A07": {
+            "initial_cash": 0.0
+          },
+          "A08": {
+            "initial_cash": 0.0
+          },
+          "A09": {
+            "initial_cash": 0.0
+          },
+          "A10": {
+            "initial_cash": 0.0
+          },
+          "A11": {
+            "initial_cash": 0.0
+          },
+          "A12": {
+            "initial_cash": 0.0
+          },
+          "A13": {
+            "initial_cash": 0.0
+          },
+          "A14": {
+            "initial_cash": 0.0
+          },
+          "A15": {
+            "initial_cash": 0.0
+          },
+          "A16": {
+            "initial_cash": 0.0
+          }
+        },
+        "household_initial_cash": 0.0,
+        "enterprise_initial_funds_total": null,
+        "enterprise_initial_funds_distribution": "equal",
+        "enterprise_initial_funds_status": "pending_calibration"
+      },
+      "lange": {
+        "status": "design_pending_confirmation",
+        "generation_method": null,
+        "household_initial_cash": null,
+        "enterprise_initial_cash": null,
+        "public_initial_cash": null,
+        "initial_total_money": null,
+        "opening_inventory_unit_costs": {
+          "rice": null,
+          "wheat": null,
+          "iron": null
+        },
+        "proposal": {
+          "household_cash_each": 5,
+          "enterprise_cash_each": 100,
+          "public_cash": 600,
+          "derived_total_money": 1280,
+          "derivation": "16*5+6*100+600",
+          "status": "legacy_lange_candidate_not_effective",
+          "legacy_inventory_unit_costs": {
+            "grain": 1,
+            "iron": 2
+          },
+          "rice_wheat_cost_split": null
+        }
+      }
+    }
+  },
+  "treatment": {
+    "currency_interface": {
+      "currency_enabled_in_base_world": false,
+      "institution_specific_currency_override_allowed": true
+    },
+    "institution_profiles": {
+      "plan_models": {
+        "time": {
+          "planning_period": {
+            "action_rounds": 1,
+            "duration_hours": 40.0
+          }
+        },
+        "production_asset_ownership": "state_owned",
+        "currency_enabled": "model_specific",
+        "shortage_allocation": "seeded_random_basic_need_allocation"
+      },
+      "market_model": {
+        "currency_enabled": true,
+        "wage_contract": {
+          "reserve_funds_across_active_contracts": true,
+          "free_cash_formula": "cash - unpaid_wage_reserves - other_reserves",
+          "promise_constraint": "new_promised_wage <= free_cash",
+          "skill_misestimation_does_not_reprice_contract": true,
+          "worker_fixed_output_guarantee": false,
+          "worker_compensates_output_shortfall": false,
+          "default_action_enabled": false,
+          "both_parties_must_perform": true,
+          "exit_or_incapacity_contract_resolution": null
+        },
+        "enterprise_initial_information": "world_average_labor_level",
+        "enterprise_daily_state_update": [
+          "rice_inventory",
+          "wheat_inventory",
+          "iron_inventory",
+          "cash",
+          "ownership_structure"
+        ],
+        "shareholder_information_access": "active_query_only_no_automatic_push",
+        "money_book_formula": "initial_money - cumulative_destroyed_money",
+        "old_money_tests_valid": false,
+        "markets": [
+          "rice",
+          "wheat",
+          "labor",
+          "iron"
+        ],
+        "food_markets": {
+          "shared_mechanism": true,
+          "shared_time_window": true,
+          "fixed_cross_food_sequence": false,
+          "window_duration": null,
+          "matching_algorithm": null,
+          "scheduling_and_concurrency_rule": null,
+          "other_market_order": null
+        }
+      }
+    },
+    "ownership_interfaces": {
+      "enterprises": {
+        "G1": {
+          "ownership": "institution_specific"
+        },
+        "G2": {
+          "ownership": "institution_specific"
+        },
+        "G3": {
+          "ownership": "institution_specific"
+        },
+        "G4": {
+          "ownership": "institution_specific"
+        },
+        "F1": {
+          "ownership": "institution_specific"
+        },
+        "F2": {
+          "ownership": "institution_specific"
+        }
+      }
+    },
+    "selected_institution": "lange",
+    "experiment_overrides": {},
+    "lange": {
+      "design_role": "current_main_design_not_execution_ready",
+      "active_template_names": [],
+      "legacy_templates_automatically_applied": false,
+      "currency_enabled": true,
+      "production_asset_ownership": "public",
+      "private_household_equity_enabled": false,
+      "household_occupation_choice": "autonomous",
+      "household_consumption_choice": "autonomous_subject_to_physical_and_budget_constraints",
+      "enterprise_planning": "decentralized_subject_to_prices_costs_information_and_resources",
+      "prices": {
+        "rice": "consumer_market",
+        "wheat": "consumer_market",
+        "wage": "labor_market",
+        "iron": "cpb_accounting_price"
+      },
+      "information": {
+        "intentional_misreporting": false,
+        "forecast_error_allowed": true,
+        "hidden_true_skill_for_decisions": false,
+        "private_memories_shared": false,
+        "disclosure_schedule": null,
+        "verifiable_job_qualification": null,
+        "individual_output_feedback": null,
+        "household_knows_all_own_endowments": true,
+        "enterprise_initial_information": "world_average_labor_level",
+        "other_household_true_endowments_automatically_visible": false
+      },
+      "planning": {
+        "coordination_method": null,
+        "planning_period": null,
+        "options": [
+          "cross_round_expectations",
+          "within_period_joint_trials"
+        ],
+        "trial_count_advances_physical_time": false,
+        "trial_max_iterations": null,
+        "trial_tolerance": null,
+        "nonconvergence_action": null,
+        "household_utility_function": null,
+        "food_health_utility_mapping": null,
+        "enterprise_cost_optimizer": null,
+        "utility_source": "/world_rules/food_utility",
+        "health_recovery_source": "/world_rules/food_recovery_endowment"
+      },
+      "event_schedule": {
+        "status": "unresolved",
+        "active_schedule": null,
+        "candidate_logical_stages": [
+          "snapshot",
+          "public_budget",
+          "plans",
+          "iron_allocation",
+          "labor_contracts",
+          "production_maturity",
+          "wages",
+          "rice_wheat_exchange",
+          "consumption_health_exit",
+          "accounts",
+          "price_learning"
+        ],
+        "mapping_to_shared_settlement_order": null,
+        "wages_before_supported_food_purchase": "proposal",
+        "new_iron_available_next_round_only": null,
+        "all_contracts_close_same_round": null
+      },
+      "labor_market": {
+        "initial_enterprise_quotes_before_random_actions": true,
+        "initial_quote_multi_job_extension": null,
+        "action_order": "reshuffle_6_enterprises_16_households_each_matching_round_sequential_latest_state",
+        "matching_requires_same_job_and_terms_version": true,
+        "employer_pre_authorizes_all_qualified_applicants": true,
+        "match_requires_bid_at_least_ask": true,
+        "match_requires_qualification_schedule_capacity_and_funds": true,
+        "individual_productivity_ranking_within_job": false,
+        "person_targeted_wage_quotes": false,
+        "platform_invents_missing_quotes": false,
+        "forced_employment": false,
+        "household_selects_specific_job": true,
+        "household_max_live_application_orders": 1,
+        "new_enterprise_order_priority": "lowest_qualified_ask_then_earliest_submission_within_job",
+        "new_household_order_scope": "only_selected_job",
+        "execution_price": "resting_counterparty_order_price",
+        "hidden_productivity_ranking": false,
+        "wait_preserves_old_order": true,
+        "replace_only_after_valid_new_order": true,
+        "invalid_replace_preserves_old_order": true,
+        "cancel_scope": "unsigned_remainder_only",
+        "full_job_invalidates_remaining_applications": true,
+        "close_cancels_unsigned_orders_only": true,
+        "signed_contracts_survive_market_close": true,
+        "signing_pays_household": false,
+        "pay_once_after_verified_performance": true,
+        "reprice_for_skill_error": false,
+        "worker_output_guarantee": false,
+        "worker_compensates_output_shortfall": false,
+        "daily_cap_source": "/world_rules/labor/daily_total_work_cap_hours",
+        "contract_time_intervals_required": true,
+        "contract_duration_policy": null,
+        "cross_day_settlement": null,
+        "partial_performance_pay": null,
+        "quote_price_unit": null,
+        "unit_adapter": "P_total=w_hourly*h_contract; never multiply P_total by h again",
+        "quote_reserve_principle": "max_total_wage_commitment_times_headcount",
+        "order_reserve_to_contract_security": "convert_without_double_reserving",
+        "fund_security_representation": null,
+        "matching_action_rounds": null,
+        "money_precision": null,
+        "hour_precision": null,
+        "legacy_proposal": {
+          "hourly_wage_reference": 0.05,
+          "hourly_wage_bounds": [
+            0.02,
+            0.5
+          ],
+          "hour_precision": 1,
+          "status": "candidate_only_no_effective_values"
+        },
+        "contract_performance": {
+          "default_action_enabled": false,
+          "both_parties_must_perform": true,
+          "fixed_output_guarantee": false,
+          "exit_or_incapacity_resolution": null
+        }
+      },
+      "iron_allocation": {
+        "mechanism": null,
+        "routing": null,
+        "quantity_precision": null,
+        "available_supply_definition": null,
+        "inventory_target": null,
+        "proposal": {
+          "mechanism": "proportional_to_budget_checked_dispatch_requests",
+          "routing": "nearest_feasible_route_random_tie_break",
+          "status": "unselected_candidate"
+        }
+      },
+      "food_markets": {
+        "mechanism": null,
+        "same_mechanism_for_rice_and_wheat": null,
+        "shared_time_window": null,
+        "fixed_cross_food_sequence": null,
+        "window_duration": null,
+        "scheduling": null,
+        "price_tick": null,
+        "price_bounds": null,
+        "zero_price_policy": null,
+        "no_trade_policy": null,
+        "marginal_order_allocation": null,
+        "inventory_retention": null,
+        "joint_household_cash_check": true,
+        "joint_storage_check": "follow_confirmed_shared_storage_rule",
+        "separate_goods_prices_orders_inventories": true,
+        "market_model_window_inheritance": "not_automatic",
+        "proposal": {
+          "all_legally_available_stock_offered": true,
+          "recent_sales_multiple_release_cap": false,
+          "options": [
+            "uniform_price",
+            "double_auction"
+          ],
+          "status": "candidate_only"
+        }
+      },
+      "public_finance": {
+        "enterprise_budget_regime": null,
+        "dividend_rule": null,
+        "dividend_fraction": null,
+        "capital_return_enabled": null,
+        "capital_return_rule": null,
+        "working_capital_policy": null,
+        "public_cash_sweep": null,
+        "dividend_source": "realized_undistributed_consolidated_net_income_after_losses_and_cash_constraint",
+        "principal_return_recorded_separately": true,
+        "proposal": {
+          "dividend_fraction": 0.8,
+          "dividend_allocation": "equal_among_eligible_living_households",
+          "public_cash_reserve": 100,
+          "enterprise_working_cash_target": 40,
+          "enterprise_grant_cap_per_old_round": 20,
+          "grant_time_unit_must_be_redefined": true,
+          "status": "legacy_candidates_not_effective"
+        }
+      },
+      "accounting": {
+        "inventory_cost_method": null,
+        "transport_cost_treatment": null,
+        "decay_loss_recognition": null,
+        "exit_settlement_sequence": null,
+        "eliminate_internal_iron_markup": true,
+        "eliminate_internal_grants_and_sweeps": true,
+        "unrealized_inventory_gains_distributable": false,
+        "repeat_wage_cost_deduction": false,
+        "money_creation_enabled": false,
+        "external_money_injection_enabled": false
+      },
+      "iron_price_update": {
+        "method": null,
+        "frequency": null,
+        "speed": null,
+        "bounds": null,
+        "supply_snapshot": null,
+        "proposal": {
+          "method": "normalized_excess_demand_exponential_update",
+          "speed": 0.1,
+          "bounds": [
+            0.05,
+            10
+          ],
+          "epsilon_iron_units": 1e-09,
+          "initial_iron_price": 2,
+          "status": "legacy_lange_candidate_not_effective"
+        }
+      },
+      "learning": {
+        "method": null,
+        "identification_rule": null,
+        "proposal": {
+          "skill_smoothing_weight": 0.25,
+          "price_smoothing_weight": 0.3,
+          "status": "candidate_only"
+        }
+      },
+      "llm": {
+        "call_budget": null,
+        "memory_policy": null,
+        "fallback": null,
+        "writes_true_ledger_directly": false
+      }
+    }
+  },
+  "_meta": {
+    "schema_version": "4.0",
+    "model_name": "兰格模式",
+    "release_date": "2026-10-23",
+    "release_name": "兰格模式_模型设计_20261023",
+    "version_role": "current_main_lange_design",
+    "replaces": "旧单谷物兰格22章30式设计稿；仅历史备份",
+    "source_baseline": {
+      "index": "codex_package/版本索引_20261022_03.json",
+      "parameters": "codex_package/model_spec/基础世界参数_20261022_03.yaml",
+      "sha256": "14fa093c11e4f89053105a8a5d43db8605b6708b165e04a639ad6ca5ebe45f41",
+      "economic_values_changed": false
+    },
+    "layer_structure": {
+      "world_rules": "共同规则原样继承",
+      "scenario": "共同场景原样继承",
+      "initial_state": "共同初值和生成接口继承，追加兰格候选现金",
+      "treatment": "显式lange，模板不激活，未决制度接口保留null",
+      "_meta": "辅助元数据，不是第五层经济设计"
+    },
+    "parameter_status": {
+      "execution_ready": false,
+      "simulation_run": false,
+      "shared_execution_blockers": [
+        "natural_day_boundary_mapping_inside_40_hour_action_round",
+        "idle_consumption_coefficient",
+        "legacy_warehouse_inventory_destination",
+        "food_consumption_units_and_substitution",
+        "rice_wheat_initial_inventory_split",
+        "legacy_grain_conversion",
+        "storage_and_decay_proposal_confirmation",
+        "food_recovery_type_assignment_and_coefficients",
+        "food_utility_function_and_parameters",
+        "mandatory_contract_exit_or_incapacity_resolution",
+        "rng_algorithm_stream_derivation_and_run_logging"
+      ],
+      "lange_execution_blockers": [
+        "lange_event_mapping_to_shared_time_and_settlement",
+        "lange_initial_cash_and_costs",
+        "lange_price_coordination_and_household_utility",
+        "lange_job_qualification_contract_duration_and_pay",
+        "lange_fund_security_representation",
+        "lange_iron_allocation_and_routes",
+        "lange_food_clearing_window_and_capacity_interface",
+        "lange_public_budget_dividend_capital_return",
+        "lange_inventory_cost_and_decay_accounting",
+        "lange_information_learning_and_llm_budget"
+      ],
+      "inactive_template_blockers": {
+        "all_shareholders_exit_rule": "兰格无私人家庭股权，不启用股份模板",
+        "market_enterprise_initial_funds": "市场专属；兰格现金另待定",
+        "shared_food_window_duration_and_settlement": "市场模板不自动继承；兰格清算时间窗另待定"
+      }
+    },
+    "parameter_governance": {
+      "category_definitions": {
+        "A": "共同结构与制度约束",
+        "B": "外生可校准参数",
+        "C": "设计AI提出或按授权设定（可与B/F重叠，状态单列）",
+        "D": "运行时自主决策与内生状态",
+        "E": "派生量",
+        "F": "未决语义与边界规则"
+      },
+      "shared_classification_source": "codex_package/model_spec/基础世界参数_20261022_03.yaml#/_meta/parameter_governance",
+      "shared_field_policy": "共同字段路径不变，类别及确认状态由来源注册表继承；市场初始条件仅模板",
+      "null_means_unresolved_not_zero": true,
+      "proposal_promoted_to_effective_by_this_release": false,
+      "classification_grants_blanket_tuning_authority": false,
+      "entries": [
+        {
+          "id": "lange_local_1",
+          "fields": [
+            "/initial_state/institution_specific/lange/status"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_2",
+          "fields": [
+            "/initial_state/institution_specific/lange/generation_method"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_3",
+          "fields": [
+            "/initial_state/institution_specific/lange/household_initial_cash"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_4",
+          "fields": [
+            "/initial_state/institution_specific/lange/enterprise_initial_cash"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_5",
+          "fields": [
+            "/initial_state/institution_specific/lange/public_initial_cash"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_6",
+          "fields": [
+            "/initial_state/institution_specific/lange/initial_total_money"
+          ],
+          "categories": [
+            "E"
+          ],
+          "status": "unresolved_derived_value",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": [
+            "/initial_state/institution_specific/lange/proposal/household_cash_each",
+            "/initial_state/institution_specific/lange/proposal/enterprise_cash_each",
+            "/initial_state/institution_specific/lange/proposal/public_cash",
+            "/scenario/population_count",
+            "/scenario/enterprises"
+          ]
+        },
+        {
+          "id": "lange_local_7",
+          "fields": [
+            "/initial_state/institution_specific/lange/opening_inventory_unit_costs/rice"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_8",
+          "fields": [
+            "/initial_state/institution_specific/lange/opening_inventory_unit_costs/wheat"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_9",
+          "fields": [
+            "/initial_state/institution_specific/lange/opening_inventory_unit_costs/iron"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_10",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/household_cash_each"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_11",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/enterprise_cash_each"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_12",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/public_cash"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_13",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/derived_total_money"
+          ],
+          "categories": [
+            "E",
+            "C"
+          ],
+          "status": "derived_candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": [
+            "/initial_state/institution_specific/lange/proposal/household_cash_each",
+            "/initial_state/institution_specific/lange/proposal/enterprise_cash_each",
+            "/initial_state/institution_specific/lange/proposal/public_cash",
+            "/scenario/population_count",
+            "/scenario/enterprises"
+          ]
+        },
+        {
+          "id": "lange_local_14",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/derivation"
+          ],
+          "categories": [
+            "E",
+            "C"
+          ],
+          "status": "derived_candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": [
+            "/initial_state/institution_specific/lange/proposal/household_cash_each",
+            "/initial_state/institution_specific/lange/proposal/enterprise_cash_each",
+            "/initial_state/institution_specific/lange/proposal/public_cash",
+            "/scenario/population_count",
+            "/scenario/enterprises"
+          ]
+        },
+        {
+          "id": "lange_local_15",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_16",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/legacy_inventory_unit_costs/grain"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_17",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/legacy_inventory_unit_costs/iron"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_18",
+          "fields": [
+            "/initial_state/institution_specific/lange/proposal/rice_wheat_cost_split"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_19",
+          "fields": [
+            "/treatment/lange/design_role"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_20",
+          "fields": [
+            "/treatment/lange/active_template_names"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_21",
+          "fields": [
+            "/treatment/lange/legacy_templates_automatically_applied"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_22",
+          "fields": [
+            "/treatment/lange/currency_enabled"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_23",
+          "fields": [
+            "/treatment/lange/production_asset_ownership"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_24",
+          "fields": [
+            "/treatment/lange/private_household_equity_enabled"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_25",
+          "fields": [
+            "/treatment/lange/household_occupation_choice"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_26",
+          "fields": [
+            "/treatment/lange/household_consumption_choice"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_27",
+          "fields": [
+            "/treatment/lange/enterprise_planning"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_28",
+          "fields": [
+            "/treatment/lange/prices/rice"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_29",
+          "fields": [
+            "/treatment/lange/prices/wheat"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_30",
+          "fields": [
+            "/treatment/lange/prices/wage"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_31",
+          "fields": [
+            "/treatment/lange/prices/iron"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_32",
+          "fields": [
+            "/treatment/lange/information/intentional_misreporting"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_33",
+          "fields": [
+            "/treatment/lange/information/forecast_error_allowed"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_34",
+          "fields": [
+            "/treatment/lange/information/hidden_true_skill_for_decisions"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_35",
+          "fields": [
+            "/treatment/lange/information/private_memories_shared"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_36",
+          "fields": [
+            "/treatment/lange/information/disclosure_schedule"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_37",
+          "fields": [
+            "/treatment/lange/information/verifiable_job_qualification"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_38",
+          "fields": [
+            "/treatment/lange/information/individual_output_feedback"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_39",
+          "fields": [
+            "/treatment/lange/information/household_knows_all_own_endowments"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_40",
+          "fields": [
+            "/treatment/lange/information/enterprise_initial_information"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_41",
+          "fields": [
+            "/treatment/lange/information/other_household_true_endowments_automatically_visible"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_42",
+          "fields": [
+            "/treatment/lange/planning/coordination_method"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_43",
+          "fields": [
+            "/treatment/lange/planning/planning_period"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_44",
+          "fields": [
+            "/treatment/lange/planning/options/0"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_45",
+          "fields": [
+            "/treatment/lange/planning/options/1"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_46",
+          "fields": [
+            "/treatment/lange/planning/trial_count_advances_physical_time"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_47",
+          "fields": [
+            "/treatment/lange/planning/trial_max_iterations"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_48",
+          "fields": [
+            "/treatment/lange/planning/trial_tolerance"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_49",
+          "fields": [
+            "/treatment/lange/planning/nonconvergence_action"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_50",
+          "fields": [
+            "/treatment/lange/planning/household_utility_function"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_51",
+          "fields": [
+            "/treatment/lange/planning/food_health_utility_mapping"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_52",
+          "fields": [
+            "/treatment/lange/planning/enterprise_cost_optimizer"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_53",
+          "fields": [
+            "/treatment/lange/planning/utility_source"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_54",
+          "fields": [
+            "/treatment/lange/planning/health_recovery_source"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_55",
+          "fields": [
+            "/treatment/lange/event_schedule/status"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_56",
+          "fields": [
+            "/treatment/lange/event_schedule/active_schedule"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_57",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/0"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_58",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/1"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_59",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/2"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_60",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/3"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_61",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/4"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_62",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/5"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_63",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/6"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_64",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/7"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_65",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/8"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_66",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/9"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_67",
+          "fields": [
+            "/treatment/lange/event_schedule/candidate_logical_stages/10"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_68",
+          "fields": [
+            "/treatment/lange/event_schedule/mapping_to_shared_settlement_order"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_69",
+          "fields": [
+            "/treatment/lange/event_schedule/wages_before_supported_food_purchase"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_70",
+          "fields": [
+            "/treatment/lange/event_schedule/new_iron_available_next_round_only"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_71",
+          "fields": [
+            "/treatment/lange/event_schedule/all_contracts_close_same_round"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_72",
+          "fields": [
+            "/treatment/lange/labor_market/initial_enterprise_quotes_before_random_actions"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_73",
+          "fields": [
+            "/treatment/lange/labor_market/initial_quote_multi_job_extension"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_74",
+          "fields": [
+            "/treatment/lange/labor_market/action_order"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_75",
+          "fields": [
+            "/treatment/lange/labor_market/matching_requires_same_job_and_terms_version"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_76",
+          "fields": [
+            "/treatment/lange/labor_market/employer_pre_authorizes_all_qualified_applicants"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_77",
+          "fields": [
+            "/treatment/lange/labor_market/match_requires_bid_at_least_ask"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_78",
+          "fields": [
+            "/treatment/lange/labor_market/match_requires_qualification_schedule_capacity_and_funds"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_79",
+          "fields": [
+            "/treatment/lange/labor_market/individual_productivity_ranking_within_job"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_80",
+          "fields": [
+            "/treatment/lange/labor_market/person_targeted_wage_quotes"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_81",
+          "fields": [
+            "/treatment/lange/labor_market/platform_invents_missing_quotes"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_82",
+          "fields": [
+            "/treatment/lange/labor_market/forced_employment"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_83",
+          "fields": [
+            "/treatment/lange/labor_market/household_selects_specific_job"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_84",
+          "fields": [
+            "/treatment/lange/labor_market/household_max_live_application_orders"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_85",
+          "fields": [
+            "/treatment/lange/labor_market/new_enterprise_order_priority"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_86",
+          "fields": [
+            "/treatment/lange/labor_market/new_household_order_scope"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_87",
+          "fields": [
+            "/treatment/lange/labor_market/execution_price"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_88",
+          "fields": [
+            "/treatment/lange/labor_market/hidden_productivity_ranking"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_89",
+          "fields": [
+            "/treatment/lange/labor_market/wait_preserves_old_order"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_90",
+          "fields": [
+            "/treatment/lange/labor_market/replace_only_after_valid_new_order"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_91",
+          "fields": [
+            "/treatment/lange/labor_market/invalid_replace_preserves_old_order"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_92",
+          "fields": [
+            "/treatment/lange/labor_market/cancel_scope"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_93",
+          "fields": [
+            "/treatment/lange/labor_market/full_job_invalidates_remaining_applications"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_94",
+          "fields": [
+            "/treatment/lange/labor_market/close_cancels_unsigned_orders_only"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_95",
+          "fields": [
+            "/treatment/lange/labor_market/signed_contracts_survive_market_close"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_96",
+          "fields": [
+            "/treatment/lange/labor_market/signing_pays_household"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_97",
+          "fields": [
+            "/treatment/lange/labor_market/pay_once_after_verified_performance"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_98",
+          "fields": [
+            "/treatment/lange/labor_market/reprice_for_skill_error"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_99",
+          "fields": [
+            "/treatment/lange/labor_market/worker_output_guarantee"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_100",
+          "fields": [
+            "/treatment/lange/labor_market/worker_compensates_output_shortfall"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_101",
+          "fields": [
+            "/treatment/lange/labor_market/daily_cap_source"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_102",
+          "fields": [
+            "/treatment/lange/labor_market/contract_time_intervals_required"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_103",
+          "fields": [
+            "/treatment/lange/labor_market/contract_duration_policy"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_104",
+          "fields": [
+            "/treatment/lange/labor_market/cross_day_settlement"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_105",
+          "fields": [
+            "/treatment/lange/labor_market/partial_performance_pay"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_106",
+          "fields": [
+            "/treatment/lange/labor_market/quote_price_unit"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_107",
+          "fields": [
+            "/treatment/lange/labor_market/unit_adapter"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_108",
+          "fields": [
+            "/treatment/lange/labor_market/quote_reserve_principle"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_109",
+          "fields": [
+            "/treatment/lange/labor_market/order_reserve_to_contract_security"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_110",
+          "fields": [
+            "/treatment/lange/labor_market/fund_security_representation"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_111",
+          "fields": [
+            "/treatment/lange/labor_market/matching_action_rounds"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_112",
+          "fields": [
+            "/treatment/lange/labor_market/money_precision"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_113",
+          "fields": [
+            "/treatment/lange/labor_market/hour_precision"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_114",
+          "fields": [
+            "/treatment/lange/labor_market/legacy_proposal/hourly_wage_reference"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_115",
+          "fields": [
+            "/treatment/lange/labor_market/legacy_proposal/hourly_wage_bounds/0"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_116",
+          "fields": [
+            "/treatment/lange/labor_market/legacy_proposal/hourly_wage_bounds/1"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_117",
+          "fields": [
+            "/treatment/lange/labor_market/legacy_proposal/hour_precision"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_118",
+          "fields": [
+            "/treatment/lange/labor_market/legacy_proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_119",
+          "fields": [
+            "/treatment/lange/labor_market/contract_performance/default_action_enabled"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_120",
+          "fields": [
+            "/treatment/lange/labor_market/contract_performance/both_parties_must_perform"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_121",
+          "fields": [
+            "/treatment/lange/labor_market/contract_performance/fixed_output_guarantee"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_122",
+          "fields": [
+            "/treatment/lange/labor_market/contract_performance/exit_or_incapacity_resolution"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_123",
+          "fields": [
+            "/treatment/lange/iron_allocation/mechanism"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_124",
+          "fields": [
+            "/treatment/lange/iron_allocation/routing"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_125",
+          "fields": [
+            "/treatment/lange/iron_allocation/quantity_precision"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_126",
+          "fields": [
+            "/treatment/lange/iron_allocation/available_supply_definition"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_127",
+          "fields": [
+            "/treatment/lange/iron_allocation/inventory_target"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_128",
+          "fields": [
+            "/treatment/lange/iron_allocation/proposal/mechanism"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_129",
+          "fields": [
+            "/treatment/lange/iron_allocation/proposal/routing"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_130",
+          "fields": [
+            "/treatment/lange/iron_allocation/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_131",
+          "fields": [
+            "/treatment/lange/food_markets/mechanism"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_132",
+          "fields": [
+            "/treatment/lange/food_markets/same_mechanism_for_rice_and_wheat"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_133",
+          "fields": [
+            "/treatment/lange/food_markets/shared_time_window"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_134",
+          "fields": [
+            "/treatment/lange/food_markets/fixed_cross_food_sequence"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_135",
+          "fields": [
+            "/treatment/lange/food_markets/window_duration"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_136",
+          "fields": [
+            "/treatment/lange/food_markets/scheduling"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_137",
+          "fields": [
+            "/treatment/lange/food_markets/price_tick"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_138",
+          "fields": [
+            "/treatment/lange/food_markets/price_bounds"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_139",
+          "fields": [
+            "/treatment/lange/food_markets/zero_price_policy"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_140",
+          "fields": [
+            "/treatment/lange/food_markets/no_trade_policy"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_141",
+          "fields": [
+            "/treatment/lange/food_markets/marginal_order_allocation"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_142",
+          "fields": [
+            "/treatment/lange/food_markets/inventory_retention"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_143",
+          "fields": [
+            "/treatment/lange/food_markets/joint_household_cash_check"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_144",
+          "fields": [
+            "/treatment/lange/food_markets/joint_storage_check"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_145",
+          "fields": [
+            "/treatment/lange/food_markets/separate_goods_prices_orders_inventories"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_146",
+          "fields": [
+            "/treatment/lange/food_markets/market_model_window_inheritance"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_147",
+          "fields": [
+            "/treatment/lange/food_markets/proposal/all_legally_available_stock_offered"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_148",
+          "fields": [
+            "/treatment/lange/food_markets/proposal/recent_sales_multiple_release_cap"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_149",
+          "fields": [
+            "/treatment/lange/food_markets/proposal/options/0"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_150",
+          "fields": [
+            "/treatment/lange/food_markets/proposal/options/1"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_151",
+          "fields": [
+            "/treatment/lange/food_markets/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_152",
+          "fields": [
+            "/treatment/lange/public_finance/enterprise_budget_regime"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_153",
+          "fields": [
+            "/treatment/lange/public_finance/dividend_rule"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_154",
+          "fields": [
+            "/treatment/lange/public_finance/dividend_fraction"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_155",
+          "fields": [
+            "/treatment/lange/public_finance/capital_return_enabled"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_156",
+          "fields": [
+            "/treatment/lange/public_finance/capital_return_rule"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_157",
+          "fields": [
+            "/treatment/lange/public_finance/working_capital_policy"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_158",
+          "fields": [
+            "/treatment/lange/public_finance/public_cash_sweep"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_159",
+          "fields": [
+            "/treatment/lange/public_finance/dividend_source"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_160",
+          "fields": [
+            "/treatment/lange/public_finance/principal_return_recorded_separately"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_161",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/dividend_fraction"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_162",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/dividend_allocation"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_163",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/public_cash_reserve"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_164",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/enterprise_working_cash_target"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_165",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/enterprise_grant_cap_per_old_round"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_166",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/grant_time_unit_must_be_redefined"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_167",
+          "fields": [
+            "/treatment/lange/public_finance/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_168",
+          "fields": [
+            "/treatment/lange/accounting/inventory_cost_method"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_169",
+          "fields": [
+            "/treatment/lange/accounting/transport_cost_treatment"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_170",
+          "fields": [
+            "/treatment/lange/accounting/decay_loss_recognition"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_171",
+          "fields": [
+            "/treatment/lange/accounting/exit_settlement_sequence"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_172",
+          "fields": [
+            "/treatment/lange/accounting/eliminate_internal_iron_markup"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_173",
+          "fields": [
+            "/treatment/lange/accounting/eliminate_internal_grants_and_sweeps"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_174",
+          "fields": [
+            "/treatment/lange/accounting/unrealized_inventory_gains_distributable"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_175",
+          "fields": [
+            "/treatment/lange/accounting/repeat_wage_cost_deduction"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_176",
+          "fields": [
+            "/treatment/lange/accounting/money_creation_enabled"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_177",
+          "fields": [
+            "/treatment/lange/accounting/external_money_injection_enabled"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_178",
+          "fields": [
+            "/treatment/lange/iron_price_update/method"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_179",
+          "fields": [
+            "/treatment/lange/iron_price_update/frequency"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_180",
+          "fields": [
+            "/treatment/lange/iron_price_update/speed"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_181",
+          "fields": [
+            "/treatment/lange/iron_price_update/bounds"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_182",
+          "fields": [
+            "/treatment/lange/iron_price_update/supply_snapshot"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_183",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/method"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_184",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/speed"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_185",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/bounds/0"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_186",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/bounds/1"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_187",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/epsilon_iron_units"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_188",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/initial_iron_price"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_189",
+          "fields": [
+            "/treatment/lange/iron_price_update/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_190",
+          "fields": [
+            "/treatment/lange/learning/method"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_191",
+          "fields": [
+            "/treatment/lange/learning/identification_rule"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_192",
+          "fields": [
+            "/treatment/lange/learning/proposal/skill_smoothing_weight"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_193",
+          "fields": [
+            "/treatment/lange/learning/proposal/price_smoothing_weight"
+          ],
+          "categories": [
+            "B",
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "见同名候选字段与设计文稿单位；不得自动启用",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_194",
+          "fields": [
+            "/treatment/lange/learning/proposal/status"
+          ],
+          "categories": [
+            "C"
+          ],
+          "status": "candidate_not_effective",
+          "unit": "rule_or_identifier",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_195",
+          "fields": [
+            "/treatment/lange/llm/call_budget"
+          ],
+          "categories": [
+            "B",
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_196",
+          "fields": [
+            "/treatment/lange/llm/memory_policy"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_197",
+          "fields": [
+            "/treatment/lange/llm/fallback"
+          ],
+          "categories": [
+            "F"
+          ],
+          "status": "unresolved",
+          "unit": "未决字段，先确定语义与单位",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_local_198",
+          "fields": [
+            "/treatment/lange/llm/writes_true_ledger_directly"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "design_rule_or_interface_annotation",
+          "unit": "boolean_rule",
+          "scope": "lange",
+          "set_by": "既有设计规则或待用户确认的制度候选",
+          "adjustment_policy": "遵守共同世界结构；候选不自动生效；本次无调参授权",
+          "depends_on": []
+        },
+        {
+          "id": "lange_selection",
+          "fields": [
+            "/treatment/selected_institution"
+          ],
+          "categories": [
+            "A"
+          ],
+          "status": "selected_for_current_design",
+          "unit": "institution_identifier",
+          "scope": "lange",
+          "set_by": "用户要求更新兰格设计",
+          "adjustment_policy": "按用户制度选择修改",
+          "depends_on": []
+        }
+      ],
+      "runtime_variables": [
+        "米麦报价与成交价",
+        "岗位选择与工资报价",
+        "投入与产量计划",
+        "实际产出",
+        "消费组合",
+        "库存与腐坏",
+        "健康与退出",
+        "利润与公共可分配额"
+      ],
+      "runtime_variable_category": "D",
+      "runtime_variables_prefilled": false
+    },
+    "initialization_method_is_not_initial_values": true,
+    "legacy_templates_are_not_active_treatment": true,
+    "common_world_modification_by_this_release": false,
+    "github_upload": "paused",
+    "updated_at": "2026-11-03",
+    "shared_world_sync": {
+      "date": "2026-11-03",
+      "status": "specification_synced",
+      "note": "2026-11-03共同世界同步：自然恢复禀赋为米快、麦快、都快、都慢四类，逐户类别和快慢系数待定。消费效用与健康恢复分开；同总量搭配优于单品，增加任一种食品提高效用，具体函数待定。旧0.65/0.35权重停用，生产技能保留；家庭初始知道自身真实禀赋，其他主体不自动获得个体真值。合同成立后双方必须履约，无违约行动，不保证固定产量；退出/失能处置待定。每次运行记录配置哈希、随机种子、随机流、实际初态和模型采样信息；当前基础种子20260927。"
+    }
+  }
+}

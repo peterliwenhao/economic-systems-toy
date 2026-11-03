@@ -1,0 +1,36 @@
+{
+  "role": "current_shared_baseline",
+  "release": "基础世界参数_20261022_03",
+  "html": "说明/基础世界参数_20261022_03.html",
+  "rules": "说明/项目共同设定_20261022_03.md",
+  "parameters": "参数/基础世界参数_20261022_03.yaml",
+  "classification": "说明/参数分类说明_20261022_03.md",
+  "validator": "scripts/validate_base_world_20261022_03.py",
+  "previous_index": "版本索引_20261022_02.json",
+  "historical_sha256": {
+    "codex_package/docs/基础世界参数_20261022.html": "d50471c56a65a298cc8bbc123d02c5492996ff98fc781ab84d7280e3c4705ea6",
+    "codex_package/model_spec/项目共同设定_当前.md": "d0d71a81419cbbf41e7c660a272d4d1d24f56b14dd72c33d80b68358e45e681f",
+    "codex_package/model_spec/任务二_基础世界参数最终版.yaml": "774f91994a84ae717a278fdd7645d4d2ac5124d97bbd30a938d4d376e3bfa30c",
+    "codex_package/docs/基础世界参数_20261022_02.html": "71c8129fdbff22ae31fd31dac5a251367c42c93b8dc2cd5e8661c6718802e015",
+    "codex_package/model_spec/基础世界参数_20261022_02.yaml": "9c23ab23a6a61b35dfcf1b16563d16f02352d86c6c2143015ccbb83700746ea1",
+    "codex_package/model_spec/项目共同设定_20261022_02.md": "cd254f2f69ea6932a5af97ac24ed882f5874510c508c229a5fec92c0ebcc0440",
+    "codex_package/model_spec/参数分类说明_20261022.md": "f33a0b8df1e7123e13e5b1e54d0425eb8473537075ea527a7861146858fa2b3c",
+    "codex_package/版本索引_20261022_02.json": "c76b508e5bdc0c06e6caef2a55b046c33735aa75ce09184037f0bb4167aa62e5",
+    "codex_package/scripts/validate_base_world_20261022_02.py": "9e9965074df1e8ce8c85eb2f9ff250a0d24e31cc817d3c4a45888606b3399d4f",
+    "codex_package/history/20261022_02_navigation/package_AGENTS.md": "015661e0141c793442c2545c9145d1f100dc8d11c8d51a8f7ae1bf83d3a29392",
+    "codex_package/history/20261022_02_navigation/README.md": "2eba2e667b9550081abbe4532cfd5f376f855a5d723388baa7890c62273f6b8e",
+    "codex_package/history/20261022_02_navigation/project_AGENTS.md": "1a000c52b825e7eca7d044221b5089fde86ae1b2bff97d29f3e93c9b77e6f165"
+  },
+  "schema_version": "4.0",
+  "configuration_layers": [
+    "world_rules",
+    "scenario",
+    "initial_state",
+    "treatment"
+  ],
+  "metadata_path": "/_meta",
+  "treatment_selection": "not_selected_shared_baseline",
+  "last_updated": "2026-11-03",
+  "latest_revision": "20261103_recovery_utility_information_contract_seed",
+  "package_note": "本索引为分享包路径适配版；未纳入的历史、代码及校验依赖仅作来源记录。"
+}

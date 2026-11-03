@@ -1,0 +1,18 @@
+{
+  "role": "unique_current_primary_design",
+  "release": "Cockshott模型设计_20261022",
+  "completed_date": "2026-10-23",
+  "updated_date": "2026-11-03",
+  "decision_register": "说明/待确认决策清单.md",
+  "validation_report": "model_spec/当前交付核验.json",
+  "design_html": "说明/Cockshott模型设计_20261022.html",
+  "design_source": "说明/Cockshott模型设计_20261022.md",
+  "configuration": "参数/Cockshott四层配置_20261022.yaml",
+  "baseline_index": "../基础世界/版本索引.json",
+  "history": "history/pre_20261022",
+  "history_role": "backup_only_not_parallel_branch",
+  "execution_ready": false,
+  "shared_world_sync": "20261103",
+  "credit_expiry_revision": "20261103_five_rounds",
+  "package_note": "本索引为分享包路径适配版；未纳入的历史、代码及校验依赖仅作来源记录。"
+}

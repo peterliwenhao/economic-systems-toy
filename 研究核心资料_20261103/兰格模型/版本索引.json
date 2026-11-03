@@ -1,0 +1,25 @@
+{
+  "role": "current_main_lange_design",
+  "release": "20261023",
+  "date": "2026-10-23",
+  "main_html": "说明/兰格模式_模型设定说明_20261023.html",
+  "design_markdown": "说明/兰格模式_模型设计_20261023.md",
+  "parameters": "参数/兰格模式_模型设计_20261023.yaml",
+  "generator": "meeting_20261023/build.py",
+  "authored_content": "meeting_20261023/content.py",
+  "source_lock": "meeting_20261023/共同世界来源锁定.json",
+  "shared_baseline_index": "../基础世界/版本索引.json",
+  "backup": "history/20261022_before_world_update/备份清单.json",
+  "old_design_role": "history_only_not_parallel_active_branch",
+  "execution_ready": false,
+  "chapters": 22,
+  "equations": 32,
+  "generated_sha256": {
+    "说明/兰格模式_模型设定说明_20261023.html": "a6a0cad3f8b03141957c793e4796ac1491d0da08f5075cc56d867d43be3b5c3c",
+    "参数/兰格模式_模型设计_20261023.yaml": "ed609b92ee8273d708a8c87cd965323962bfd2ec1f909e8c9be92bdd0dc3d2d3",
+    "说明/兰格模式_模型设计_20261023.md": "f3ebda580cb85409f52b035479501d7a4de7627430de09e5ef8eb048a6c72c74"
+  },
+  "updated_at": "2026-11-03",
+  "shared_world_revision": "2026-11-03",
+  "package_note": "本索引为分享包路径适配版；未纳入的历史、代码及校验依赖仅作来源记录。"
+}

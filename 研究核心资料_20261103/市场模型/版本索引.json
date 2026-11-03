@@ -1,0 +1,49 @@
+{
+  "role": "current_market_model",
+  "release": "20261023",
+  "core_files": {
+    "overview": "说明/市场经济模型_梳理_20261023.html",
+    "parameters": "参数/市场经济模型_参数表_20261023.xlsx",
+    "yaml": "参数/市场经济模型_基准参数_20261023.yaml",
+    "technical": "说明/市场经济模型_技术细节_20261023.html"
+  },
+  "shared_baseline": {
+    "path": "codex_package/model_spec/基础世界参数_20261022_03.yaml",
+    "sha256": "14fa093c11e4f89053105a8a5d43db8605b6708b165e04a639ad6ca5ebe45f41",
+    "schema_version": "4.0"
+  },
+  "previous_files": [
+    {
+      "path": "/Users/zhangxinyue/.codex/.chatgpt-projects/g-p-6aac9ed5a4708191960b74b620d9d6d3/市场经济模型_梳理.html",
+      "role": "historical_backup_only",
+      "sha256": "cb34b1df7446a6dbe2de3545880413d1a9ef3bee0cecb3f9fa675d4f43da2897"
+    },
+    {
+      "path": "/Users/zhangxinyue/.codex/.chatgpt-projects/g-p-6aac9ed5a4708191960b74b620d9d6d3/outputs/market_parameters/市场经济模型_参数表.xlsx",
+      "role": "historical_backup_only",
+      "sha256": "c700518dd2e8be0aa3769a67ae99f1fa7d2749344d50f981314c383fac80491f"
+    },
+    {
+      "path": "/Users/zhangxinyue/.codex/.chatgpt-projects/g-p-6aac9ed5a4708191960b74b620d9d6d3/outputs/market_parameters/市场经济模型_基准参数.yaml",
+      "role": "historical_backup_only",
+      "sha256": "46afcd9cfb76bdb5d4faa6934ea70f75203a5e6e5ce4130c0cd5bf1075581364"
+    },
+    {
+      "path": "/Users/zhangxinyue/.codex/.chatgpt-projects/g-p-6aac9ed5a4708191960b74b620d9d6d3/任务二_市场经济模型_决策与记忆.html",
+      "role": "historical_backup_only",
+      "sha256": "3599358273648e3ab19f30372603e1d81ba3c172854c6cd33d325c6789fc5b19"
+    }
+  ],
+  "policy": "本版是后续唯一市场主版本；原文件只作备份，不是并行研究分支。",
+  "execution_ready": false,
+  "validation_report": "support/validation.json",
+  "updated_at": "2026-11-03",
+  "shared_world_revision": "2026-11-03",
+  "current_core_sha256": {
+    "overview": "9f5a64cd359100e99aba71e3061991fbc030810a0bb29d09de574f3ae5e9f98b",
+    "parameters": "f3b79c752b877bc8f563e12861618d87a2aa3b719ff128e563655d2a4a808622",
+    "yaml": "bfdd0b8c947c812ba32199caec9ceda3e633344e8642b1324f72b18b6b4324f4",
+    "technical": "ee855ca7699264d3a61bf5660427a56a28ebbc64e28a16d84806331f90ffc9ca"
+  },
+  "package_note": "本索引为分享包路径适配版；未纳入的历史、代码及校验依赖仅作来源记录。"
+}
