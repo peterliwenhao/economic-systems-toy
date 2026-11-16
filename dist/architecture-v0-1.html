@@ -908,7 +908,7 @@
             原始状态、决策和结算事件完整保存；第一版只计算两个最小指标，但不丢失未来分析所需信息。
           </p>
           <div class="resource-links" aria-label="相关文档">
-            <a href="implementation-roadmap.html">五阶段实施 Roadmap 与进度 Dashboard</a>
+            <a href="implementation-roadmap.html">Phase 0 + 五阶段 Roadmap 与进度 Dashboard</a>
             <a href="development-collaboration-process.html">开发协作与接口评审流程</a>
             <a href="python-engineering-kickoff-guide.html">Python 软件工程启动会讲稿</a>
           </div>
@@ -1670,17 +1670,19 @@ flowchart TB
       <section id="sequence">
         <div class="section-head">
           <div><div class="section-number">05 · Build Sequence</div><h2>建议开发顺序</h2></div>
-          <p>公共骨架负责人可以先开始搭目录和测试桩，但正式契约必须在四人接口草案对齐后冻结为 v0.1。</p>
+          <p>先完成 Phase 0 的两轮接口对齐，再开始公共骨架；第一次对齐前只思考交互，不要求正式接口文档。</p>
         </div>
         <ol class="sequence">
-          <li><strong>接口草案</strong><span>四人分别提出输入、输出、异常和最小测例。</span></li>
-          <li><strong>接口对齐</strong><span>提供方与使用方确认，馨月汇总，你和刘充评审。</span></li>
-          <li><strong>公共骨架</strong><span>契约、运行器、存储和 Fake 组件实现。</span></li>
-          <li><strong>骨架自测</strong><span>假实现完成一轮并生成完整 run 目录。</span></li>
-          <li><strong>四线并行</strong><span>LLM、世界、市场和计划分别实现真实功能。</span></li>
-          <li><strong>分段集成</strong><span>Engine → 市场/计划 → Lange 循环 → LLM。</span></li>
+          <li><strong>个人接口发现</strong><span>四人分别想清楚需要、提供、调用时机和失败，不写正式文档。</span></li>
+          <li><strong>第一次对齐</strong><span>共同走查最小一轮与 Lange 子循环，只确认交互关系。</span></li>
+          <li><strong>分派接口文档</strong><span>馨月指定维护者、提供方、使用方和契约测试任务。</span></li>
+          <li><strong>第二次对齐</strong><span>评审字段、单位、失败语义和测试，冻结 v0.1。</span></li>
+          <li><strong>公共骨架</strong><span>契约、SimulationEngine、存储和 Fake 组件跑通一轮。</span></li>
+          <li><strong>分阶段实现</strong><span>WorldEngine → 简化机制 → LLM → 正式实验。</span></li>
         </ol>
         <div class="callout">
+          <strong>Phase 0 的退出条件：</strong>
+          交互图、接口负责人、v0.1 草案、契约测试示例和未解决问题清单都已完成第二次对齐。<br>
           <strong>公共骨架的退出条件：</strong>
           固定配置可以解析；SimulationEngine 能启动一个微型世界；FakePolicy 产生结构化行动；FakeMechanism 返回结构化决策；FakeWorldEngine 完成一次结算；run 目录、事件、快照和最小指标都能写出并被重新读取。
         </div>

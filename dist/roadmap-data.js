@@ -1,7 +1,7 @@
 /* Generated from project/implementation-roadmap.json. */
 window.ROADMAP_DATA = {
   "schemaVersion": "0.1",
-  "title": "Five-stage implementation roadmap",
+  "title": "Phase 0 plus five-stage implementation roadmap",
   "updatedAt": "2026-11-16",
   "statusPolicy": "Progress counts accepted deliverables, not subjective effort. Every draft task awaits Zhang Xinyue's review and assignment.",
   "tracks": [
@@ -33,6 +33,141 @@ window.ROADMAP_DATA = {
   ],
   "phases": [
     {
+      "id": "P0",
+      "number": 0,
+      "title": "Interface Discovery & Alignment",
+      "summary": "Each owner first thinks through needed and provided interactions without writing a formal document; the team aligns twice, with interface drafting and assignment between the two meetings.",
+      "gate": "The team has an agreed interaction map, named interface owners, reviewed v0.1 interface drafts, contract-test examples, and an explicit unresolved-question list; no production implementation is required.",
+      "tasks": [
+        {
+          "id": "P0-M1",
+          "track": "M1",
+          "title": "Discover orchestration and policy interfaces",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "Before the first meeting, think through what SimulationEngine, Policy, Mechanism, and WorldEngine must call, consume, and return; do not write a formal interface document yet.",
+            "At the first alignment meeting, walk through one minimal round and identify timing, state ownership, failures, and missing interactions.",
+            "After Zhang Xinyue assigns interface ownership, draft SimulationEngine, PolicyPort, MechanismPort, shared envelopes, and their contract-test examples."
+          ],
+          "deliverables": [
+            "Confirmed M1 needs/provides interaction list",
+            "Assigned M1 interface drafts v0.1",
+            "M1 contract-test examples for the second alignment"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "development-collaboration-process.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P0-M2",
+          "track": "M2",
+          "title": "Discover WorldEngine interfaces",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "Before the first meeting, think through what WorldEngine must receive and what StateView, WorldState, validation, and StepResult data it can provide; do not write a formal document yet.",
+            "At the first alignment meeting, explain who may read or modify state and which failures must be returned to SimulationEngine.",
+            "After assignment, draft WorldEnginePort, StateView, WorldState, StepResult, validation semantics, and contract-test examples."
+          ],
+          "deliverables": [
+            "Confirmed M2 needs/provides interaction list",
+            "Assigned M2 interface drafts v0.1",
+            "M2 contract-test examples for the second alignment"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/WORLD_CONFIGURATION_LAYERS.md"
+          ]
+        },
+        {
+          "id": "P0-M3",
+          "track": "M3",
+          "title": "Discover market and Lange-feedback interfaces",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "Before the first meeting, think through required market views, order inputs, market outputs, and trial-price feedback without writing a formal document.",
+            "At the first alignment meeting, explain the normal market call and the single-iteration Lange market call, including empty and failed outcomes.",
+            "After assignment, draft Order, MarketResult, MarketFeedback, TrialPriceMarketPort, decision adaptation, and contract-test examples."
+          ],
+          "deliverables": [
+            "Confirmed M3 needs/provides interaction list",
+            "Assigned M3 interface drafts v0.1",
+            "M3 contract-test examples for the second alignment"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P0-M4",
+          "track": "M4",
+          "title": "Discover planning and labor interfaces",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "Before the first meeting, think through required planning views, reports, market feedback, plan outputs, and labor-matching inputs/outputs without writing a formal document.",
+            "At the first alignment meeting, explain Lange, Cockshott, and labor interaction sequences and their failure/termination cases.",
+            "After assignment, draft LangeState, PlanProposal, LaborAssignment, PlanningDecisionAdapter, and contract-test examples."
+          ],
+          "deliverables": [
+            "Confirmed M4 needs/provides interaction list",
+            "Assigned M4 interface drafts v0.1",
+            "M4 contract-test examples for the second alignment"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P0-X",
+          "track": "X",
+          "title": "Run two-pass interface alignment and assign documentation",
+          "status": "draft",
+          "completed": 0,
+          "total": 4,
+          "responsibilities": [
+            "Before the first meeting, ask every owner to prepare only a mental or whiteboard-level needs/provides sketch; do not request formal fields or class documents.",
+            "Facilitate the first meeting around one minimal round, record agreed calls and open questions, then assign every interface document to an owner plus provider and consumer reviewers.",
+            "Collect the formal drafts and contract-test examples, run the second alignment, and send unresolved research/economic questions to Li Wenhao and Liu Chong."
+          ],
+          "deliverables": [
+            "First alignment interaction map and unresolved-question list",
+            "Named interface-document assignments with provider/consumer reviewers",
+            "Second alignment record and reviewed interface baseline v0.1",
+            "Phase 0 gate decision"
+          ],
+          "dependencies": [
+            "P0-M1",
+            "P0-M2",
+            "P0-M3",
+            "P0-M4"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "development-collaboration-process.html",
+            "docs/interfaces.md",
+            "docs/meetings/",
+            "docs/decisions/"
+          ]
+        }
+      ]
+    },
+    {
       "id": "P1",
       "number": 1,
       "title": "Common Skeleton",
@@ -56,7 +191,9 @@ window.ROADMAP_DATA = {
             "SimulationEngine one-round smoke test",
             "Minimal run directory with manifest, events, and snapshot"
           ],
-          "dependencies": [],
+          "dependencies": [
+            "P0-X"
+          ],
           "documents": [
             "architecture-v0-1.html",
             "development-collaboration-process.html",

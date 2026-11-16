@@ -58,7 +58,7 @@ const taskStatusesForRoadmap = new Set(["draft", "ready", "in_progress", "review
 
 if (roadmap) {
   if (!Array.isArray(roadmap.tracks) || roadmap.tracks.length !== 5) errors.push("implementation roadmap 必须定义 5 条责任轨");
-  if (!Array.isArray(roadmap.phases) || roadmap.phases.length !== 5) errors.push("implementation roadmap 必须定义 5 个阶段");
+  if (!Array.isArray(roadmap.phases) || roadmap.phases.length !== 6) errors.push("implementation roadmap 必须定义 Phase 0 和 5 个实现阶段");
   const roadmapTaskIds = new Set();
   const trackIds = new Set((roadmap.tracks || []).map((track) => track.id));
   for (const phase of roadmap.phases || []) {

@@ -81,7 +81,7 @@
     const blocked = tasks.filter((task) => task.status === "blocked").length;
     const percent = total ? Math.round(completed / total * 100) : 0;
     const cards = [
-      [`${data.phases.length}`, "阶段"],
+      [`${data.phases.length}`, "Phase 0 + 五个实现阶段"],
       [`${taskDone}/${tasks.length}`, "已完成任务轨"],
       [`${completed}/${total}`, `已验收交付物 · ${percent}%`],
       [`${blocked}`, "阻塞任务"]

@@ -62,7 +62,7 @@ section { margin-top: 72px; }
 .data-flow strong { color: #ffcf96; }
 .data-flow i { color: #89a6c7; font-size: 12px; font-style: normal; }
 
-.phase-overview { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; padding: 1px; background: var(--line); border-radius: 15px; overflow: hidden; }
+.phase-overview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; padding: 1px; background: var(--line); border-radius: 15px; overflow: hidden; }
 .phase-tile { min-height: 245px; padding: 20px; background: var(--surface); }
 .phase-tile span { color: var(--blue); font: 800 11px/1 monospace; }
 .phase-tile h3 { margin: 28px 0 10px; font-size: 18px; line-height: 1.3; }

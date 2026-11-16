@@ -9,7 +9,7 @@
 - 当前任务包括张馨月负责的 **T-001：形成研究设计草案 v0.1**，以及李文浩负责的 GitHub 建仓与项目启动任务 T-002/T-003；
 - 尚未进入正式代码实现或实验阶段；
 - Dashboard 已部署至 `https://118.178.235.171:9003/projects/economic-systems-toy/`；
-- 五阶段开发分工与进度 Dashboard：`https://118.178.235.171:9003/projects/economic-systems-toy/implementation-roadmap.html`；其唯一数据源为 `project/implementation-roadmap.json`，由张馨月审阅、分派和维护状态；
+- Phase 0 加五阶段开发分工与进度 Dashboard：`https://118.178.235.171:9003/projects/economic-systems-toy/implementation-roadmap.html`；Phase 0 采用“个人先想 → 第一次口头对齐 → 馨月分派接口文档 → 各自写接口与契约测试 → 第二次对齐”，唯一数据源为 `project/implementation-roadmap.json`；
 - GitHub 仓库信息将在创建后写回本文件与 `project/project.json`。
 
 ## 新会话应该先做什么
