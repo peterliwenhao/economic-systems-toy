@@ -2,6 +2,18 @@
 
 本文规定项目从架构构思、任务拆分、接口设计、测试设计、正式实现到集成验收的基本流程。目标是让四个开发子系统能够并行推进，同时避免接口不一致、责任边界模糊和最后阶段集中返工。
 
+## 实施进度 Dashboard
+
+五阶段实施计划、每位成员在各阶段的职责、验收闸门、完成度和相关文档，统一维护在：
+
+- 网页：`dist/implementation-roadmap.html`
+- 唯一数据源：`project/implementation-roadmap.json`
+- 生成命令：`npm run roadmap:build`
+
+Dashboard 的完成度按“已经通过验收的交付物数量 / 计划交付物数量”计算，不使用主观工时百分比。张馨月审阅并正式分派后，应补全真实负责人和 GitHub Issue；任务状态变化必须能对应到接口文档、测试、PR、会议决定或实验记录。
+
+当前页面中的 Member 1–4 表示职责轨，不代表已经确定的姓名；在馨月完成审阅前，所有新任务均保持“待审阅/分派”。
+
 ## 一、基本原则
 
 1. **先明确研究问题和模块边界，再讨论具体实现。**
@@ -9,10 +21,11 @@
 3. **公共接口由提供方与使用方共同确认，不由任何一方单独决定。**
 4. **模块负责人对本模块的设计、代码和单元测试负责。**
 5. **张馨月负责组织、对齐和集成，不代替所有负责人完成技术设计。**
-6. **只有 Engine 可以修改库存、健康、产量等世界物理状态。**
-7. **市场、计划机构和 Agent 只提交行为或决策，由 Engine 校验和结算。**
-8. **不同经济制度必须面对同一套环境、资源、技术和物理结算规则。**
-9. **先完成最小可运行骨架，再逐步补充真实机制，不等全部实现完才第一次集成。**
+6. **SimulationEngine 负责启动和推进一次运行，并调用 Policy、Mechanism 与 WorldEngine。**
+7. **只有 WorldEngine 可以修改库存、健康、产量等世界物理状态。**
+8. **市场、计划机构和 Agent 只提交行为或决策，由 WorldEngine 校验和结算。**
+9. **不同经济制度必须面对同一套环境、资源、技术和物理结算规则。**
+10. **先完成最小可运行骨架，再逐步补充真实机制，不等全部实现完才第一次集成。**
 
 ## 二、角色与责任
 
@@ -146,11 +159,11 @@ flowchart TD
 
 典型确认关系包括：
 
-- Engine 提出 `WorldState`，LLM、市场和计划负责人确认是否够用；
-- LLM 提出 `AgentAction`，Engine 负责人确认是否能校验和结算；
-- 市场提出 `MarketResult`，Engine 和 Lange 负责人确认是否能使用；
-- 计划模块提出 `PlanDecision`，Engine 负责人确认是否能执行；
-- 劳动匹配模块提出 `LaborAssignment`，Agent 与 Engine 负责人共同确认。
+- WorldEngine 提出 `WorldState`，LLM、市场和计划负责人确认是否够用；
+- LLM 提出 `AgentAction`，WorldEngine 负责人确认是否能校验和结算；
+- 市场提出 `MarketResult`，WorldEngine 和 Lange 负责人确认是否能使用；
+- 计划模块提出 `PlanDecision`，WorldEngine 负责人确认是否能执行；
+- 劳动匹配模块提出 `LaborAssignment`，Agent 与 WorldEngine 负责人共同确认。
 
 确认时必须回答：
 
@@ -170,7 +183,7 @@ flowchart TD
 - 时间步和调用顺序是否一致；
 - 状态所有权是否明确；
 - 异常和非法输入是否有统一处理；
-- 不同制度能否使用相同的 Engine 接口；
+- 不同制度能否使用相同的 WorldEngine 接口；
 - 是否遗漏契约测试和端到端测试所需的信息。
 
 统一接口应设置版本，例如：
@@ -187,7 +200,7 @@ interface_version: "0.1"
 
 示例：
 
-- Engine：库存守恒、运输损耗、健康更新、非法状态拒绝；
+- WorldEngine：库存守恒、运输损耗、健康更新、非法状态拒绝；
 - LLM：结构化输出解析、非法行为拒绝、超时与回退；
 - 市场：撮合、价格形成、供需不平衡和未成交处理；
 - 计划：劳动分配、资源约束和计划可行性。
@@ -204,8 +217,8 @@ interface_version: "0.1"
 
 例如：
 
-- `AgentAction` 是否一定能被 Engine 解析；
-- `MarketResult` 是否满足 Engine 的结算要求；
+- `AgentAction` 是否一定能被 WorldEngine 解析；
+- `MarketResult` 是否满足 WorldEngine 的结算要求；
 - `PlanDecision` 是否包含完整生产、劳动和调拨信息；
 - Lange 中央计划局能否读取市场的价格和超额需求反馈。
 
@@ -218,7 +231,7 @@ interface_version: "0.1"
 → 生成观察
 → 产生行为
 → 市场或计划模块产生决策
-→ Engine 校验与结算
+→ WorldEngine 校验与结算
 → 输出下一轮状态
 ```
 
@@ -360,4 +373,3 @@ interface_version: "0.1"
 → 问题退回对应负责人修复
 → 阶段验收与实验
 ```
-

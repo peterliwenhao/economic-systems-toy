@@ -908,13 +908,14 @@
             原始状态、决策和结算事件完整保存；第一版只计算两个最小指标，但不丢失未来分析所需信息。
           </p>
           <div class="resource-links" aria-label="相关文档">
+            <a href="implementation-roadmap.html">五阶段实施 Roadmap 与进度 Dashboard</a>
             <a href="development-collaboration-process.html">开发协作与接口评审流程</a>
             <a href="python-engineering-kickoff-guide.html">Python 软件工程启动会讲稿</a>
           </div>
         </div>
         <aside class="hero-note">
           <strong>架构核心</strong>
-          <p>制度负责产生决策，Engine 是唯一状态修改者；规则、优化与 LLM 是可替换策略，不与制度绑定。</p>
+          <p>SimulationEngine 负责调用流程，制度负责产生决策，WorldEngine 是唯一状态修改者；规则、优化与 LLM 是可替换策略。</p>
         </aside>
       </header>
 
@@ -942,7 +943,7 @@
             <p>四人先提交最小接口草案并完成对齐；LLM 负责人随后实现公共契约、运行编排、存储和 Fake 组件，用假实现跑通一轮。</p>
           </article>
           <article class="decision">
-            <h3>Engine 是唯一状态修改者</h3>
+            <h3>WorldEngine 是唯一状态修改者</h3>
             <p>市场、计划局、岗位匹配和 LLM 只能提出结构化行动或决策，不能直接写库存、健康、产量和位置。</p>
           </article>
           <article class="decision">
@@ -989,14 +990,14 @@
           <div class="layer">
             <div class="layer-title">Evidence &amp; Runtime</div>
             <div class="layer-content">
-              <span>Experiment Runner</span><span>Event Stream</span><span>State Snapshots</span><span>LLM Trace</span><span>Run Manifest</span><span>Minimal Metrics</span>
+              <span>Experiment Runner</span><span>Simulation Engine</span><span>Event Stream</span><span>State Snapshots</span><span>LLM Trace</span><span>Run Manifest</span><span>Minimal Metrics</span>
             </div>
           </div>
         </div>
 
         <article class="diagram-panel">
           <h3>整体架构与主数据流</h3>
-          <p class="diagram-note">实线表示运行时数据流；所有正式状态变化最终都经过 Engine 校验与结算。</p>
+          <p class="diagram-note">实线表示运行时数据流；SimulationEngine 负责编排，所有正式状态变化最终都经过 WorldEngine 校验与结算。</p>
           <div class="mermaid">
 flowchart TB
   subgraph CFG[Configuration & Scenario]
@@ -1011,13 +1012,15 @@ flowchart TB
   end
 
   subgraph CORE[Common Skeleton]
-    RUN[Experiment / Episode Runner]
+    EXP[Experiment Runner]
+    SIM[Simulation Engine]
     CONTRACTS[Public Contracts]
     STORE[Artifact Store]
-    PORTS[Policy / Mechanism / Engine Ports]
+    PORTS[Policy / Mechanism / WorldEngine Ports]
     CONTRACTS --> PORTS
-    RUN --> PORTS
-    RUN --> STORE
+    EXP --> SIM
+    SIM --> PORTS
+    SIM --> STORE
   end
 
   subgraph POLICY[Agents & Policies]
@@ -1062,15 +1065,18 @@ flowchart TB
     METRIC[Need Satisfaction / Output by Good]
   end
 
-  RS --> RUN
-  RUN --> STATE
+  RS --> EXP
+  SIM --> STATE
+  SIM --> INFO
   STATE --> INFO
-  ACTION --> MARKET
-  ACTION --> LANGE
-  ACTION --> COCK
-  ACTION --> JOB
-  DECISION --> VALIDATE
-  NEXT --> RUN
+  ACTION --> SIM
+  SIM --> MARKET
+  SIM --> LANGE
+  SIM --> COCK
+  SIM --> JOB
+  DECISION --> SIM
+  SIM --> VALIDATE
+  NEXT --> SIM
   ACTION --> EVENTS
   DECISION --> EVENTS
   SETTLE --> EVENTS
@@ -1093,21 +1099,22 @@ flowchart TB
                   <tr><td><code>RealizedInstance</code></td><td>由初始化规格和 seed 生成的具体主体、禀赋、位置与岗位；保存后可直接重放。</td></tr>
                   <tr><td><code>ExperimentTreatment</code></td><td>声明本次实验要改变的制度、策略或冲击，不能偷偷覆盖世界物理规则。</td></tr>
                   <tr><td><code>Resolved Scenario</code></td><td>合并并校验上述配置后得到的只读运行输入，包含来源、版本和 hash。</td></tr>
-                  <tr><td><code>Experiment / Episode Runner</code></td><td>装配模块并调度 reset、step、子循环、终止和记录；它负责流程，不负责经济算法。</td></tr>
+                  <tr><td><code>ExperimentRunner</code></td><td>负责 treatment 组合、多 seed、重复运行、恢复和失败汇总；每个单独 run 交给 SimulationEngine。</td></tr>
+                  <tr><td><code>SimulationEngine</code></td><td>启动并推进一个 episode，依次调用 Policy、Mechanism 与 WorldEngine，负责 step loop、Lange 子循环和终止判断。</td></tr>
                   <tr><td><code>PublicContracts</code></td><td>定义跨模块数据结构、字段语义、单位、版本和序列化规则，是团队共同依赖的契约。</td></tr>
                   <tr><td><code>Artifact Store</code></td><td>按 run_id 追加保存配置、事件、快照、模型 trace、失败和指标，不参与状态结算。</td></tr>
-                  <tr><td><code>Ports</code></td><td>规定 Runner 调用 Policy、Mechanism、Engine 的最小方法集合，使真实实现和 Fake 可互换。</td></tr>
+                  <tr><td><code>Ports</code></td><td>规定 SimulationEngine 调用 Policy、Mechanism、WorldEngine 的最小方法集合，使真实实现和 Fake 可互换。</td></tr>
                   <tr><td><code>InformationPolicy / ObservationBuilder</code></td><td>从完整状态构造每个主体允许看到的观察，避免 Policy 直接读取全局秘密。</td></tr>
                   <tr><td><code>Policy Router</code></td><td>按主体、角色和实验配置选择规则、优化或 LLM Policy。</td></tr>
                   <tr><td><code>RulePolicy / OptimizationPolicy</code></td><td>用确定性规则或优化器生成主体行动，既是基线也是 LLM 失败时的候选回退。</td></tr>
                   <tr><td><code>LLM Policy</code></td><td>把观察转成 Prompt，调用模型并解析为合法结构；不得直接修改世界状态。</td></tr>
-                  <tr><td><code>AgentAction / Report</code></td><td>主体提交的报价、需求、劳动意愿或报告的统一外壳，仍需机制与 Engine 校验。</td></tr>
+                  <tr><td><code>AgentAction / Report</code></td><td>主体提交的报价、需求、劳动意愿或报告的统一外壳，仍需机制与 WorldEngine 校验。</td></tr>
                   <tr><td><code>MarketSystem</code></td><td>接收订单或试行价格下的响应，执行撮合、出清并生成成交及市场反馈。</td></tr>
                   <tr><td><code>LangePlanner</code></td><td>提出和更新试行价格、判断收敛并输出生产指导；不自行实现市场撮合。</td></tr>
                   <tr><td><code>CockshottPlanner</code></td><td>依据需求、资源、投入产出和劳动时间生成可行的生产、调拨与配给计划。</td></tr>
                   <tr><td><code>LaborMatcher</code></td><td>把劳动供给与各机制产生的岗位需求匹配为候选劳动安排。</td></tr>
-                  <tr><td><code>MechanismDecision</code></td><td>把市场、计划和岗位结果适配成 Engine 可统一校验的制度决策。</td></tr>
-                  <tr><td><code>WorldState</code></td><td>某一逻辑时刻的完整权威状态；只有 Engine 能产生下一版本。</td></tr>
+                  <tr><td><code>MechanismDecision</code></td><td>把市场、计划和岗位结果适配成 WorldEngine 可统一校验的制度决策。</td></tr>
+                  <tr><td><code>WorldState</code></td><td>某一逻辑时刻的完整权威状态；只有 WorldEngine 能产生下一版本。</td></tr>
                   <tr><td><code>DecisionValidator</code></td><td>检查行动来源、状态版本、库存、能力、容量和时间是否允许执行。</td></tr>
                   <tr><td><code>SettlementPipeline</code></td><td>按固定阶段把合法行动和决策转成状态变化；相同输入和 seed 必须得到相同结果。</td></tr>
                   <tr><td><code>InvariantChecker</code></td><td>在提交下一状态前验证守恒、非负、容量、引用完整性和账本一致性。</td></tr>
@@ -1138,8 +1145,8 @@ flowchart TB
               <li>公共数据契约和 schema 版本。</li>
               <li>四类配置的加载、合并入口与 Resolved Scenario。</li>
               <li>统一运行入口：reset、step、episode、终止。</li>
-              <li>Policy、Engine、Mechanism 的 Protocol / 抽象入口。</li>
-              <li>FakePolicy、FakeEngine、FakeMechanism 测试桩。</li>
+              <li>Policy、Mechanism、WorldEngine 的 Protocol，以及负责调用它们的 SimulationEngine。</li>
+              <li>FakePolicy、FakeWorldEngine、FakeMechanism 测试桩。</li>
               <li>Run ID、Manifest、事件、快照和 trace 写入器。</li>
               <li>最小端到端 smoke test。</li>
             </ul>
@@ -1155,7 +1162,7 @@ flowchart TB
           </article>
 
           <article class="owner world">
-            <div class="owner-kicker">成员 2 · 世界与 Engine</div>
+            <div class="owner-kicker">成员 2 · 世界与 WorldEngine</div>
             <h3>世界状态、物理规则与确定性结算</h3>
             <h4>世界模型</h4>
             <ul>
@@ -1217,7 +1224,7 @@ flowchart TB
             <ul>
               <li>技能、健康、劳动供给与岗位需求。</li>
               <li>工作地点、部门、工时和未匹配原因。</li>
-              <li>返回统一 LaborAssignment，交 Engine 校验。</li>
+              <li>返回统一 LaborAssignment，交 WorldEngine 校验。</li>
             </ul>
             <div class="not-owned"><strong>不负责：</strong>市场撮合、超额需求计算、生产结算或直接修改 Agent 工作地点。</div>
           </article>
@@ -1240,14 +1247,16 @@ flowchart TB
     CONFIG[Config Loader]
     RESOLVE[Scenario Resolver]
     CONTRACT[Contracts + Schema Version]
-    RUNNER[Run / Episode / Step Runner]
-    PORT[Policy · Mechanism · Engine Ports]
-    FAKE[FakePolicy · FakeMechanism · FakeEngine]
+    EXP[Experiment Runner]
+    SIM[Simulation Engine]
+    PORT[Policy · Mechanism · WorldEngine Ports]
+    FAKE[FakePolicy · FakeMechanism · FakeWorldEngine]
     WRITER[Manifest · Event · Snapshot Writers]
-    CONFIG --> RESOLVE --> RUNNER
-    CONTRACT --> PORT --> RUNNER
+    CONFIG --> RESOLVE --> EXP --> SIM
+    CONTRACT --> PORT --> SIM
     FAKE --> PORT
-    RUNNER --> WRITER
+    EXP --> WRITER
+    SIM --> WRITER
   end
 
   subgraph AGENT[Agent & LLM]
@@ -1273,8 +1282,9 @@ flowchart TB
     CHECK --> FALLBACK --> ACT
   end
 
-  RUNNER --> VIEW
-  ACT --> PORT
+  SIM --> VIEW
+  ACT --> SIM
+  SIM --> PORT
   TRACE --> WRITER
             </div>
             <details class="component-guide">
@@ -1285,11 +1295,12 @@ flowchart TB
                   <tr><td><code>Config Loader</code></td><td>读取 YAML/JSON、验证基础格式并保留来源；不决定配置冲突如何解决。</td></tr>
                   <tr><td><code>Scenario Resolver</code></td><td>按明确优先级合并世界规则、实现例和 treatment，输出不可变的 ResolvedScenario。</td></tr>
                   <tr><td><code>Contracts + Schema Version</code></td><td>维护跨模块 DTO、枚举、单位与版本；变更需接口双方共同评审。</td></tr>
-                  <tr><td><code>Run / Episode / Step Runner</code></td><td>控制实验、episode、轮次和 Lange 子循环的调用顺序与失败传播。</td></tr>
-                  <tr><td><code>Policy · Mechanism · Engine Ports</code></td><td>面向调用方的最小协议，使四个实现组可独立开发并替换测试桩。</td></tr>
+                  <tr><td><code>Experiment Runner</code></td><td>控制 treatment、多 seed 和重复 run；不直接调用主体或结算单步。</td></tr>
+                  <tr><td><code>Simulation Engine</code></td><td>负责单个 episode、轮次和 Lange 子循环的调用顺序与失败传播。</td></tr>
+                  <tr><td><code>Policy · Mechanism · WorldEngine Ports</code></td><td>面向 SimulationEngine 的最小协议，使四个实现组可独立开发并替换测试桩。</td></tr>
                   <tr><td><code>FakePolicy</code></td><td>稳定返回预设 AgentAction，用于在 LLM 未完成前测试流程。</td></tr>
                   <tr><td><code>FakeMechanism</code></td><td>返回预设 MechanismDecision，用于隔离市场和计划算法。</td></tr>
-                  <tr><td><code>FakeEngine</code></td><td>模拟 reset/step 和固定状态推进，只用于骨架契约测试，不冒充真实物理结算。</td></tr>
+                  <tr><td><code>FakeWorldEngine</code></td><td>模拟 reset/step 和固定状态推进，只用于骨架契约测试，不冒充真实物理结算。</td></tr>
                   <tr><td><code>Manifest · Event · Snapshot Writers</code></td><td>以追加、原子和可重读方式写运行产物，确保失败运行也留下证据。</td></tr>
                   <tr><td><code>StateView</code></td><td>Engine 提供的只读裁剪视图；不同角色可有不同字段，但共享状态版本。</td></tr>
                   <tr><td><code>Observation Builder</code></td><td>把 StateView 转成主体可理解、可序列化的 Observation。</td></tr>
@@ -1300,7 +1311,7 @@ flowchart TB
                   <tr><td><code>LLM Provider Adapter</code></td><td>统一不同模型供应商的请求、响应、超时和用量字段，不包含经济逻辑。</td></tr>
                   <tr><td><code>Raw Response</code></td><td>不可覆盖地保留模型原始返回，供解析失败和行为研究审计。</td></tr>
                   <tr><td><code>Structured Parser</code></td><td>从原始响应提取结构化候选，不负责判断经济行为是否可执行。</td></tr>
-                  <tr><td><code>Action Schema Validation</code></td><td>检查字段、类型、枚举和基本范围；资源可行性仍由 Engine 检查。</td></tr>
+                  <tr><td><code>Action Schema Validation</code></td><td>检查字段、类型、枚举和基本范围；资源可行性仍由 WorldEngine 检查。</td></tr>
                   <tr><td><code>Retry / Timeout / Fallback</code></td><td>按预算处理暂时失败，并在耗尽后返回规则行动、no-op 或明确失败。</td></tr>
                   <tr><td><code>AgentAction</code></td><td>经过解析和 schema 校验的主体行动候选，连同来源与状态版本交给机制。</td></tr>
                   <tr><td><code>Token · Cost · Latency · Failure Trace</code></td><td>记录每次模型调用的可观测信息，用于成本、性能和失败分析。</td></tr>
@@ -1314,11 +1325,12 @@ flowchart TB
                 <tbody>
                   <tr><td><code>ConfigLoader</code></td><td><code class="signature">load(paths) -&gt; RawConfigBundle</code><br>只负责读取、基础 schema 检查和来源记录。</td></tr>
                   <tr><td><code>ScenarioResolver</code></td><td><code class="signature">resolve(bundle, seed) -&gt; ResolvedScenario</code><br>执行合并优先级、交叉校验与 hash 固化。</td></tr>
-                  <tr><td><code>ExperimentRunner</code></td><td><code class="signature">run(scenario); run_episode(ctx); run_step(ctx)</code><br>唯一的顶层流程编排器，同时负责 Lange 子循环调度。</td></tr>
+                  <tr><td><code>ExperimentRunner</code></td><td><code class="signature">run_experiment(matrix, seeds); run_once(spec) -&gt; RunSummary</code><br>批量调度多个独立 run，每个 run 委托给 SimulationEngine。</td></tr>
+                  <tr><td><code>SimulationEngine</code></td><td><code class="signature">run_episode(scenario); run_step(context) -&gt; StepResult</code><br>单次运行的顶层编排器，负责 Policy → Mechanism → WorldEngine 与 Lange 子循环。</td></tr>
                   <tr><td><code>Contract dataclasses</code></td><td><code class="signature">ResolvedScenario, Observation, AgentAction, MechanismDecision, StepResult</code><br>建议使用 frozen dataclass / Pydantic model；只有字段和校验，不放业务流程。</td></tr>
                   <tr><td><code>PolicyPort</code></td><td><code class="signature">decide(observation, context) -&gt; AgentAction</code><br>规则和 LLM Policy 必须实现的共同接口。</td></tr>
                   <tr><td><code>MechanismPort</code></td><td><code class="signature">coordinate(view, actions, context) -&gt; MechanismDecision</code><br>市场和计划机制的共同外壳。</td></tr>
-                  <tr><td><code>EnginePort</code></td><td><code class="signature">reset(scenario) -&gt; WorldState; step(state, actions, decision) -&gt; StepResult</code><br>Runner 仅通过该接口推进世界。</td></tr>
+                  <tr><td><code>WorldEnginePort</code></td><td><code class="signature">reset(scenario) -&gt; WorldState; step(state, actions, decision) -&gt; StepResult</code><br>SimulationEngine 仅通过该接口推进世界。</td></tr>
                   <tr><td><code>ArtifactStore</code></td><td><code class="signature">start_run(); append_event(); write_snapshot(); finalize()</code><br>统一管理追加写、原子快照与 manifest 状态。</td></tr>
                   <tr><td><code>ObservationBuilder</code></td><td><code class="signature">build(state_view, actor_id, information_policy) -&gt; Observation</code><br>生成主体实际可见的观察。</td></tr>
                   <tr><td><code>PolicyRouter</code></td><td><code class="signature">resolve(actor_id, role, treatment) -&gt; PolicyPort</code><br>不执行决策，只选择实现。</td></tr>
@@ -1326,21 +1338,21 @@ flowchart TB
                   <tr><td><code>LLMPolicy</code></td><td><code class="signature">decide(observation, context) -&gt; AgentAction</code><br>内部组合 PromptBuilder、LLMProvider、ActionParser 与 ActionValidator。</td></tr>
                   <tr><td><code>LLMProvider</code></td><td><code class="signature">generate(request, timeout) -&gt; ProviderResponse</code><br>隔离供应商 SDK，并返回统一 usage 与错误。</td></tr>
                   <tr><td><code>ActionParser</code></td><td><code class="signature">parse(raw_response) -&gt; ActionCandidate | ParseFailure</code><br>只做结构提取，不访问世界状态。</td></tr>
-                  <tr><td><code>ActionValidator</code></td><td><code class="signature">validate(candidate, schema) -&gt; AgentAction | SchemaFailure</code><br>检查类型和范围；库存与权限仍由 Engine 判断。</td></tr>
+                  <tr><td><code>ActionValidator</code></td><td><code class="signature">validate(candidate, schema) -&gt; AgentAction | SchemaFailure</code><br>检查类型和范围；库存与权限仍由 WorldEngine 判断。</td></tr>
                   <tr><td><code>FailurePolicy</code></td><td><code class="signature">recover(failure, observation, budget) -&gt; AgentAction | PolicyFailure</code><br>集中实现重试、超时和回退规则。</td></tr>
                   <tr><td><code>TraceRecorder</code></td><td><code class="signature">record_policy_call(call, response, outcome)</code><br>将 token、成本、延迟、原始响应和失败写入 ArtifactStore。</td></tr>
-                  <tr><td><code>FakePolicy / FakeMechanism / FakeEngine</code></td><td><code class="signature">implement the same public Ports</code><br>测试替身不得拥有生产实现没有的额外调用路径。</td></tr>
+                  <tr><td><code>FakePolicy / FakeMechanism / FakeWorldEngine</code></td><td><code class="signature">implement the same public Ports</code><br>测试替身不得拥有生产实现没有的额外调用路径。</td></tr>
                 </tbody>
               </table></div>
               <h4>Runtime process</h4>
               <ol class="process-list">
                 <li><strong>Resolve:</strong> <code>ConfigLoader</code> 读取配置，<code>ScenarioResolver</code> 生成并保存 <code>ResolvedScenario</code>。</li>
-                <li><strong>Initialize:</strong> <code>ExperimentRunner</code> 创建 run，调用 <code>EnginePort.reset()</code> 并写初始快照。</li>
-                <li><strong>Observe:</strong> Runner 获取只读视图，为每个主体调用 <code>ObservationBuilder.build()</code>。</li>
+                <li><strong>Initialize:</strong> <code>ExperimentRunner</code> 创建 run 并启动 <code>SimulationEngine</code>；后者调用 <code>WorldEnginePort.reset()</code> 并写初始快照。</li>
+                <li><strong>Observe:</strong> SimulationEngine 获取只读视图，为每个主体调用 <code>ObservationBuilder.build()</code>。</li>
                 <li><strong>Route:</strong> <code>PolicyRouter</code> 选择 <code>RulePolicy</code> 或 <code>LLMPolicy</code>。</li>
                 <li><strong>Decide:</strong> Policy 返回 <code>AgentAction</code>；LLM 路径同时保存原始响应和调用 trace。</li>
-                <li><strong>Coordinate and settle:</strong> Runner 调用 <code>MechanismPort</code>，再把统一决策交给 <code>EnginePort.step()</code>。</li>
-                <li><strong>Persist:</strong> <code>ArtifactStore</code> 写事件、快照、指标与失败；Runner 判断继续或终止。</li>
+                <li><strong>Coordinate and settle:</strong> SimulationEngine 调用 <code>MechanismPort</code>，再把统一决策交给 <code>WorldEnginePort.step()</code>。</li>
+                <li><strong>Persist:</strong> <code>ArtifactStore</code> 写事件、快照、指标与失败；SimulationEngine 判断 episode 继续或终止，ExperimentRunner 汇总多个 run。</li>
               </ol>
             </details>
           </article>
@@ -1417,7 +1429,7 @@ flowchart TB
                 <thead><tr><th>Class / Protocol</th><th>Primary API and responsibility</th></tr></thead>
                 <tbody>
                   <tr><td><code>WorldInitializer</code></td><td><code class="signature">initialize(scenario) -&gt; WorldState</code><br>创建并交叉校验初始实体、库存、位置和机构状态。</td></tr>
-                  <tr><td><code>WorldEngine</code></td><td><code class="signature">reset(scenario); step(state, actions, decision, shocks) -&gt; StepResult</code><br>EnginePort 的真实门面和唯一状态提交者。</td></tr>
+                  <tr><td><code>WorldEngine</code></td><td><code class="signature">reset(scenario); step(state, actions, decision, shocks) -&gt; StepResult</code><br>WorldEnginePort 的真实实现和唯一状态提交者；它不调用 Policy 或 Mechanism。</td></tr>
                   <tr><td><code>StateViewFactory</code></td><td><code class="signature">for_actor(state, actor_id); for_mechanism(state, mechanism)</code><br>按权限返回不可变投影。</td></tr>
                   <tr><td><code>PhaseController</code></td><td><code class="signature">current_phase(clock); advance(clock) -&gt; SimulationClock</code><br>固定阶段顺序与逻辑时间。</td></tr>
                   <tr><td><code>DecisionValidator</code></td><td><code class="signature">validate(state, actions, decision, phase) -&gt; ValidationReport</code><br>统一执行权限、资源、容量与版本检查。</td></tr>
@@ -1480,7 +1492,7 @@ flowchart TB
                   <tr><td><code>Buy / Sell Requests</code></td><td>主体提交的商品、方向、数量、限价和有效期；它们是意愿，不是已成交事实。</td></tr>
                   <tr><td><code>Optional Lange Trial Prices</code></td><td>Lange 计划局传入的外生试行价格；普通市场运行时可以为空。</td></tr>
                   <tr><td><code>Market StateView</code></td><td>市场获准读取的库存、主体资格、历史价格等只读信息。</td></tr>
-                  <tr><td><code>Order Validator</code></td><td>检查订单 schema、主体资格、数量与价格范围；最终库存可执行性由 Engine 复核。</td></tr>
+                  <tr><td><code>Order Validator</code></td><td>检查订单 schema、主体资格、数量与价格范围；最终库存可执行性由 WorldEngine 复核。</td></tr>
                   <tr><td><code>Normalized Orders</code></td><td>统一单位、精度和默认字段后的订单，作为后续算法唯一输入。</td></tr>
                   <tr><td><code>Order Book / Batch</code></td><td>收集本轮有效订单；第一版建议同步批量出清而非连续交易。</td></tr>
                   <tr><td><code>Agent / Enterprise Response at Trial Price</code></td><td>在 Lange 价格下生成供需数量；响应规则需要与主体 Policy 的责任边界对齐。</td></tr>
@@ -1492,7 +1504,7 @@ flowchart TB
                   <tr><td><code>Excess Demand / Supply</code></td><td>按商品计算总需求减总供给，是 Lange 调价的关键反馈。</td></tr>
                   <tr><td><code>MarketFeedback</code></td><td>汇总价格、成交量、未成交和超额需求，供 Lange 或记录系统读取。</td></tr>
                   <tr><td><code>MarketResult</code></td><td>市场模块的完整结果，包含成交与反馈，但尚未成为世界事实。</td></tr>
-                  <tr><td><code>MechanismDecision Adapter</code></td><td>把 MarketResult 转成 Engine 可校验的统一成交/转移指令。</td></tr>
+                  <tr><td><code>MechanismDecision Adapter</code></td><td>把 MarketResult 转成 WorldEngine 可校验的统一成交/转移指令。</td></tr>
                   <tr><td><code>Lange Planning Port</code></td><td>向 Lange 计划局暴露稳定的反馈接口，避免计划代码依赖市场内部类。</td></tr>
                 </tbody>
               </table></div>
@@ -1503,7 +1515,7 @@ flowchart TB
                 <thead><tr><th>Class / Protocol</th><th>Primary API and responsibility</th></tr></thead>
                 <tbody>
                   <tr><td><code>MarketMechanism</code></td><td><code class="signature">coordinate(view, actions, context) -&gt; MechanismDecision</code><br>普通市场入口，组合订单管线并返回统一决策。</td></tr>
-                  <tr><td><code>TrialPriceMarketPort</code></td><td><code class="signature">evaluate(view, trial_prices, responses, context) -&gt; MarketFeedback</code><br>供 Runner 执行 Lange 单次价格试验。</td></tr>
+                  <tr><td><code>TrialPriceMarketPort</code></td><td><code class="signature">evaluate(view, trial_prices, responses, context) -&gt; MarketFeedback</code><br>供 SimulationEngine 执行 Lange 单次价格试验。</td></tr>
                   <tr><td><code>Market dataclasses</code></td><td><code class="signature">BuyRequest, SellRequest, Order, Trade, MarketFeedback, MarketResult</code><br>使用稳定 ID、商品单位和 Decimal/统一定点精度。</td></tr>
                   <tr><td><code>OrderValidator</code></td><td><code class="signature">validate(request, view) -&gt; OrderValidation</code><br>检查订单格式、主体资格与基本范围。</td></tr>
                   <tr><td><code>OrderNormalizer</code></td><td><code class="signature">normalize(valid_order, market_rules) -&gt; Order</code><br>统一单位、精度、默认值与有效期。</td></tr>
@@ -1521,7 +1533,7 @@ flowchart TB
                 <li><strong>Normalize:</strong> <code>OrderNormalizer</code> 统一单位和精度，<code>BatchOrderBook</code> 冻结订单批次。</li>
                 <li><strong>Clear:</strong> <code>ClearingEngine</code> 排序、撮合并生成候选成交、价格和未成交集合。</li>
                 <li><strong>Measure:</strong> <code>ExcessDemandCalculator</code> 生成各商品反馈；普通市场和 Lange 共用该计算。</li>
-                <li><strong>Return:</strong> 普通市场经 <code>MarketDecisionAdapter</code> 返回机制决策；Lange 单次试验返回 <code>MarketFeedback</code> 给 Runner。</li>
+                <li><strong>Return:</strong> 普通市场经 <code>MarketDecisionAdapter</code> 返回机制决策；Lange 单次试验返回 <code>MarketFeedback</code> 给 SimulationEngine。</li>
                 <li><strong>Settle elsewhere:</strong> 所有成交仍由 <code>WorldEngine</code> 复核和落账，市场模块不得修改库存。</li>
               </ol>
             </details>
@@ -1548,10 +1560,10 @@ flowchart TB
     CONV -->|Stop| GUIDE
   end
 
-  RUNNER[Runner-owned Lange Loop]
+  SIM[SimulationEngine-owned Lange Loop]
   MARKETPORT[Market Port]
-  RUNNER -->|Request initial / updated prices| P0
-  PROPOSE --> RUNNER --> MARKETPORT
+  SIM -->|Request initial / updated prices| P0
+  PROPOSE --> SIM --> MARKETPORT
   MARKETPORT -->|MarketFeedback| MF
 
   subgraph COCK[Cockshott Planning Board]
@@ -1594,9 +1606,9 @@ flowchart TB
                   <tr><td><code>Planning StateView</code></td><td>计划机构获准看到的需求、库存、产能和技术只读视图；其信息范围是实验制度的一部分。</td></tr>
                   <tr><td><code>Needs / Reports / Labor Preferences</code></td><td>主体提交的需求、报告和劳动偏好；可能不完整或有误，不能等同于真实状态。</td></tr>
                   <tr><td><code>Initial Trial Price</code></td><td>生成 Lange 第一次迭代的商品价格向量及其初始化依据。</td></tr>
-                  <tr><td><code>Trial Price Proposal</code></td><td>把本次试行价格和迭代编号返回 Runner；计划局不在内部直接循环调用市场。</td></tr>
-                  <tr><td><code>Runner-owned Lange Loop</code></td><td>由公共 Runner 调度“提价—市场执行—反馈—更新”，避免成员 3 与 4 相互导入实现。</td></tr>
-                  <tr><td><code>Market Port</code></td><td>Runner 通过该端口调用成员 3 的试行价格市场执行，并把公共 MarketFeedback 交回计划局。</td></tr>
+                  <tr><td><code>Trial Price Proposal</code></td><td>把本次试行价格和迭代编号返回 SimulationEngine；计划局不在内部直接循环调用市场。</td></tr>
+                  <tr><td><code>SimulationEngine-owned Lange Loop</code></td><td>由公共 SimulationEngine 调度“提价—市场执行—反馈—更新”，避免成员 3 与 4 相互导入实现。</td></tr>
+                  <tr><td><code>Market Port</code></td><td>SimulationEngine 通过该端口调用成员 3 的试行价格市场执行，并把公共 MarketFeedback 交回计划局。</td></tr>
                   <tr><td><code>Read MarketFeedback</code></td><td>提取各商品超额需求、成交和未成交信号，检查反馈版本与完整性。</td></tr>
                   <tr><td><code>Price Update Rule</code></td><td>根据超额需求按明确步长或公式更新试行价格。</td></tr>
                   <tr><td><code>Convergence / Iteration Limit</code></td><td>判断是否达到容差、停滞或最大迭代，并给出可审计的退出原因。</td></tr>
@@ -1605,13 +1617,13 @@ flowchart TB
                   <tr><td><code>Input-output + Labor-time Model</code></td><td>表达生产技术、投入产出关系和直接/间接劳动时间核算。</td></tr>
                   <tr><td><code>Resource / Capacity Constraints</code></td><td>提供库存、劳动、设施产能、空间与其他硬约束。</td></tr>
                   <tr><td><code>Plan Feasibility Check</code></td><td>验证候选计划是否满足技术和资源限制，并解释不可行约束。</td></tr>
-                  <tr><td><code>Production · Transfer · Allocation Plan</code></td><td>输出生产目标、地点间调拨和配给提案，交给 Engine 最终校验与执行。</td></tr>
+                  <tr><td><code>Production · Transfer · Allocation Plan</code></td><td>输出生产目标、地点间调拨和配给提案，交给 WorldEngine 最终校验与执行。</td></tr>
                   <tr><td><code>Skills · Health · Labor Supply</code></td><td>汇总每个主体能提供的工时、技能、健康约束和可工作地点。</td></tr>
                   <tr><td><code>Sector · Workplace · Hour Demand</code></td><td>把 Lange 指导或 Cockshott 计划转成岗位、部门、地点与工时需求。</td></tr>
                   <tr><td><code>Matching Rule</code></td><td>依据技能、偏好、距离和优先级匹配供需；规则必须明确 tie-break。</td></tr>
                   <tr><td><code>LaborAssignment + Unmatched Reasons</code></td><td>返回每个主体的候选岗位/工时，以及未匹配岗位和劳动力的原因。</td></tr>
                   <tr><td><code>Planning Decision Adapter</code></td><td>合并价格、生产、调拨、配给和劳动安排，转换成统一机制决策。</td></tr>
-                  <tr><td><code>MechanismDecision</code></td><td>提交给 Engine 的最终计划候选；它本身无权修改位置、库存或健康。</td></tr>
+                  <tr><td><code>MechanismDecision</code></td><td>提交给 WorldEngine 的最终计划候选；它本身无权修改位置、库存或健康。</td></tr>
                 </tbody>
               </table></div>
             </details>
@@ -1636,10 +1648,10 @@ flowchart TB
               </table></div>
               <h4>Lange runtime process</h4>
               <ol class="process-list">
-                <li><strong>Initialize:</strong> Runner 调用 <code>LangePlanner.initialize()</code>，随后取得第一次 <code>TrialPriceProposal</code>。</li>
-                <li><strong>Evaluate:</strong> Runner 把试行价格交给成员 3 的 <code>TrialPriceMarketPort.evaluate()</code>。</li>
-                <li><strong>Update:</strong> Runner 将 <code>MarketFeedback</code> 交给 <code>LangePlanner.update()</code>。</li>
-                <li><strong>Stop or repeat:</strong> <code>LangeConvergencePolicy</code> 返回继续、收敛或失败；继续时由 Runner 发起下一次市场试验。</li>
+                <li><strong>Initialize:</strong> SimulationEngine 调用 <code>LangePlanner.initialize()</code>，随后取得第一次 <code>TrialPriceProposal</code>。</li>
+                <li><strong>Evaluate:</strong> SimulationEngine 把试行价格交给成员 3 的 <code>TrialPriceMarketPort.evaluate()</code>。</li>
+                <li><strong>Update:</strong> SimulationEngine 将 <code>MarketFeedback</code> 交给 <code>LangePlanner.update()</code>。</li>
+                <li><strong>Stop or repeat:</strong> <code>LangeConvergencePolicy</code> 返回继续、收敛或失败；继续时由 SimulationEngine 发起下一次市场试验。</li>
                 <li><strong>Finalize:</strong> 收敛或达到上限后，Planner 返回带退出状态的 <code>PlanProposal</code>。</li>
               </ol>
               <h4>Cockshott and labor runtime process</h4>
@@ -1648,7 +1660,7 @@ flowchart TB
                 <li><strong>Plan:</strong> <code>CockshottPlanner</code> 生成候选生产、调拨和配给方案。</li>
                 <li><strong>Check:</strong> <code>PlanFeasibilityChecker</code> 返回可行性及约束缺口。</li>
                 <li><strong>Match labor:</strong> <code>LaborDemandBuilder</code> 生成岗位需求，<code>LaborMatcher</code> 匹配劳动供给。</li>
-                <li><strong>Adapt:</strong> <code>PlanningDecisionAdapter</code> 生成统一 <code>MechanismDecision</code>，交给 Engine 校验。</li>
+                <li><strong>Adapt:</strong> <code>PlanningDecisionAdapter</code> 生成统一 <code>MechanismDecision</code>，交给 WorldEngine 校验。</li>
               </ol>
             </details>
           </article>
@@ -1670,7 +1682,7 @@ flowchart TB
         </ol>
         <div class="callout">
           <strong>公共骨架的退出条件：</strong>
-          固定配置可以解析；一个微型世界可以 reset；FakePolicy 产生结构化行动；FakeMechanism 返回结构化决策；FakeEngine 完成一次结算；run 目录、事件、快照和最小指标都能写出并被重新读取。
+          固定配置可以解析；SimulationEngine 能启动一个微型世界；FakePolicy 产生结构化行动；FakeMechanism 返回结构化决策；FakeWorldEngine 完成一次结算；run 目录、事件、快照和最小指标都能写出并被重新读取。
         </div>
       </section>
 
@@ -1685,7 +1697,7 @@ flowchart TB
           <article class="run-step"><b>3. 主体行动</b><p>规则、优化或 LLM Policy 产生报价、需求、劳动意愿和报告。</p></article>
           <article class="run-step"><b>4. 机制协调</b><p>市场单次出清、Lange 多次试错，或 Cockshott 单次静态计划。</p></article>
           <article class="run-step"><b>5. 岗位匹配</b><p>根据劳动供给与岗位需求产生 LaborAssignment。</p></article>
-          <article class="run-step"><b>6. Engine 校验</b><p>检查权限、库存、容量、资源约束、时间和状态版本。</p></article>
+          <article class="run-step"><b>6. WorldEngine 校验</b><p>检查权限、库存、容量、资源约束、时间和状态版本。</p></article>
           <article class="run-step"><b>7. 确定性结算</b><p>执行劳动、生产、收获、交易/配给、运输、消费和健康更新。</p></article>
           <article class="run-step"><b>8. 记录与进入下一轮</b><p>保存事件、状态快照和两个最小指标，判断终止条件。</p></article>
         </div>
@@ -1812,7 +1824,7 @@ flowchart TB
           <article class="contract"><code>MarketFeedback</code><h3>市场反馈</h3><p>价格、成交、未成交、超额需求和库存/短缺信号。</p></article>
           <article class="contract"><code>PlanProposal</code><h3>计划提案</h3><p>生产目标、调拨、配给、价格提案和劳动需求。</p></article>
           <article class="contract"><code>LaborAssignment</code><h3>劳动匹配</h3><p>主体、岗位、地点、部门、工时和未匹配原因。</p></article>
-          <article class="contract"><code>MechanismDecision</code><h3>统一机制结果</h3><p>市场、Lange 与 Cockshott 最终都转换为 Engine 可校验的共同决策。</p></article>
+          <article class="contract"><code>MechanismDecision</code><h3>统一机制结果</h3><p>市场、Lange 与 Cockshott 最终都转换为 WorldEngine 可校验的共同决策。</p></article>
           <article class="contract"><code>SettlementEvent / StepResult</code><h3>结算和轮次结果</h3><p>状态变化、拒绝、不变量、下一状态、终止和最小指标。</p></article>
         </div>
       </section>
@@ -1825,8 +1837,8 @@ flowchart TB
         <div class="gate-grid">
           <article class="gate"><div class="gate-number">GATE 1</div><h3>公共骨架</h3><p>Fake 组件跑通一轮；契约可序列化；run 目录可完整读取。</p></article>
           <article class="gate"><div class="gate-number">GATE 2</div><h3>真实 Engine</h3><p>固定行为完成多轮；守恒、非负、容量和相同 seed 重放通过。</p></article>
-          <article class="gate"><div class="gate-number">GATE 3</div><h3>简化市场</h3><p>单商品同步出清与 Engine 结算打通，极小案例可手算。</p></article>
-          <article class="gate"><div class="gate-number">GATE 4</div><h3>简化计划</h3><p>Cockshott 静态计划、岗位匹配与 Engine 打通。</p></article>
+          <article class="gate"><div class="gate-number">GATE 3</div><h3>简化市场</h3><p>单商品同步出清与 WorldEngine 结算打通，极小案例可手算。</p></article>
+          <article class="gate"><div class="gate-number">GATE 4</div><h3>简化计划</h3><p>Cockshott 静态计划、岗位匹配与 WorldEngine 打通。</p></article>
           <article class="gate"><div class="gate-number">GATE 5</div><h3>Lange 试错</h3><p>计划局与市场模块完成多次价格反馈，迭代全程可追踪。</p></article>
           <article class="gate"><div class="gate-number">GATE 6</div><h3>LLM 接入</h3><p>规则 Policy 先通过，再替换 LLM；失败回退和预算记录完整。</p></article>
         </div>

@@ -17,6 +17,7 @@
         <p class="source-note">内容源：<code>docs/DEVELOPMENT_COLLABORATION_PROCESS.md</code></p>
       </header>
       <nav class="doc-nav" aria-label="文档目录">
+          <a href="#progress-dashboard">实施进度 Dashboard</a>
           <a href="#_2">一、基本原则</a>
           <a href="#_3">二、角色与责任</a>
           <a href="#_8">三、完整开发流程</a>
@@ -28,6 +29,23 @@
       <article class="markdown-body">
 <h1 id="_1">开发协作与接口评审流程</h1>
 <p>本文规定项目从架构构思、任务拆分、接口设计、测试设计、正式实现到集成验收的基本流程。目标是让四个开发子系统能够并行推进，同时避免接口不一致、责任边界模糊和最后阶段集中返工。</p>
+<section class="roadmap-panel" id="progress-dashboard">
+  <div>
+    <p class="panel-eyebrow">LIVE IMPLEMENTATION PLAN</p>
+    <h2>实施进度 Dashboard</h2>
+    <p>五阶段、四条开发责任轨和馨月的协调任务统一显示在独立看板中。完成度只统计已经通过验收的交付物。</p>
+    <a class="panel-button" href="implementation-roadmap.html">打开五阶段 Dashboard →</a>
+  </div>
+  <dl>
+    <div><dt>阶段</dt><dd>5</dd></div>
+    <div><dt>任务轨</dt><dd>25</dd></div>
+    <div><dt>当前基线</dt><dd>待馨月审阅/分派</dd></div>
+    <div><dt>数据源</dt><dd><code>project/implementation-roadmap.json</code></dd></div>
+  </dl>
+</section>
+<h2 id="dashboard-maintenance">实施进度 Dashboard</h2>
+<p>Dashboard 的完成度按“已经通过验收的交付物数量 / 计划交付物数量”计算，不使用主观工时百分比。张馨月审阅并正式分派后，应补全真实负责人和 GitHub Issue；任务状态变化必须能对应到接口文档、测试、PR、会议决定或实验记录。</p>
+<p>当前页面中的 Member 1–4 表示职责轨，不代表已经确定的姓名；在馨月完成审阅前，所有新任务均保持“待审阅/分派”。</p>
 <h2 id="_2">一、基本原则</h2>
 <ol>
 <li><strong>先明确研究问题和模块边界，再讨论具体实现。</strong></li>
@@ -35,8 +53,9 @@
 <li><strong>公共接口由提供方与使用方共同确认，不由任何一方单独决定。</strong></li>
 <li><strong>模块负责人对本模块的设计、代码和单元测试负责。</strong></li>
 <li><strong>张馨月负责组织、对齐和集成，不代替所有负责人完成技术设计。</strong></li>
-<li><strong>只有 Engine 可以修改库存、健康、产量等世界物理状态。</strong></li>
-<li><strong>市场、计划机构和 Agent 只提交行为或决策，由 Engine 校验和结算。</strong></li>
+<li><strong>SimulationEngine 负责启动和推进一次运行，并调用 Policy、Mechanism 与 WorldEngine。</strong></li>
+<li><strong>只有 WorldEngine 可以修改库存、健康、产量等世界物理状态。</strong></li>
+<li><strong>市场、计划机构和 Agent 只提交行为或决策，由 WorldEngine 校验和结算。</strong></li>
 <li><strong>不同经济制度必须面对同一套环境、资源、技术和物理结算规则。</strong></li>
 <li><strong>先完成最小可运行骨架，再逐步补充真实机制，不等全部实现完才第一次集成。</strong></li>
 </ol>
@@ -152,11 +171,11 @@
 </ul>
 <p>典型确认关系包括：</p>
 <ul>
-<li>Engine 提出 <code>WorldState</code>，LLM、市场和计划负责人确认是否够用；</li>
-<li>LLM 提出 <code>AgentAction</code>，Engine 负责人确认是否能校验和结算；</li>
-<li>市场提出 <code>MarketResult</code>，Engine 和 Lange 负责人确认是否能使用；</li>
-<li>计划模块提出 <code>PlanDecision</code>，Engine 负责人确认是否能执行；</li>
-<li>劳动匹配模块提出 <code>LaborAssignment</code>，Agent 与 Engine 负责人共同确认。</li>
+<li>WorldEngine 提出 <code>WorldState</code>，LLM、市场和计划负责人确认是否够用；</li>
+<li>LLM 提出 <code>AgentAction</code>，WorldEngine 负责人确认是否能校验和结算；</li>
+<li>市场提出 <code>MarketResult</code>，WorldEngine 和 Lange 负责人确认是否能使用；</li>
+<li>计划模块提出 <code>PlanDecision</code>，WorldEngine 负责人确认是否能执行；</li>
+<li>劳动匹配模块提出 <code>LaborAssignment</code>，Agent 与 WorldEngine 负责人共同确认。</li>
 </ul>
 <p>确认时必须回答：</p>
 <ol>
@@ -175,7 +194,7 @@
 <li>时间步和调用顺序是否一致；</li>
 <li>状态所有权是否明确；</li>
 <li>异常和非法输入是否有统一处理；</li>
-<li>不同制度能否使用相同的 Engine 接口；</li>
+<li>不同制度能否使用相同的 WorldEngine 接口；</li>
 <li>是否遗漏契约测试和端到端测试所需的信息。</li>
 </ul>
 <p>统一接口应设置版本，例如：</p>
@@ -186,7 +205,7 @@
 <p>由各模块负责人设计和实现，用于验证模块内部逻辑。</p>
 <p>示例：</p>
 <ul>
-<li>Engine：库存守恒、运输损耗、健康更新、非法状态拒绝；</li>
+<li>WorldEngine：库存守恒、运输损耗、健康更新、非法状态拒绝；</li>
 <li>LLM：结构化输出解析、非法行为拒绝、超时与回退；</li>
 <li>市场：撮合、价格形成、供需不平衡和未成交处理；</li>
 <li>计划：劳动分配、资源约束和计划可行性。</li>
@@ -201,8 +220,8 @@
 <p>由相邻模块负责人共同设计，张馨月组织和维护整体一致性。</p>
 <p>例如：</p>
 <ul>
-<li><code>AgentAction</code> 是否一定能被 Engine 解析；</li>
-<li><code>MarketResult</code> 是否满足 Engine 的结算要求；</li>
+<li><code>AgentAction</code> 是否一定能被 WorldEngine 解析；</li>
+<li><code>MarketResult</code> 是否满足 WorldEngine 的结算要求；</li>
 <li><code>PlanDecision</code> 是否包含完整生产、劳动和调拨信息；</li>
 <li>Lange 中央计划局能否读取市场的价格和超额需求反馈。</li>
 </ul>
@@ -212,7 +231,7 @@
 → 生成观察
 → 产生行为
 → 市场或计划模块产生决策
-→ Engine 校验与结算
+→ WorldEngine 校验与结算
 → 输出下一轮状态
 </code></pre>
 <p>刘充负责检查极小案例是否符合经济机制；李文浩负责检查执行、记录和复现是否完整。</p>

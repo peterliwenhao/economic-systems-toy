@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Economic Systems Toy 五阶段开发分工、验收闸门与进度 Dashboard。" />
+    <title>Five-stage Implementation Roadmap · Economic Systems Toy</title>
+    <link rel="stylesheet" href="roadmap.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <nav class="breadcrumbs" aria-label="相关文档">
+          <a href="index.html">Project Dashboard</a>
+          <a href="development-collaboration-process.html">Collaboration Process</a>
+          <a href="architecture-v0-1.html">Architecture v0.1</a>
+        </nav>
+        <p class="eyebrow">Implementation Roadmap · Review Draft</p>
+        <h1>从公共骨架到正式实验</h1>
+        <p class="lead">五阶段分工草案。张馨月负责审阅、调整工作量并正式分派；模块负责人负责补齐接口、实现和测试。Dashboard 只依据可核验交付物计算进度。</p>
+        <div class="draft-warning"><strong>当前状态：</strong>以下 25 个工作轨均为待审阅草案，不代表已经正式指派，也不代表代码已完成。</div>
+      </header>
+
+      <section class="boundary-section" aria-labelledby="boundary-title">
+        <div class="section-head">
+          <div><p class="section-index">01 · Boundaries</p><h2 id="boundary-title">谁负责运行，谁负责决策，谁负责结算？</h2></div>
+          <p>“Engine”容易同时指运行循环和物理结算，因此明确拆成 SimulationEngine 与 WorldEngine。</p>
+        </div>
+        <div class="boundary-grid">
+          <article class="boundary-card simulation">
+            <span>01</span><h3>SimulationEngine</h3>
+            <p><strong>一次运行的编排器：</strong>启动和推进一个 episode，依次调用 <code>Policy → Mechanism → WorldEngine</code>，并把事件交给存储。</p>
+            <dl><div><dt>例子</dt><dd>reset、step loop、Lange 子循环、终止判断</dd></div><div><dt>不能做</dt><dd>自己实现主体偏好、市场算法或生产公式</dd></div></dl>
+          </article>
+          <article class="boundary-card policy">
+            <span>02</span><h3>Policy</h3>
+            <p><strong>主体决策规则：</strong>根据一个主体能看到的 <code>Observation</code>，产生该主体“想做什么”的 <code>AgentAction</code>。</p>
+            <dl><div><dt>例子</dt><dd>家庭报需求、企业报供给、主体选择工时</dd></div><div><dt>不能做</dt><dd>直接改库存、价格、健康或工作地点</dd></div></dl>
+          </article>
+          <article class="boundary-card mechanism">
+            <span>03</span><h3>Mechanism</h3>
+            <p><strong>制度协调规则：</strong>汇总多个主体的行动和制度信息，产生“应该怎样协调”的 <code>MechanismDecision</code>。</p>
+            <dl><div><dt>例子</dt><dd>市场撮合、Lange 调价、Cockshott 计划、岗位匹配</dd></div><div><dt>不能做</dt><dd>把候选成交或计划直接写进世界状态</dd></div></dl>
+          </article>
+          <article class="boundary-card engine">
+            <span>04</span><h3>WorldEngine</h3>
+            <p><strong>世界规则执行器：</strong>检查行动和制度决策是否合法，按物理规则结算，生成唯一权威的下一版 <code>WorldState</code>。</p>
+            <dl><div><dt>例子</dt><dd>生产、运输、消费、健康、守恒和容量检查</dd></div><div><dt>不能做</dt><dd>替主体选择偏好，或替制度决定谁应得到资源</dd></div></dl>
+          </article>
+        </div>
+        <div class="data-flow" aria-label="一次运行的数据流">
+          <strong>SimulationEngine</strong><i>calls</i><span>Policy</span><i>→ AgentAction → calls</i><span>Mechanism</span><i>→ MechanismDecision → calls</i><span>WorldEngine</span><i>→</i><span>Next WorldState</span><i>→ next step</i><strong>SimulationEngine</strong>
+        </div>
+      </section>
+
+      <section aria-labelledby="phases-title">
+        <div class="section-head">
+          <div><p class="section-index">02 · Stage Gates</p><h2 id="phases-title">五阶段主线</h2></div>
+          <p>每一阶段通过验收闸门后再进入下一阶段。可以提前写接口草案，但不得把下一阶段功能偷偷塞进当前验收范围。</p>
+        </div>
+        <div id="phase-overview" class="phase-overview"></div>
+      </section>
+
+      <section id="dashboard" aria-labelledby="dashboard-title">
+        <div class="section-head">
+          <div><p class="section-index">03 · Progress Dashboard</p><h2 id="dashboard-title">阶段 × 成员任务看板</h2></div>
+          <p>完成度按已验收交付物计算。负责人姓名由张馨月审阅分派后填入源数据；当前先以 Member 1–4 的职责轨表示。</p>
+        </div>
+        <div id="summary" class="summary-grid" aria-label="进度摘要"></div>
+        <div class="filters" aria-label="Dashboard 筛选">
+          <div id="phase-filters" class="filter-row"></div>
+          <label>责任轨<select id="track-filter"><option value="all">全部成员</option></select></label>
+          <label>状态<select id="status-filter"><option value="all">全部状态</option><option value="draft">待审阅/分派</option><option value="ready">可开始</option><option value="in_progress">进行中</option><option value="review">待验收</option><option value="blocked">阻塞</option><option value="done">已完成</option></select></label>
+        </div>
+        <div id="task-grid" class="task-grid"></div>
+      </section>
+
+      <section class="coordination" aria-labelledby="coordination-title">
+        <div class="section-head">
+          <div><p class="section-index">04 · Coordination</p><h2 id="coordination-title">张馨月如何审阅和分派</h2></div>
+          <p>她负责把草案变成可执行任务，但具体输入输出仍由模块负责人提出、接口双方共同确认。</p>
+        </div>
+        <ol>
+          <li><strong>核对人员与工作量：</strong>为 M1–M4 填写真实负责人，必要时拆小任务，但不改变上层模块边界。</li>
+          <li><strong>建立 Issues：</strong>每个任务写负责人、范围、依赖、交付物、验收条件和明确不做的内容。</li>
+          <li><strong>组织接口对齐：</strong>提供方和使用方共同确认字段、单位、失败语义、正常示例和边界示例。</li>
+          <li><strong>安排测试：</strong>负责人写单测；相邻负责人写契约测试；馨月组织阶段端到端测试。</li>
+          <li><strong>更新 Dashboard：</strong>只有交付物出现并通过审阅后才更新完成数；阻塞必须写明依赖和下一步。</li>
+          <li><strong>阶段集成：</strong>按 Gate 依次集成，问题退回对应负责人修复；李文浩和刘充在规定节点评审。</li>
+        </ol>
+      </section>
+
+      <section class="maintenance" aria-labelledby="maintenance-title">
+        <div class="section-head">
+          <div><p class="section-index">05 · Maintenance</p><h2 id="maintenance-title">Dashboard 如何维护</h2></div>
+        </div>
+        <div class="maintenance-grid">
+          <article><h3>唯一数据源</h3><p>编辑 <code>project/implementation-roadmap.json</code>，不要直接手改生成的 <code>dist/roadmap-data.js</code>。</p></article>
+          <article><h3>重新生成</h3><p>运行 <code>npm run roadmap:build</code>，再执行 <code>npm run validate</code>。</p></article>
+          <article><h3>完成度规则</h3><p><code>completed / total</code> 表示通过验收的交付物数量，不表示估算工时，也不以“写了一半”计数。</p></article>
+          <article><h3>相关证据</h3><p>每项任务必须关联接口、测试、PR、会议决定或实验记录；Dashboard 不是证据本身。</p></article>
+        </div>
+      </section>
+
+      <footer>Economic Systems Toy · Five-stage implementation roadmap · 数据源更新时间 <span id="updated-at">—</span></footer>
+    </main>
+    <script src="roadmap-data.js"></script>
+    <script src="roadmap.js"></script>
+  </body>
+</html>
