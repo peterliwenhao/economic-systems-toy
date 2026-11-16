@@ -46,3 +46,4 @@
 - [开发协作与接口评审流程](DEVELOPMENT_COLLABORATION_PROCESS.md)：规定架构评审、任务拆分、接口设计、测试设计、实现和集成流程；
 - [Python 软件工程与团队开发启动会讲稿](PYTHON_ENGINEERING_KICKOFF_GUIDE.md)：用于向开发成员讲解模块边界、接口、Python 代码组织、测试、Git 和 Codex 使用方式；
 - [四个开发子系统与协作流程图](team-subsystems-workflow.html)：四个开发子系统及简化协作流程的独立 HTML 页面。
+- [系统架构草案 v0.1](../dist/architecture-v0-1.html)：四人分工、模块细化、运行流程、详细存储设计和最小指标的网页说明。
