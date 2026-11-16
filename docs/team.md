@@ -40,3 +40,9 @@
 - 经济机制、目标函数与制度解释问题：优先请刘充评审；
 - 日常实现、实验和文档：由张馨月主导推进，阶段成果进入团队评审；
 - 涉及核心研究问题、指标或结论的改变：三方均应可见并记录依据。
+
+## 开发协作文档
+
+- [开发协作与接口评审流程](DEVELOPMENT_COLLABORATION_PROCESS.md)：规定架构评审、任务拆分、接口设计、测试设计、实现和集成流程；
+- [Python 软件工程与团队开发启动会讲稿](PYTHON_ENGINEERING_KICKOFF_GUIDE.md)：用于向开发成员讲解模块边界、接口、Python 代码组织、测试、Git 和 Codex 使用方式；
+- [四个开发子系统与协作流程图](team-subsystems-workflow.html)：四个开发子系统及简化协作流程的独立 HTML 页面。
