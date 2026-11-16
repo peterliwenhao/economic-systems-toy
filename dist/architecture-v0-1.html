@@ -340,6 +340,86 @@
         min-width: 520px;
       }
 
+      .component-guide {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fbfcfe;
+      }
+
+      .component-guide summary {
+        padding: 13px 16px;
+        cursor: pointer;
+        color: var(--navy);
+        font-weight: 800;
+      }
+
+      .component-guide summary::marker {
+        color: var(--orange);
+      }
+
+      .component-guide .table-wrap {
+        margin: 0;
+        border: 0;
+        border-top: 1px solid var(--line);
+        border-radius: 0 0 14px 14px;
+        box-shadow: none;
+      }
+
+      .component-guide table {
+        min-width: 620px;
+      }
+
+      .component-guide th:first-child,
+      .component-guide td:first-child {
+        width: 29%;
+      }
+
+      .component-guide td {
+        vertical-align: top;
+      }
+
+      .component-guide td code {
+        white-space: nowrap;
+      }
+
+      .question-groups {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .question-group {
+        padding: 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .question-group h3 {
+        margin-bottom: 6px;
+      }
+
+      .question-group > p {
+        margin-top: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .question-group ol {
+        margin-bottom: 0;
+        padding-left: 22px;
+      }
+
+      .question-group li {
+        margin-bottom: 9px;
+      }
+
+      .question-group.critical {
+        border-top: 4px solid var(--orange);
+      }
+
       .layer {
         display: grid;
         grid-template-columns: 150px 1fr;
@@ -716,7 +796,8 @@
 
         .contract-grid,
         .gate-grid,
-        .component-diagrams {
+        .component-diagrams,
+        .question-groups {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
@@ -743,6 +824,7 @@
         .contract-grid,
         .gate-grid,
         .component-diagrams,
+        .question-groups,
         .run-flow,
         .sequence {
           grid-template-columns: 1fr;
@@ -955,14 +1037,55 @@ flowchart TB
   ACTION --> JOB
   DECISION --> VALIDATE
   NEXT --> RUN
-  STORE --> EVENTS
-  STORE --> SNAP
-  STORE --> TRACE
-  STORE --> METRIC
-  ACTION --> STORE
-  DECISION --> STORE
-  SETTLE --> STORE
+  ACTION --> EVENTS
+  DECISION --> EVENTS
+  SETTLE --> EVENTS
+  NEXT --> SNAP
+  LLM --> TRACE
+  NEXT --> METRIC
+  EVENTS --> STORE
+  SNAP --> STORE
+  TRACE --> STORE
+  METRIC --> STORE
           </div>
+          <details class="component-guide" open>
+            <summary>总图组件说明（点击收起）</summary>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>组件</th><th>职责与边界</th></tr></thead>
+                <tbody>
+                  <tr><td><code>世界规则</code></td><td>定义跨实验保持稳定的物理规则、单位、结算顺序和约束，不放置某次实验抽到的主体实例。</td></tr>
+                  <tr><td><code>初始化规格</code></td><td>描述“如何生成世界”的分布、数量和分配规则，是随机初始化的输入。</td></tr>
+                  <tr><td><code>初始化实现例</code></td><td>由初始化规格和 seed 生成的具体主体、禀赋、位置与岗位；保存后可直接重放。</td></tr>
+                  <tr><td><code>实验 Treatment</code></td><td>声明本次实验要改变的制度、策略或冲击，不能偷偷覆盖世界物理规则。</td></tr>
+                  <tr><td><code>Resolved Scenario</code></td><td>合并并校验上述配置后得到的只读运行输入，包含来源、版本和 hash。</td></tr>
+                  <tr><td><code>Experiment / Episode Runner</code></td><td>装配模块并调度 reset、step、子循环、终止和记录；它负责流程，不负责经济算法。</td></tr>
+                  <tr><td><code>公共 Contracts</code></td><td>定义跨模块数据结构、字段语义、单位、版本和序列化规则，是团队共同依赖的契约。</td></tr>
+                  <tr><td><code>Artifact Store</code></td><td>按 run_id 追加保存配置、事件、快照、模型 trace、失败和指标，不参与状态结算。</td></tr>
+                  <tr><td><code>Ports</code></td><td>规定 Runner 调用 Policy、Mechanism、Engine 的最小方法集合，使真实实现和 Fake 可互换。</td></tr>
+                  <tr><td><code>信息权限与 Observation Builder</code></td><td>从完整状态构造每个主体允许看到的观察，避免 Policy 直接读取全局秘密。</td></tr>
+                  <tr><td><code>Policy Router</code></td><td>按主体、角色和实验配置选择规则、优化或 LLM Policy。</td></tr>
+                  <tr><td><code>规则 / 优化 Policy</code></td><td>用确定性规则或优化器生成主体行动，既是基线也是 LLM 失败时的候选回退。</td></tr>
+                  <tr><td><code>LLM Policy</code></td><td>把观察转成 Prompt，调用模型并解析为合法结构；不得直接修改世界状态。</td></tr>
+                  <tr><td><code>AgentAction / Report</code></td><td>主体提交的报价、需求、劳动意愿或报告的统一外壳，仍需机制与 Engine 校验。</td></tr>
+                  <tr><td><code>市场与价格系统</code></td><td>接收订单或试行价格下的响应，执行撮合、出清并生成成交及市场反馈。</td></tr>
+                  <tr><td><code>Lange 中央计划局</code></td><td>提出和更新试行价格、判断收敛并输出生产指导；不自行实现市场撮合。</td></tr>
+                  <tr><td><code>Cockshott 中央计划局</code></td><td>依据需求、资源、投入产出和劳动时间生成可行的生产、调拨与配给计划。</td></tr>
+                  <tr><td><code>劳动与岗位匹配</code></td><td>把劳动供给与各机制产生的岗位需求匹配为候选劳动安排。</td></tr>
+                  <tr><td><code>MechanismDecision</code></td><td>把市场、计划和岗位结果适配成 Engine 可统一校验的制度决策。</td></tr>
+                  <tr><td><code>WorldState</code></td><td>某一逻辑时刻的完整权威状态；只有 Engine 能产生下一版本。</td></tr>
+                  <tr><td><code>权限、资源与容量校验</code></td><td>检查行动来源、状态版本、库存、能力、容量和时间是否允许执行。</td></tr>
+                  <tr><td><code>确定性结算流水线</code></td><td>按固定阶段把合法行动和决策转成状态变化；相同输入和 seed 必须得到相同结果。</td></tr>
+                  <tr><td><code>不变量检查</code></td><td>在提交下一状态前验证守恒、非负、容量、引用完整性和账本一致性。</td></tr>
+                  <tr><td><code>Next WorldState + StepResult</code></td><td>返回下一权威状态以及本轮事件、拒绝、终止原因和摘要。</td></tr>
+                  <tr><td><code>观察、行动、迭代、结算事件</code></td><td>保存运行过程中的原始事实，用于审计、重放和未来重算指标。</td></tr>
+                  <tr><td><code>逐轮状态快照</code></td><td>保存每轮完整状态，优先保证小型世界的可检查性与故障恢复。</td></tr>
+                  <tr><td><code>LLM Trace 与失败</code></td><td>记录 Prompt、原始响应、解析、token、延迟、重试与错误，但不保存密钥。</td></tr>
+                  <tr><td><code>需求满足率 / 分商品产出</code></td><td>第一版的两个派生指标；可从原始状态和结算事件重新计算。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
         </article>
       </section>
 
@@ -1120,6 +1243,36 @@ flowchart TB
   ACT --> PORT
   TRACE --> WRITER
             </div>
+            <details class="component-guide">
+              <summary>成员 1 组件逐项说明</summary>
+              <div class="table-wrap"><table>
+                <thead><tr><th>组件</th><th>职责与边界</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Config Loader</code></td><td>读取 YAML/JSON、验证基础格式并保留来源；不决定配置冲突如何解决。</td></tr>
+                  <tr><td><code>Scenario Resolver</code></td><td>按明确优先级合并世界规则、实现例和 treatment，输出不可变的 ResolvedScenario。</td></tr>
+                  <tr><td><code>Contracts + Schema Version</code></td><td>维护跨模块 DTO、枚举、单位与版本；变更需接口双方共同评审。</td></tr>
+                  <tr><td><code>Run / Episode / Step Runner</code></td><td>控制实验、episode、轮次和 Lange 子循环的调用顺序与失败传播。</td></tr>
+                  <tr><td><code>Policy · Mechanism · Engine Ports</code></td><td>面向调用方的最小协议，使四个实现组可独立开发并替换测试桩。</td></tr>
+                  <tr><td><code>FakePolicy</code></td><td>稳定返回预设 AgentAction，用于在 LLM 未完成前测试流程。</td></tr>
+                  <tr><td><code>FakeMechanism</code></td><td>返回预设 MechanismDecision，用于隔离市场和计划算法。</td></tr>
+                  <tr><td><code>FakeEngine</code></td><td>模拟 reset/step 和固定状态推进，只用于骨架契约测试，不冒充真实物理结算。</td></tr>
+                  <tr><td><code>Manifest · Event · Snapshot Writers</code></td><td>以追加、原子和可重读方式写运行产物，确保失败运行也留下证据。</td></tr>
+                  <tr><td><code>StateView</code></td><td>Engine 提供的只读裁剪视图；不同角色可有不同字段，但共享状态版本。</td></tr>
+                  <tr><td><code>Observation Builder</code></td><td>把 StateView 转成主体可理解、可序列化的 Observation。</td></tr>
+                  <tr><td><code>Information Policy</code></td><td>声明哪些角色能看到哪些字段、历史和聚合信息，并记录策略版本。</td></tr>
+                  <tr><td><code>Policy Router</code></td><td>依据主体 ID、角色和 treatment 选择具体 Policy 实现。</td></tr>
+                  <tr><td><code>Rule Policy</code></td><td>生成确定性基线行动，可单测、可作为模型不可用时的回退。</td></tr>
+                  <tr><td><code>Prompt Builder</code></td><td>把 Observation、行动约束和输出 schema 组合成版本化 Prompt。</td></tr>
+                  <tr><td><code>LLM Provider Adapter</code></td><td>统一不同模型供应商的请求、响应、超时和用量字段，不包含经济逻辑。</td></tr>
+                  <tr><td><code>Raw Response</code></td><td>不可覆盖地保留模型原始返回，供解析失败和行为研究审计。</td></tr>
+                  <tr><td><code>Structured Parser</code></td><td>从原始响应提取结构化候选，不负责判断经济行为是否可执行。</td></tr>
+                  <tr><td><code>Action Schema Validation</code></td><td>检查字段、类型、枚举和基本范围；资源可行性仍由 Engine 检查。</td></tr>
+                  <tr><td><code>Retry / Timeout / Fallback</code></td><td>按预算处理暂时失败，并在耗尽后返回规则行动、no-op 或明确失败。</td></tr>
+                  <tr><td><code>AgentAction</code></td><td>经过解析和 schema 校验的主体行动候选，连同来源与状态版本交给机制。</td></tr>
+                  <tr><td><code>Token · Cost · Latency · Failure Trace</code></td><td>记录每次模型调用的可观测信息，用于成本、性能和失败分析。</td></tr>
+                </tbody>
+              </table></div>
+            </details>
           </article>
 
           <article class="diagram-panel">
@@ -1160,6 +1313,34 @@ flowchart TB
   INV --> RESULT[SettlementEvents + StepResult]
   NEXT --> VIEW
             </div>
+            <details class="component-guide">
+              <summary>成员 2 组件逐项说明</summary>
+              <div class="table-wrap"><table>
+                <thead><tr><th>组件</th><th>职责与边界</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Resolved Scenario + Realized Instance</code></td><td>向初始化器提供已合并规则和已抽样实例；实例存在时不得重新随机生成。</td></tr>
+                  <tr><td><code>World Initializer</code></td><td>创建实体、索引、库存和初始机构状态，并在 step 之前检查初态合法性。</td></tr>
+                  <tr><td><code>WorldState</code></td><td>保存 Agent、设施、库存、健康、岗位、位置、机构状态、时钟和版本号。</td></tr>
+                  <tr><td><code>Read-only State Views</code></td><td>为 Policy 与机制提供最小只读投影，防止外部模块持有并修改状态对象。</td></tr>
+                  <tr><td><code>AgentAction</code></td><td>来自主体的候选行动；Engine 只接受公共契约，不依赖具体 Policy。</td></tr>
+                  <tr><td><code>MechanismDecision</code></td><td>市场或计划机制提出的成交、配给、调拨、生产与劳动安排候选。</td></tr>
+                  <tr><td><code>Exogenous Shock</code></td><td>表示天气、产能或其他外生变化，必须可复现并明确发生阶段。</td></tr>
+                  <tr><td><code>Clock + Phase Controller</code></td><td>维护轮次、逻辑小时和阶段顺序，拒绝在错误阶段发生的操作。</td></tr>
+                  <tr><td><code>Permission / Resource / Capacity Validator</code></td><td>在结算前检查权限、引用、状态版本、库存、能力、容量和操作上限。</td></tr>
+                  <tr><td><code>劳动与岗位生效</code></td><td>将合法 LaborAssignment 落为本轮工作地点和工时，不自行决定匹配对象。</td></tr>
+                  <tr><td><code>生产</code></td><td>依据有效劳动、技能、健康、技术和投入品计算当轮产出或在制品。</td></tr>
+                  <tr><td><code>收获 / 成熟</code></td><td>处理跨轮成熟和收获时间，将符合条件的在制品转入库存。</td></tr>
+                  <tr><td><code>交易或配给</code></td><td>按已批准的成交或配给扣减和增加账户/库存，不重新运行机制算法。</td></tr>
+                  <tr><td><code>调拨与运输</code></td><td>执行地点间移动、距离与运输约束；运输损耗若启用也只在此结算。</td></tr>
+                  <tr><td><code>消费</code></td><td>根据可得库存和消费决策结算实际消费、缺口与剩余库存。</td></tr>
+                  <tr><td><code>健康与急性劳动能力</code></td><td>依据消费、短缺和加班更新健康及下一轮劳动能力。</td></tr>
+                  <tr><td><code>Inventory / State Ledger</code></td><td>逐项记录每个状态变化的前值、后值、原因和因果事件，便于审计。</td></tr>
+                  <tr><td><code>Invariants</code></td><td>对候选终态检查守恒、非负、容量、唯一性和引用完整性。</td></tr>
+                  <tr><td><code>Next WorldState</code></td><td>全部校验通过后发布的新不可变状态版本。</td></tr>
+                  <tr><td><code>SettlementEvents + StepResult</code></td><td>返回结算明细、拒绝与修正、终止状态及必要的本轮摘要。</td></tr>
+                </tbody>
+              </table></div>
+            </details>
           </article>
 
           <article class="diagram-panel">
@@ -1191,6 +1372,31 @@ flowchart TB
   RESULT --> ADAPTER[MechanismDecision Adapter]
   FEEDBACK --> LANGEPORT[Lange Planning Port]
             </div>
+            <details class="component-guide">
+              <summary>成员 3 组件逐项说明</summary>
+              <div class="table-wrap"><table>
+                <thead><tr><th>组件</th><th>职责与边界</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Buy / Sell Requests</code></td><td>主体提交的商品、方向、数量、限价和有效期；它们是意愿，不是已成交事实。</td></tr>
+                  <tr><td><code>Optional Lange Trial Prices</code></td><td>Lange 计划局传入的外生试行价格；普通市场运行时可以为空。</td></tr>
+                  <tr><td><code>Market StateView</code></td><td>市场获准读取的库存、主体资格、历史价格等只读信息。</td></tr>
+                  <tr><td><code>Order Validator</code></td><td>检查订单 schema、主体资格、数量与价格范围；最终库存可执行性由 Engine 复核。</td></tr>
+                  <tr><td><code>Normalized Orders</code></td><td>统一单位、精度和默认字段后的订单，作为后续算法唯一输入。</td></tr>
+                  <tr><td><code>Order Book / Batch</code></td><td>收集本轮有效订单；第一版建议同步批量出清而非连续交易。</td></tr>
+                  <tr><td><code>Agent / Enterprise Response at Trial Price</code></td><td>在 Lange 价格下生成供需数量；响应规则需要与主体 Policy 的责任边界对齐。</td></tr>
+                  <tr><td><code>Deterministic Ordering + Tie-break</code></td><td>用固定排序和 seed 处理同价订单，保证相同输入可重放。</td></tr>
+                  <tr><td><code>Matcher / Clearing Algorithm</code></td><td>依据已声明规则撮合供需并决定成交集合，不直接写入库存。</td></tr>
+                  <tr><td><code>Trades</code></td><td>候选成交明细，包括买卖方、商品、数量、价格和订单引用。</td></tr>
+                  <tr><td><code>Clearing Prices</code></td><td>本轮各商品的出清或参考价格；无成交时必须定义明确返回规则。</td></tr>
+                  <tr><td><code>Unfilled Orders</code></td><td>记录未成交数量和原因，不能静默丢弃。</td></tr>
+                  <tr><td><code>Excess Demand / Supply</code></td><td>按商品计算总需求减总供给，是 Lange 调价的关键反馈。</td></tr>
+                  <tr><td><code>MarketFeedback</code></td><td>汇总价格、成交量、未成交和超额需求，供 Lange 或记录系统读取。</td></tr>
+                  <tr><td><code>MarketResult</code></td><td>市场模块的完整结果，包含成交与反馈，但尚未成为世界事实。</td></tr>
+                  <tr><td><code>MechanismDecision Adapter</code></td><td>把 MarketResult 转成 Engine 可校验的统一成交/转移指令。</td></tr>
+                  <tr><td><code>Lange Planning Port</code></td><td>向 Lange 计划局暴露稳定的反馈接口，避免计划代码依赖市场内部类。</td></tr>
+                </tbody>
+              </table></div>
+            </details>
           </article>
 
           <article class="diagram-panel">
@@ -1206,12 +1412,19 @@ flowchart TB
     MF[Read MarketFeedback]
     UPDATE[Price Update Rule]
     CONV[Convergence / Iteration Limit]
+    PROPOSE[Trial Price Proposal]
     GUIDE[Final Price + Production Guidance]
-    P0 --> MARKETPORT[Market Port]
-    MARKETPORT --> MF --> UPDATE --> CONV
-    CONV -->|继续| MARKETPORT
+    P0 --> PROPOSE
+    MF --> UPDATE --> CONV
+    CONV -->|继续| PROPOSE
     CONV -->|结束| GUIDE
   end
+
+  RUNNER[Runner-owned Lange Loop]
+  MARKETPORT[Market Port]
+  RUNNER -->|请求初始/更新价格| P0
+  PROPOSE --> RUNNER --> MARKETPORT
+  MARKETPORT -->|MarketFeedback| MF
 
   subgraph COCK[Cockshott 中央计划局]
     AGG[Demand Aggregator]
@@ -1245,6 +1458,35 @@ flowchart TB
   ASSIGN --> COMMON
   COMMON --> DECISION[MechanismDecision]
             </div>
+            <details class="component-guide">
+              <summary>成员 4 组件逐项说明</summary>
+              <div class="table-wrap"><table>
+                <thead><tr><th>组件</th><th>职责与边界</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Planning StateView</code></td><td>计划机构获准看到的需求、库存、产能和技术只读视图；其信息范围是实验制度的一部分。</td></tr>
+                  <tr><td><code>Needs / Reports / Labor Preferences</code></td><td>主体提交的需求、报告和劳动偏好；可能不完整或有误，不能等同于真实状态。</td></tr>
+                  <tr><td><code>Initial Trial Price</code></td><td>生成 Lange 第一次迭代的商品价格向量及其初始化依据。</td></tr>
+                  <tr><td><code>Trial Price Proposal</code></td><td>把本次试行价格和迭代编号返回 Runner；计划局不在内部直接循环调用市场。</td></tr>
+                  <tr><td><code>Runner-owned Lange Loop</code></td><td>由公共 Runner 调度“提价—市场执行—反馈—更新”，避免成员 3 与 4 相互导入实现。</td></tr>
+                  <tr><td><code>Market Port</code></td><td>Runner 通过该端口调用成员 3 的试行价格市场执行，并把公共 MarketFeedback 交回计划局。</td></tr>
+                  <tr><td><code>Read MarketFeedback</code></td><td>提取各商品超额需求、成交和未成交信号，检查反馈版本与完整性。</td></tr>
+                  <tr><td><code>Price Update Rule</code></td><td>根据超额需求按明确步长或公式更新试行价格。</td></tr>
+                  <tr><td><code>Convergence / Iteration Limit</code></td><td>判断是否达到容差、停滞或最大迭代，并给出可审计的退出原因。</td></tr>
+                  <tr><td><code>Final Price + Production Guidance</code></td><td>输出最终价格和生产指导；即使未收敛也必须返回明确状态而非伪装成功。</td></tr>
+                  <tr><td><code>Demand Aggregator</code></td><td>把家庭需求和机构报告按商品、地点和时间汇总，并保留来源。</td></tr>
+                  <tr><td><code>Input-output + Labor-time Model</code></td><td>表达生产技术、投入产出关系和直接/间接劳动时间核算。</td></tr>
+                  <tr><td><code>Resource / Capacity Constraints</code></td><td>提供库存、劳动、设施产能、空间与其他硬约束。</td></tr>
+                  <tr><td><code>Plan Feasibility Check</code></td><td>验证候选计划是否满足技术和资源限制，并解释不可行约束。</td></tr>
+                  <tr><td><code>Production · Transfer · Allocation Plan</code></td><td>输出生产目标、地点间调拨和配给提案，交给 Engine 最终校验与执行。</td></tr>
+                  <tr><td><code>Skills · Health · Labor Supply</code></td><td>汇总每个主体能提供的工时、技能、健康约束和可工作地点。</td></tr>
+                  <tr><td><code>Sector · Workplace · Hour Demand</code></td><td>把 Lange 指导或 Cockshott 计划转成岗位、部门、地点与工时需求。</td></tr>
+                  <tr><td><code>Matching Rule</code></td><td>依据技能、偏好、距离和优先级匹配供需；规则必须明确 tie-break。</td></tr>
+                  <tr><td><code>LaborAssignment + Unmatched Reasons</code></td><td>返回每个主体的候选岗位/工时，以及未匹配岗位和劳动力的原因。</td></tr>
+                  <tr><td><code>Planning Decision Adapter</code></td><td>合并价格、生产、调拨、配给和劳动安排，转换成统一机制决策。</td></tr>
+                  <tr><td><code>MechanismDecision</code></td><td>提交给 Engine 的最终计划候选；它本身无权修改位置、库存或健康。</td></tr>
+                </tbody>
+              </table></div>
+            </details>
           </article>
         </div>
       </section>
@@ -1429,24 +1671,47 @@ flowchart TB
       <section id="review">
         <div class="section-head">
           <div><div class="section-number">11 · Review Questions</div><h2>下一轮评审需要确认</h2></div>
-          <p>这些问题不妨碍讨论架构，但会直接影响接口和实现范围，应在正式分工前形成决定。</p>
+          <p>组件逐项检查后，将问题分为两级。橙色组会改变公共接口或制度含义，应在接口冻结前决定；其余可先保留默认值，但必须在对应模块实现前决定。</p>
         </div>
-        <ol class="review-list">
-          <li>第一版市场、Lange、Cockshott 各自最小机制是什么？</li>
-          <li>市场制度下的劳动也使用岗位匹配部门，还是独立劳动力市场？</li>
-          <li>Lange 的试行价格覆盖哪些商品，企业如何响应？</li>
-          <li>Lange 的收敛条件和最大迭代次数是什么？</li>
-          <li>Cockshott 第一版能够观察哪些需求和资源信息？</li>
-          <li>Cockshott 的计划目标和资源不足时的优先级是什么？</li>
-          <li>一轮内的正式阶段顺序和各阶段时间单位是什么？</li>
-          <li>第一版是否启用货币、劳动券和私人账户？</li>
-          <li>家庭、设施、仓库和中央机构分别拥有或保管什么？</li>
-          <li>Agent 第一版允许提交哪些行为？</li>
-          <li>LLM 首先扮演家庭、企业、计划局中的哪些角色？</li>
-          <li>LLM 非法输出的默认回退行为是什么？</li>
-          <li>极小可手算世界包含多少 Agent、设施和商品？</li>
-          <li>每个 episode 运行多少轮，什么情况提前终止？</li>
-        </ol>
+        <div class="question-groups">
+          <article class="question-group critical">
+            <h3>接口冻结前必须决定</h3>
+            <p>不决定就会让两组人写出不兼容的接口，或让三种制度失去可比性。</p>
+            <ol>
+              <li><strong>三种制度的最小机制：</strong>第一版市场、Lange、Cockshott 分别做到哪一步，哪些功能明确延期？</li>
+              <li><strong>市场结算媒介：</strong>当前配置关闭货币、劳动券和私人账户；市场的“价格、买卖与支付”究竟代表真实货币、记账单位、以物易物，还是只用于资源分配？</li>
+              <li><strong>劳动制度：</strong>市场经济也使用统一岗位匹配部门，还是存在独立劳动力市场？若共用，会不会把计划机制带入市场基线？</li>
+              <li><strong>Lange 响应归属：</strong>试行价格下的供需响应由主体 Policy 生成、市场模块生成，还是中央计划局模型生成？这是成员 1、3、4 的交界。</li>
+              <li><strong>Lange 覆盖范围：</strong>试行价格覆盖粮食、铁、劳动还是其他要素？生产单位在同一轮能调整哪些决策？</li>
+              <li><strong>公共决策结构：</strong><code>MechanismDecision</code> 如何同时容纳成交、生产、调拨、配给和劳动安排，哪些字段是必需/可选？</li>
+              <li><strong>状态与视图：</strong><code>WorldState</code> 的权威字段有哪些，各角色和三类机构分别可见哪些字段与历史？</li>
+              <li><strong>阶段顺序：</strong>一轮内行动、Lange 迭代、岗位匹配、生产、交易/配给、运输、消费的正式顺序和时间单位是什么？</li>
+              <li><strong>所有权与保管：</strong>家庭、设施、仓库和中央机构分别拥有或保管什么；谁有权发起转移？</li>
+              <li><strong>主体行动集合：</strong>Agent 第一版允许提交哪些行为，哪些只是报告，哪些能进入机制？</li>
+              <li><strong>拒绝与原子性：</strong>一条复合决策部分不可行时，是整条回滚、只拒绝非法项，还是按优先级截断？</li>
+              <li><strong>实验可比性：</strong>三种制度是否使用完全相同的 Realized Instance、外生冲击、主体偏好和随机数流？</li>
+            </ol>
+          </article>
+
+          <article class="question-group">
+            <h3>对应模块实现前决定</h3>
+            <p>可以暂用显式默认值推进骨架，但负责人必须把决定写进接口文档与测试。</p>
+            <ol>
+              <li>Lange 的初始价格、更新步长、收敛条件、最大迭代次数及未收敛结果是什么？</li>
+              <li>Cockshott 能观察哪些需求和资源信息，计划目标及资源不足时的优先级是什么？</li>
+              <li>Cockshott 第一版是否只做单轮静态计划，投入产出系数和劳动时间从哪里读取？</li>
+              <li>订单类型、价格/数量精度、批量出清规则、同价 tie-break 和无成交价格如何定义？</li>
+              <li>运输、成熟和健康更新是否进入第一版；若进入，各自发生在哪个结算阶段？</li>
+              <li>LLM 首先扮演家庭、企业还是计划机构；同一实验中哪些主体仍使用规则 Policy？</li>
+              <li>LLM 超时、非法输出和预算耗尽时使用 no-op、上轮行动还是 RulePolicy？</li>
+              <li>随机性由哪个组件创建和派发，浮点精度、舍入与 seed 子流如何统一？</li>
+              <li>极小可手算世界包含多少 Agent、设施、商品和轮次，每类机制的手算期望结果是什么？</li>
+              <li>每个 episode 的正常终止、提前终止与失败条件是什么；失败 run 是否计入实验样本？</li>
+              <li>schema 变更如何兼容旧 run，何时递增版本，谁批准公共契约变更？</li>
+              <li>存储写入失败时是否中止运行；事件、快照和 manifest 的原子写入边界是什么？</li>
+            </ol>
+          </article>
+        </div>
       </section>
 
       <footer>
