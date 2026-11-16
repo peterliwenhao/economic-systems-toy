@@ -143,6 +143,31 @@
         font-size: 18px;
       }
 
+      .resource-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .resource-links a {
+        padding: 9px 13px;
+        color: var(--navy);
+        background: rgba(255, 253, 248, 0.76);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .resource-links a:hover,
+      .resource-links a:focus-visible {
+        background: var(--surface);
+        outline: 2px solid rgba(84, 121, 184, 0.35);
+        outline-offset: 2px;
+      }
+
       .hero-note {
         margin: 0;
         padding: 22px;
@@ -273,6 +298,46 @@
       .architecture-map {
         display: grid;
         gap: 12px;
+      }
+
+      .diagram-panel {
+        margin-top: 22px;
+        padding: 22px;
+        overflow-x: auto;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .diagram-panel h3 {
+        margin-bottom: 4px;
+        font-size: 20px;
+      }
+
+      .diagram-note {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .diagram-panel .mermaid {
+        min-width: 640px;
+        text-align: center;
+      }
+
+      .component-diagrams {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .component-diagrams .diagram-panel {
+        margin-top: 0;
+      }
+
+      .component-diagrams .mermaid {
+        min-width: 520px;
       }
 
       .layer {
@@ -650,7 +715,8 @@
         }
 
         .contract-grid,
-        .gate-grid {
+        .gate-grid,
+        .component-diagrams {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
@@ -676,6 +742,7 @@
         .metric-grid,
         .contract-grid,
         .gate-grid,
+        .component-diagrams,
         .run-flow,
         .sequence {
           grid-template-columns: 1fr;
@@ -724,6 +791,10 @@
             先用公共契约和假实现跑通一轮，再让世界、市场、计划机构与 LLM 分别演进。
             原始状态、决策和结算事件完整保存；第一版只计算两个最小指标，但不丢失未来分析所需信息。
           </p>
+          <div class="resource-links" aria-label="相关文档">
+            <a href="development-collaboration-process.html">开发协作与接口评审流程</a>
+            <a href="python-engineering-kickoff-guide.html">Python 软件工程启动会讲稿</a>
+          </div>
         </div>
         <aside class="hero-note">
           <strong>架构核心</strong>
@@ -735,6 +806,7 @@
         <a href="#decisions">核心决定</a>
         <a href="#architecture">总体架构</a>
         <a href="#ownership">四人分工</a>
+        <a href="#components">组件图</a>
         <a href="#sequence">开发顺序</a>
         <a href="#runtime">运行流程</a>
         <a href="#storage">存储设计</a>
@@ -805,6 +877,93 @@
             </div>
           </div>
         </div>
+
+        <article class="diagram-panel">
+          <h3>整体架构与主数据流</h3>
+          <p class="diagram-note">实线表示运行时数据流；所有正式状态变化最终都经过 Engine 校验与结算。</p>
+          <div class="mermaid">
+flowchart TB
+  subgraph CFG[配置与场景]
+    WD[世界规则]
+    IS[初始化规格]
+    RI[初始化实现例]
+    TR[实验 Treatment]
+    RS[Resolved Scenario]
+    WD --> RS
+    IS --> RI --> RS
+    TR --> RS
+  end
+
+  subgraph CORE[公共骨架]
+    RUN[Experiment / Episode Runner]
+    CONTRACTS[公共 Contracts]
+    STORE[Artifact Store]
+    PORTS[Policy / Mechanism / Engine Ports]
+    CONTRACTS --> PORTS
+    RUN --> PORTS
+    RUN --> STORE
+  end
+
+  subgraph POLICY[主体与策略]
+    INFO[信息权限与 Observation Builder]
+    ROUTER[Policy Router]
+    RULE[规则 / 优化 Policy]
+    LLM[LLM Policy]
+    ACTION[AgentAction / Report]
+    INFO --> ROUTER
+    ROUTER --> RULE --> ACTION
+    ROUTER --> LLM --> ACTION
+  end
+
+  subgraph MECH[制度协调]
+    MARKET[市场与价格系统]
+    LANGE[Lange 中央计划局]
+    COCK[Cockshott 中央计划局]
+    JOB[劳动与岗位匹配]
+    DECISION[MechanismDecision]
+    LANGE <-->|试行价格 / 超额需求| MARKET
+    LANGE --> JOB
+    COCK --> JOB
+    MARKET --> DECISION
+    LANGE --> DECISION
+    COCK --> DECISION
+    JOB --> DECISION
+  end
+
+  subgraph WORLD[统一世界 Engine]
+    STATE[WorldState]
+    VALIDATE[权限、资源与容量校验]
+    SETTLE[确定性结算流水线]
+    INV[守恒、非负与一致性检查]
+    NEXT[Next WorldState + StepResult]
+    STATE --> VALIDATE --> SETTLE --> INV --> NEXT
+  end
+
+  subgraph EVIDENCE[证据与最小指标]
+    EVENTS[观察、行动、迭代、结算事件]
+    SNAP[逐轮状态快照]
+    TRACE[LLM Trace 与失败]
+    METRIC[需求满足率 / 分商品产出]
+  end
+
+  RS --> RUN
+  RUN --> STATE
+  STATE --> INFO
+  ACTION --> MARKET
+  ACTION --> LANGE
+  ACTION --> COCK
+  ACTION --> JOB
+  DECISION --> VALIDATE
+  NEXT --> RUN
+  STORE --> EVENTS
+  STORE --> SNAP
+  STORE --> TRACE
+  STORE --> METRIC
+  ACTION --> STORE
+  DECISION --> STORE
+  SETTLE --> STORE
+          </div>
+        </article>
       </section>
 
       <section id="ownership">
@@ -908,9 +1067,191 @@
         </div>
       </section>
 
+      <section id="components">
+        <div class="section-head">
+          <div><div class="section-number">04 · Component Views</div><h2>四个部分的组件图</h2></div>
+          <p>这些图细化每位负责人的内部组件和边界，但仍然是架构草案；接口双方评审后再确定最终类名和字段。</p>
+        </div>
+
+        <div class="component-diagrams">
+          <article class="diagram-panel">
+            <h3>成员 1：公共骨架与 LLM</h3>
+            <p class="diagram-note">先用 Fake Ports 完成骨架测试，再替换为真实 LLM Policy。</p>
+            <div class="mermaid">
+flowchart TB
+  subgraph SKELETON[公共骨架]
+    CONFIG[Config Loader]
+    RESOLVE[Scenario Resolver]
+    CONTRACT[Contracts + Schema Version]
+    RUNNER[Run / Episode / Step Runner]
+    PORT[Policy · Mechanism · Engine Ports]
+    FAKE[FakePolicy · FakeMechanism · FakeEngine]
+    WRITER[Manifest · Event · Snapshot Writers]
+    CONFIG --> RESOLVE --> RUNNER
+    CONTRACT --> PORT --> RUNNER
+    FAKE --> PORT
+    RUNNER --> WRITER
+  end
+
+  subgraph AGENT[Agent 与 LLM]
+    VIEW[StateView]
+    OBS[Observation Builder]
+    VIS[Information Policy]
+    ROUTE[Policy Router]
+    RULE[Rule Policy]
+    PROMPT[Prompt Builder]
+    PROVIDER[LLM Provider Adapter]
+    RAW[Raw Response]
+    PARSER[Structured Parser]
+    CHECK[Action Schema Validation]
+    FALLBACK[Retry / Timeout / Fallback]
+    ACT[AgentAction]
+    TRACE[Token · Cost · Latency · Failure Trace]
+    VIEW --> OBS
+    VIS --> OBS --> ROUTE
+    ROUTE --> RULE --> ACT
+    ROUTE --> PROMPT --> PROVIDER --> RAW --> PARSER --> CHECK --> ACT
+    PROVIDER --> TRACE
+    RAW --> TRACE
+    CHECK --> FALLBACK --> ACT
+  end
+
+  RUNNER --> VIEW
+  ACT --> PORT
+  TRACE --> WRITER
+            </div>
+          </article>
+
+          <article class="diagram-panel">
+            <h3>成员 2：世界与 Engine</h3>
+            <p class="diagram-note">世界负责事实与结算，不决定价格、资源优先级或计划目标。</p>
+            <div class="mermaid">
+flowchart TB
+  SPEC[Resolved Scenario + Realized Instance] --> INIT[World Initializer]
+  INIT --> STATE[WorldState]
+  STATE --> VIEW[Read-only State Views]
+
+  ACTION[AgentAction]
+  DECISION[MechanismDecision]
+  SHOCK[Exogenous Shock]
+  CLOCK[Clock + Phase Controller]
+
+  ACTION --> VALIDATE[Permission / Resource / Capacity Validator]
+  DECISION --> VALIDATE
+  STATE --> VALIDATE
+  SHOCK --> CLOCK
+  CLOCK --> VALIDATE
+
+  subgraph PIPE[确定性结算流水线]
+    LABOR[劳动与岗位生效]
+    PROD[生产]
+    HARVEST[收获 / 成熟]
+    ALLOC[交易或配给]
+    TRANSFER[调拨与运输]
+    CONSUME[消费]
+    HEALTH[健康与急性劳动能力]
+    LABOR --> PROD --> HARVEST --> ALLOC --> TRANSFER --> CONSUME --> HEALTH
+  end
+
+  VALIDATE --> PIPE
+  PIPE --> LEDGER[Inventory / State Ledger]
+  LEDGER --> INV[Conservation · Non-negative · Capacity Invariants]
+  INV --> NEXT[Next WorldState]
+  INV --> RESULT[SettlementEvents + StepResult]
+  NEXT --> VIEW
+            </div>
+          </article>
+
+          <article class="diagram-panel">
+            <h3>成员 3：市场与 Lange 市场执行</h3>
+            <p class="diagram-note">一般市场和 Lange 共用订单、撮合、价格与超额需求计算。</p>
+            <div class="mermaid">
+flowchart TB
+  REQUEST[Buy / Sell Requests]
+  TRIAL[Optional Lange Trial Prices]
+  MSTATE[Market StateView]
+
+  REQUEST --> CHECK[Order Validator]
+  MSTATE --> CHECK
+  CHECK --> NORMAL[Normalized Orders]
+  NORMAL --> BOOK[Order Book / Batch]
+  TRIAL --> RESPONSE[Agent / Enterprise Response at Trial Price]
+  RESPONSE --> BOOK
+
+  BOOK --> SORT[Deterministic Ordering + Tie-break]
+  SORT --> MATCH[Matcher / Clearing Algorithm]
+  MATCH --> TRADES[Trades]
+  MATCH --> PRICE[Clearing Prices]
+  MATCH --> UNFILLED[Unfilled Orders]
+  PRICE --> FEEDBACK[MarketFeedback]
+  UNFILLED --> EXCESS[Excess Demand / Supply]
+  EXCESS --> FEEDBACK
+  TRADES --> RESULT[MarketResult]
+  FEEDBACK --> RESULT
+  RESULT --> ADAPTER[MechanismDecision Adapter]
+  FEEDBACK --> LANGEPORT[Lange Planning Port]
+            </div>
+          </article>
+
+          <article class="diagram-panel">
+            <h3>成员 4：计划局与劳动匹配</h3>
+            <p class="diagram-note">两类中央计划局共享世界视图和劳动匹配，但使用不同的协调算法。</p>
+            <div class="mermaid">
+flowchart TB
+  VIEW[Planning StateView]
+  NEEDS[Needs / Reports / Labor Preferences]
+
+  subgraph LANGE[Lange 中央计划局]
+    P0[Initial Trial Price]
+    MF[Read MarketFeedback]
+    UPDATE[Price Update Rule]
+    CONV[Convergence / Iteration Limit]
+    GUIDE[Final Price + Production Guidance]
+    P0 --> MARKETPORT[Market Port]
+    MARKETPORT --> MF --> UPDATE --> CONV
+    CONV -->|继续| MARKETPORT
+    CONV -->|结束| GUIDE
+  end
+
+  subgraph COCK[Cockshott 中央计划局]
+    AGG[Demand Aggregator]
+    IO[Input-output + Labor-time Model]
+    RESOURCE[Resource / Capacity Constraints]
+    FEASIBLE[Plan Feasibility Check]
+    PLAN[Production · Transfer · Allocation Plan]
+    AGG --> IO
+    IO --> FEASIBLE
+    RESOURCE --> FEASIBLE --> PLAN
+  end
+
+  subgraph JOB[劳动与岗位匹配]
+    SUPPLY[Skills · Health · Labor Supply]
+    DEMAND[Sector · Workplace · Hour Demand]
+    MATCH[Matching Rule]
+    ASSIGN[LaborAssignment + Unmatched Reasons]
+    SUPPLY --> MATCH
+    DEMAND --> MATCH --> ASSIGN
+  end
+
+  VIEW --> P0
+  VIEW --> AGG
+  VIEW --> RESOURCE
+  NEEDS --> AGG
+  VIEW --> SUPPLY
+  GUIDE --> DEMAND
+  PLAN --> DEMAND
+  GUIDE --> COMMON[Planning Decision Adapter]
+  PLAN --> COMMON
+  ASSIGN --> COMMON
+  COMMON --> DECISION[MechanismDecision]
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section id="sequence">
         <div class="section-head">
-          <div><div class="section-number">04 · Build Sequence</div><h2>建议开发顺序</h2></div>
+          <div><div class="section-number">05 · Build Sequence</div><h2>建议开发顺序</h2></div>
           <p>公共骨架负责人可以先开始搭目录和测试桩，但正式契约必须在四人接口草案对齐后冻结为 v0.1。</p>
         </div>
         <ol class="sequence">
@@ -929,7 +1270,7 @@
 
       <section id="runtime">
         <div class="section-head">
-          <div><div class="section-number">05 · Runtime</div><h2>一轮运行如何发生</h2></div>
+          <div><div class="section-number">06 · Runtime</div><h2>一轮运行如何发生</h2></div>
           <p>三种制度共享同一条外围流程，只替换“机制协调”阶段。每个阶段都产生结构化事件，便于重放和审计。</p>
         </div>
         <div class="run-flow">
@@ -950,7 +1291,7 @@
 
       <section id="storage">
         <div class="section-head">
-          <div><div class="section-number">06 · Evidence Storage</div><h2>详细存储设计</h2></div>
+          <div><div class="section-number">07 · Evidence Storage</div><h2>详细存储设计</h2></div>
           <p>第一版不需要数据库。使用不可覆盖的 run 目录、JSON/JSONL 和 YAML 即可。核心原则是原始事实与派生指标分开，未来可以从保存的证据重新计算指标。</p>
         </div>
 
@@ -1035,7 +1376,7 @@
 
       <section id="metrics">
         <div class="section-head">
-          <div><div class="section-number">07 · Minimal Metrics</div><h2>第一版只计算两个指标</h2></div>
+          <div><div class="section-number">08 · Minimal Metrics</div><h2>第一版只计算两个指标</h2></div>
           <p>暂不建立完整 evaluation 模块。两个指标用于 smoke test 和基本比较；不同单位的商品不直接相加，复杂福利指标以后从原始状态重算。</p>
         </div>
         <div class="metric-grid">
@@ -1054,7 +1395,7 @@
 
       <section id="contracts">
         <div class="section-head">
-          <div><div class="section-number">08 · Contracts</div><h2>必须先对齐的公共接口</h2></div>
+          <div><div class="section-number">09 · Contracts</div><h2>必须先对齐的公共接口</h2></div>
           <p>以下是接口类别，不是最终字段。每个接口都需要负责人、提供方、使用方、正常示例、边界示例和契约测试。</p>
         </div>
         <div class="contract-grid">
@@ -1072,7 +1413,7 @@
 
       <section id="gates">
         <div class="section-head">
-          <div><div class="section-number">09 · Integration Gates</div><h2>分阶段集成，不等最后一天</h2></div>
+          <div><div class="section-number">10 · Integration Gates</div><h2>分阶段集成，不等最后一天</h2></div>
           <p>每个闸门通过后才扩大实现范围。发现问题由对应模块负责人修复，馨月负责组织和记录。</p>
         </div>
         <div class="gate-grid">
@@ -1087,7 +1428,7 @@
 
       <section id="review">
         <div class="section-head">
-          <div><div class="section-number">10 · Review Questions</div><h2>下一轮评审需要确认</h2></div>
+          <div><div class="section-number">11 · Review Questions</div><h2>下一轮评审需要确认</h2></div>
           <p>这些问题不妨碍讨论架构，但会直接影响接口和实现范围，应在正式分工前形成决定。</p>
         </div>
         <ol class="review-list">
@@ -1112,5 +1453,14 @@
         LLM-driven Economic Systems Toy · Architecture Proposal v0.1 · 本页为评审草案，不代表机制细节已经正式决定。
       </footer>
     </main>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/+esm";
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "neutral",
+        securityLevel: "strict",
+        flowchart: { htmlLabels: true, curve: "basis", useMaxWidth: true },
+      });
+    </script>
   </body>
 </html>
