@@ -1,0 +1,12 @@
+{
+  "name": "engineering-standards-and-architecture-v2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build_deck.js",
+    "validate": "node validate_deck.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

@@ -5,6 +5,7 @@
   "description": "Research collaboration dashboard for an LLM economic systems toy simulation",
   "scripts": {
     "dashboard:build": "node scripts/build-dashboard-data.mjs --sample",
+    "roadmap:build": "node scripts/build-roadmap-data.mjs",
     "dashboard:serve": "python3 -m http.server 4173 --directory dist",
     "validate": "node scripts/validate.mjs",
     "test": "npm run validate"

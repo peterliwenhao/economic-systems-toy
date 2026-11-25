@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Economic Systems Toy Phase 0 接口发现及五阶段开发分工、验收闸门与进度 Dashboard。" />
+    <title>Phase 0 + 五阶段实施路线图 · Economic Systems Toy</title>
+    <link rel="stylesheet" href="roadmap.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <nav class="breadcrumbs" aria-label="相关文档">
+          <a href="index.html">Project Dashboard</a>
+          <a href="architecture-v0-1.html">Architecture v0.1</a>
+          <a href="../docs/tasks/T-008.md">1123任务文档</a>
+        </nav>
+        <p class="eyebrow">实施路线图 · 1123 任务对齐版</p>
+        <h1>从接口发现到正式实验</h1>
+        <p class="lead">Phase 0 加五个实现阶段的分工草案。Phase 0 先完成类图、模块说明、逐份提供/所需接口草案和张馨月的系统时序图，再进行首次接口对齐；之后进入公共骨架。</p>
+        <div class="draft-warning"><strong>金标准：</strong>当前分工和本周交付以 <a href="../docs/tasks/T-008.md">1123任务文档</a> 为准。本页后续阶段内容是规划参考；发生冲突时执行 1123任务文档。</div>
+      </header>
+
+      <section class="boundary-section" aria-labelledby="boundary-title">
+        <div class="section-head">
+          <div><p class="section-index">01 · Boundaries</p><h2 id="boundary-title">谁负责运行，谁负责决策，谁负责结算？</h2></div>
+          <p>Engine 主动组织一轮运行，World 维护权威物理状态；Decision、Market 和 Planning 通过接口被调用。</p>
+        </div>
+        <div class="boundary-grid">
+          <article class="boundary-card simulation">
+            <span>01</span><h3>Engine</h3>
+            <p><strong>张馨月负责的运行编排器：</strong>启动并推进实验，调用 Decision、Market/Planning 和 World，并把事件交给存储。</p>
+            <dl><div><dt>例子</dt><dd>reset、step loop、Lange 子循环、终止判断</dd></div><div><dt>不能做</dt><dd>自己实现主体偏好、市场算法或生产公式</dd></div></dl>
+          </article>
+          <article class="boundary-card policy">
+            <span>02</span><h3>Decision / LLM / Memory</h3>
+            <p><strong>杜芃烨负责：</strong>根据各领域提供的 Context，经 Harness 与 Model Adapter 生成结构化 Action，并管理决策记忆。</p>
+            <dl><div><dt>例子</dt><dd>家庭、企业或其他主体的规则/LLM 决策</dd></div><div><dt>不能做</dt><dd>定义市场制度或直接改权威世界状态</dd></div></dl>
+          </article>
+          <article class="boundary-card mechanism">
+            <span>03</span><h3>Market / Firm</h3>
+            <p><strong>王逸忱负责：</strong>商品市场、分散式劳动力市场、企业决策问题，以及 Lange 所需的市场反馈。</p>
+            <dl><div><dt>例子</dt><dd>订单、撮合、价格、企业问题、超额需求</dd></div><div><dt>不能做</dt><dd>代替 Planning 更新 Lange 或 Cockshott 计划</dd></div></dl>
+          </article>
+          <article class="boundary-card engine">
+            <span>04</span><h3>World</h3>
+            <p><strong>张津阁负责：</strong>初始化世界、检查行动与机制结果、执行物理规则并生成下一版权威 <code>WorldState</code>。</p>
+            <dl><div><dt>例子</dt><dd>生产、运输、消费、健康、守恒和容量检查</dd></div><div><dt>不能做</dt><dd>替主体选择偏好，或替制度决定谁应得到资源</dd></div></dl>
+          </article>
+          <article class="boundary-card mechanism">
+            <span>05</span><h3>Planning</h3>
+            <p><strong>郝依琳负责：</strong>Cockshott、Lange 中央方与集中式劳动分配。</p>
+            <dl><div><dt>例子</dt><dd>静态计划、价格试错、中央劳动安排</dd></div><div><dt>不能做</dt><dd>实现分散式市场撮合或直接写 WorldState</dd></div></dl>
+          </article>
+        </div>
+        <div class="data-flow" aria-label="一次运行的数据流">
+          <strong>Engine</strong><i>calls</i><span>Decision</span><i>→ Action → calls</i><span>Market / Planning</span><i>→ Result → calls</i><span>World</span><i>→ Next WorldState → record</i><strong>Artifacts</strong>
+        </div>
+      </section>
+
+      <section aria-labelledby="phases-title">
+        <div class="section-head">
+          <div><p class="section-index">02 · Stage Gates</p><h2 id="phases-title">Phase 0 + 五阶段主线</h2></div>
+          <p>Phase 0 只发现和对齐接口，不写生产代码；每一阶段通过验收闸门后再进入下一阶段。</p>
+        </div>
+        <div id="phase-overview" class="phase-overview"></div>
+      </section>
+
+      <section id="dashboard" aria-labelledby="dashboard-title">
+        <div class="section-head">
+          <div><p class="section-index">03 · Progress Dashboard</p><h2 id="dashboard-title">阶段 × 成员任务看板</h2></div>
+          <p>完成度按已验收交付物计算。五个责任域和负责人已经确定，类名、字段与接口细节仍待首次对齐。</p>
+        </div>
+        <div id="summary" class="summary-grid" aria-label="进度摘要"></div>
+        <div class="filters" aria-label="Dashboard 筛选">
+          <div id="phase-filters" class="filter-row"></div>
+          <label>责任轨<select id="track-filter"><option value="all">全部成员</option></select></label>
+          <label>状态<select id="status-filter"><option value="all">全部状态</option><option value="draft">草案准备中/待接口对齐</option><option value="ready">可开始</option><option value="in_progress">进行中</option><option value="review">待验收</option><option value="blocked">阻塞</option><option value="done">已完成</option></select></label>
+        </div>
+        <div id="task-grid" class="task-grid"></div>
+      </section>
+
+      <section class="coordination" aria-labelledby="coordination-title">
+        <div class="section-head">
+          <div><p class="section-index">04 · Coordination</p><h2 id="coordination-title">张馨月如何负责 Backbone 与整体集成</h2></div>
+          <p>她负责 Engine、整体架构、系统时序、接口对齐和最终集成；具体输入输出由模块负责人提出、接口双方共同确认。</p>
+        </div>
+        <ol>
+          <li><strong>准备系统设计：</strong>完成 Backbone/Engine 类图、系统时序图，并核对五个责任域的边界。</li>
+          <li><strong>建立 Issues：</strong>每个任务写负责人、范围、依赖、交付物、验收条件和明确不做的内容。</li>
+          <li><strong>组织首次接口对齐：</strong>先核对每份接口的用途、提供方、调用方、Python 签名、输入输出和未决问题。</li>
+          <li><strong>后续完善：</strong>接口初步对齐后再补字段约束、异常、样例和测试，并逐步冻结版本。</li>
+          <li><strong>更新 Dashboard：</strong>只有交付物出现并通过审阅后才更新完成数；阻塞必须写明依赖和下一步。</li>
+          <li><strong>阶段集成：</strong>按 Gate 依次集成，问题退回对应负责人修复；李文浩和刘充在规定节点评审。</li>
+        </ol>
+      </section>
+
+      <section class="maintenance" aria-labelledby="maintenance-title">
+        <div class="section-head">
+          <div><p class="section-index">05 · Maintenance</p><h2 id="maintenance-title">Dashboard 如何维护</h2></div>
+        </div>
+        <div class="maintenance-grid">
+          <article><h3>唯一数据源</h3><p>编辑 <code>project/implementation-roadmap.json</code>，不要直接手改生成的 <code>dist/roadmap-data.js</code>。</p></article>
+          <article><h3>重新生成</h3><p>运行 <code>npm run roadmap:build</code>，再执行 <code>npm run validate</code>。</p></article>
+          <article><h3>完成度规则</h3><p><code>completed / total</code> 表示通过验收的交付物数量，不表示估算工时，也不以“写了一半”计数。</p></article>
+          <article><h3>相关证据</h3><p>每项任务必须关联接口、测试、PR、会议决定或实验记录；Dashboard 不是证据本身。</p></article>
+        </div>
+      </section>
+
+      <footer>Economic Systems Toy · Phase 0 + 五阶段实施路线图 · 数据源更新时间 <span id="updated-at">—</span></footer>
+    </main>
+    <script src="roadmap-data.js"></script>
+    <script src="roadmap.js"></script>
+  </body>
+</html>

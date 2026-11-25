@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Economic Systems Toy 五个责任域、调用关系与 1123 协作方式" />
+    <title>五个责任域与协作流程</title>
+    <style>
+      :root { --ink:#182235; --muted:#5d687c; --paper:#f4f1e9; --panel:#fffdf8; --line:#cfd5df; --blue:#2455a4; --violet:#6f55b5; --green:#32785a; --orange:#b9652a; --red:#a84545; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.65 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+      main { width:min(1180px,calc(100% - 32px)); margin:32px auto 64px; }
+      header,section { background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:28px; margin-bottom:22px; box-shadow:0 12px 35px rgba(35,45,65,.07); }
+      h1,h2,h3 { line-height:1.25; margin-top:0; }
+      h1 { font-size:clamp(2rem,4vw,3.4rem); margin-bottom:12px; }
+      h2 { font-size:1.55rem; }
+      p { margin:.55rem 0; }
+      a { color:var(--blue); }
+      .eyebrow { color:var(--blue); font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+      .standard { margin-top:18px; padding:15px 18px; border-left:5px solid var(--red); background:#fff1ef; border-radius:10px; }
+      .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+      .card { border:1px solid var(--line); border-top:5px solid var(--blue); border-radius:14px; padding:18px; background:white; }
+      .card.decision { border-top-color:var(--violet); }.card.world { border-top-color:var(--green); }.card.market { border-top-color:var(--orange); }.card.planning { border-top-color:var(--red); }
+      .owner { color:var(--muted); font-weight:700; }
+      .tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }.tags span { padding:4px 9px; border-radius:999px; background:#eef2f8; font-size:.88rem; }
+      .flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:10px; margin:18px 0; }
+      .node { min-height:115px; display:grid; place-content:center; text-align:center; padding:14px; background:white; border:2px solid var(--line); border-radius:14px; }
+      .arrow { font-size:1.7rem; color:var(--blue); font-weight:900; }
+      .branch { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+      ol li,ul li { margin:.4rem 0; }
+      code { background:#eef1f6; padding:.12rem .35rem; border-radius:5px; }
+      table { width:100%; border-collapse:collapse; } th,td { padding:11px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+      @media(max-width:820px){ .grid,.branch{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center} }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Architecture & Collaboration</p>
+        <h1>五个责任域与协作流程</h1>
+        <p>本页把 Backbone/Engine 放在整体流程中心，说明四个领域模块分别提供什么，以及它们如何通过首次接口草案完成对齐。</p>
+        <div class="standard"><strong>金标准：</strong>当前分工、本周交付和完成范围以 <a href="tasks/T-008.md">1123任务文档</a> 为准；本页用于直观解释。</div>
+      </header>
+
+      <section>
+        <h2>整体调用关系</h2>
+        <div class="flow">
+          <div class="node"><strong>Experiment / Config</strong><span>场景、seed、机制选择</span></div><div class="arrow">→</div>
+          <div class="node"><strong>Backbone / Engine</strong><span>张馨月：主动组织调用</span></div><div class="arrow">→</div>
+          <div class="node"><strong>Artifacts</strong><span>manifest、events、snapshots</span></div>
+        </div>
+        <div class="branch">
+          <div class="node"><strong>Decision</strong><span>Context → Action</span></div>
+          <div class="node"><strong>Market / Firm</strong><span>订单、撮合、市场反馈</span></div>
+          <div class="node"><strong>Planning</strong><span>计划、调价、集中劳动</span></div>
+          <div class="node"><strong>World</strong><span>验证、确定性结算、权威状态</span></div>
+        </div>
+        <p>Engine 负责“何时调用谁”；World 负责“物理状态如何合法变化”；Decision、Market 和 Planning 返回结构化行动、机制结果或请求。Decision Memory 保存决策相关记录，运行产物存储保存实验证据，两者用途不同。</p>
+      </section>
+
+      <section>
+        <h2>责任域与负责人</h2>
+        <div class="grid">
+          <article class="card"><h3>Backbone / Engine</h3><p class="owner">张馨月</p><p>负责公共骨架、运行入口、配置解析、调用顺序、公共数据契约、产物汇总、接口对齐和最终集成。她额外画系统级时序图。</p><div class="tags"><span>Engine</span><span>Contracts</span><span>Artifact Storage</span><span>Integration</span></div></article>
+          <article class="card decision"><h3>Decision / LLM / Memory</h3><p class="owner">杜芃烨</p><p>分为 Decision、Harness/Context/Tools、Model Adapter 三层。其他模块定义经济问题并提供合适 Context，本模块执行规则或 LLM 决策并管理决策记忆。</p><div class="tags"><span>Decision</span><span>Harness</span><span>Model Adapter</span><span>Decision Memory</span></div></article>
+          <article class="card world"><h3>World</h3><p class="owner">张津阁</p><p>负责世界初始化、权威 WorldState、生产、运输、消费、健康、容量、守恒和确定性随机流。World 被 Engine 调用，不承担整体流程编排。</p><div class="tags"><span>Initializer</span><span>WorldState</span><span>Rules</span><span>Settlement</span></div></article>
+          <article class="card market"><h3>Market / Firm</h3><p class="owner">王逸忱</p><p>负责粮食、铁等商品市场，市场经济中的分散式劳动力市场，企业需要解决的决策问题，以及 Lange 使用的试探价格与超额需求反馈。</p><div class="tags"><span>Commodity Market</span><span>Labor Market</span><span>Firm</span><span>Market Feedback</span></div></article>
+          <article class="card planning"><h3>Planning</h3><p class="owner">郝依琳</p><p>负责 Cockshott 静态计划、Lange 中央计划方的价格试错，以及计划经济中的集中式劳动分配。Lange 通过接口反复请求 Market 反馈。</p><div class="tags"><span>Cockshott</span><span>Lange</span><span>Central Labor Allocation</span></div></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>1123 本周怎样合作</h2>
+        <ol>
+          <li>每位负责人独立完成一张可讨论的类图草案。</li>
+          <li>每位负责人用 PPT、HTML、Markdown 或口头配图讲清本模块内部如何构成、如何运作。</li>
+          <li>每个准备提供的接口单独写一份首次草案；每个希望获得的接口也单独写一份需求草案。</li>
+          <li>张馨月在相同基础上完成 Backbone/Engine 草案，并额外画出系统级时序图。</li>
+          <li>首次接口会上，由提供方和调用方逐份核对接口用途、Python 签名、输入、输出和待确认问题。</li>
+          <li>接口初步对齐后，再补完整字段、异常、样例和测试，并进入公共骨架实现。</li>
+        </ol>
+        <p><strong>本周不要求：</strong>正常/边界/失败样例、单元测试、最终字段定稿或功能代码。</p>
+      </section>
+
+      <section>
+        <h2>首次接口草案最小格式</h2>
+        <table>
+          <thead><tr><th>项目</th><th>需要回答的内容</th></tr></thead>
+          <tbody>
+            <tr><td>接口名称与用途</td><td>这次调用解决什么问题。</td></tr>
+            <tr><td>提供方 / 调用方</td><td>谁实现，谁会调用。</td></tr>
+            <tr><td>Python 签名</td><td>用函数或方法的形式写清参数和返回类型；名称可以在会议中修改。</td></tr>
+            <tr><td>输入 / 输出</td><td>每项数据表达什么，不要求本周冻结全部字段。</td></tr>
+            <tr><td>待确认问题</td><td>仍需哪位负责人或评审者共同决定。</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>

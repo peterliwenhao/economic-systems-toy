@@ -1,0 +1,881 @@
+/* Generated from project/implementation-roadmap.json. */
+window.ROADMAP_DATA = {
+  "schemaVersion": "0.1",
+  "title": "Phase 0 加五阶段实施路线图",
+  "updatedAt": "2026-11-24",
+  "statusPolicy": "进度按已通过验收的交付物计算，不按主观工时估算。当前分工已经确定，正准备 1123 任务交付；首次接口对齐后再冻结接口和进入实现。",
+  "tracks": [
+    {
+      "id": "M1",
+      "label": "杜芃烨",
+      "name": "Decision / LLM / Harness / Memory"
+    },
+    {
+      "id": "M2",
+      "label": "张津阁",
+      "name": "World / 初始化 / 确定性规则"
+    },
+    {
+      "id": "M3",
+      "label": "王逸忱",
+      "name": "Market / Firm / 分散式劳动力市场"
+    },
+    {
+      "id": "M4",
+      "label": "郝依琳",
+      "name": "Planning / Lange / Cockshott / 集中式劳动分配"
+    },
+    {
+      "id": "X",
+      "label": "张馨月",
+      "name": "Backbone / Engine / 整体架构 / 集成"
+    }
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "number": 0,
+      "title": "接口发现与对齐",
+      "summary": "每位负责人先提交模块类图、内部运作说明、逐份提供接口草案和逐份所需接口草案；张馨月额外提交系统时序图，再组织首次接口对齐。",
+      "gate": "五位负责人已经完成 1123 任务文档规定的设计草案，团队完成首次接口对齐并记录未决问题。本阶段不要求测试、正常/边界/失败样例、最终字段或功能实现。",
+      "tasks": [
+        {
+          "id": "P0-M1",
+          "track": "M1",
+          "title": "准备 Decision / LLM / Memory 设计草案",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "画出 Decision、Harness/Context/Tools、Model Adapter 与 Decision Memory 的类图草案。",
+            "说明不同决策场景如何获得其他模块提供的上下文，并经通用决策链得到结构化结果。",
+            "分别起草本模块准备提供和希望获得的每一份接口文档。"
+          ],
+          "deliverables": [
+            "Decision / LLM / Memory 类图草案",
+            "模块内部构成与运作说明",
+            "逐份提供接口草案与逐份所需接口草案"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/tasks/T-008.md"
+          ]
+        },
+        {
+          "id": "P0-M2",
+          "track": "M2",
+          "title": "准备 World 设计草案",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "画出初始化、权威 WorldState、观察、确定性规则、校验和结算的类图草案。",
+            "说明 World 如何被 Engine 调用，以及如何维护生产、运输、消费和健康等物理状态。",
+            "分别起草本模块准备提供和希望获得的每一份接口文档。"
+          ],
+          "deliverables": [
+            "World 类图草案",
+            "模块内部构成与运作说明",
+            "逐份提供接口草案与逐份所需接口草案"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/WORLD_CONFIGURATION_LAYERS.md",
+            "docs/tasks/T-008.md"
+          ]
+        },
+        {
+          "id": "P0-M3",
+          "track": "M3",
+          "title": "准备 Market / Firm 设计草案",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "画出商品市场、分散式劳动力市场、企业决策问题和 Lange 市场反馈的类图草案。",
+            "说明市场如何接收订单或决策结果、完成撮合，并向 Engine 与 Planning 返回结构化结果。",
+            "分别起草本模块准备提供和希望获得的每一份接口文档。"
+          ],
+          "deliverables": [
+            "Market / Firm 类图草案",
+            "模块内部构成与运作说明",
+            "逐份提供接口草案与逐份所需接口草案"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/tasks/T-008.md"
+          ]
+        },
+        {
+          "id": "P0-M4",
+          "track": "M4",
+          "title": "准备 Planning 设计草案",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "画出 Cockshott、Lange 与集中式劳动分配的类图草案。",
+            "说明三个机制内部如何运作，以及 Lange 如何向 Market 请求试探价格反馈。",
+            "分别起草本模块准备提供和希望获得的每一份接口文档。"
+          ],
+          "deliverables": [
+            "Planning 类图草案",
+            "模块内部构成与运作说明",
+            "逐份提供接口草案与逐份所需接口草案"
+          ],
+          "dependencies": [],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/tasks/T-008.md"
+          ]
+        },
+        {
+          "id": "P0-X",
+          "track": "X",
+          "title": "准备 Backbone / Engine 草案并组织首次接口对齐",
+          "status": "draft",
+          "completed": 0,
+          "total": 4,
+          "responsibilities": [
+            "画出 Backbone / Engine 类图草案，并说明配置、运行编排、结果汇总和产物保存如何协作。",
+            "额外画出系统级时序图，明确 Engine 如何调用 Decision、World、Market 和 Planning。",
+            "收集五个责任域的类图、模块说明和接口草案，组织首次接口对齐并记录未决问题。"
+          ],
+          "deliverables": [
+            "Backbone / Engine 类图与模块运作说明",
+            "系统级时序图",
+            "逐份提供接口草案与逐份所需接口草案",
+            "首次接口对齐记录及未决问题清单"
+          ],
+          "dependencies": [
+            "P0-M1",
+            "P0-M2",
+            "P0-M3",
+            "P0-M4"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/interfaces.md",
+            "docs/tasks/T-008.md",
+            "docs/meetings/",
+            "docs/decisions/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "number": 1,
+      "title": "公共骨架",
+      "summary": "解析配置、冻结公共契约、连接空实现，并跑通一轮固定结果。",
+      "gate": "Engine 能通过固定 Decision、固定 Market/Planning 和最小 World 完成一轮运行；公共数据可以序列化，运行产物可以重新读回。",
+      "tasks": [
+        {
+          "id": "P1-M1",
+          "track": "M1",
+          "title": "搭建 Decision 三层空骨架",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "建立 Decision、Harness/Context/Tools、Model Adapter 三层空骨架。",
+            "实现固定 Decision 与最小 Decision Memory，供 Engine 冒烟运行。",
+            "与各领域负责人确认上下文由谁提供、结构化决策由谁使用。"
+          ],
+          "deliverables": [
+            "Decision 三层代码骨架",
+            "固定 Decision 与最小 Memory 实现",
+            "Engine 到 Decision 的冒烟接口"
+          ],
+          "dependencies": [
+            "P0-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P1-M2",
+          "track": "M2",
+          "title": "定义 World 边界",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "与张馨月共同冻结 WorldState、StateView、WorldPort 和 WorldResult。",
+            "明确 World 发布下一时刻的权威 WorldState，Engine 只组织调用。",
+            "提供供 Engine 使用的最小 World 测试夹具和契约测试。"
+          ],
+          "deliverables": [
+            "World 接口基线",
+            "最小 WorldState 测试夹具",
+            "WorldPort 契约测试"
+          ],
+          "dependencies": [
+            "P1-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/WORLD_CONFIGURATION_LAYERS.md"
+          ]
+        },
+        {
+          "id": "P1-M3",
+          "track": "M3",
+          "title": "定义市场模块边界",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "起草 Order、MarketResult、MarketFeedback 和市场 StateView 的需求。",
+            "实现返回固定决策的 FakeMarketMechanism。",
+            "与 M4 共同确认 TrialPriceMarketPort 和超额需求反馈。"
+          ],
+          "deliverables": [
+            "市场契约草案",
+            "Fake 市场机制",
+            "市场到 Engine、市场到 Lange 的契约示例"
+          ],
+          "dependencies": [
+            "P1-M1",
+            "P1-M2"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P1-M4",
+          "track": "M4",
+          "title": "定义计划与岗位匹配边界",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "起草 PlanProposal、LangeState、LaborAssignment 和计划 StateView 的需求。",
+            "实现固定结果的 Lange、Cockshott 和 LaborMatcher 测试替身。",
+            "与 M3 共同确认单次试探价格反馈，并与 M2 确认可执行决策的格式。"
+          ],
+          "deliverables": [
+            "计划与岗位匹配契约草案",
+            "固定结果的计划模块测试替身",
+            "Lange 循环交互示例"
+          ],
+          "dependencies": [
+            "P1-M1",
+            "P1-M2",
+            "P1-M3"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P1-X",
+          "track": "X",
+          "title": "实现并集成公共骨架 v0.1",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现配置解析、公共 dataclass/Ports、Engine、ArtifactStore 和运行入口。",
+            "组装五个责任域的固定实现，跑通一轮固定结果并保存最小运行目录。",
+            "组织接口提供方与调用方评审，收集契约测试并完成 Gate 1 集成。"
+          ],
+          "deliverables": [
+            "公共契约包与接口版本",
+            "Engine 单轮冒烟测试及最小运行目录",
+            "Gate 1 检查清单与集成记录"
+          ],
+          "dependencies": [
+            "P0-X"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/tasks/",
+            "docs/meetings/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "number": 2,
+      "title": "无 LLM 的确定性世界",
+      "summary": "实现世界初始化和物理结算，再使用固定行为运行多个步骤。",
+      "gate": "同一场景和随机种子在多步运行中产生字节一致或语义一致的状态；守恒、库存非负和容量测试全部通过。",
+      "tasks": [
+        {
+          "id": "P2-M1",
+          "track": "M1",
+          "title": "提供固定 Decision 与决策记忆",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现确定性的规则 Decision；保持所有真实 LLM 调用关闭。",
+            "让固定 Decision 在相同上下文下产生可复现的结构化行动。",
+            "验证 Decision Memory 只保存决策所需记录，不替代 World 权威状态。"
+          ],
+          "deliverables": [
+            "固定 RuleDecision",
+            "最小 Decision Memory",
+            "Decision 可复现性测试"
+          ],
+          "dependencies": [
+            "P1-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P2-M2",
+          "track": "M2",
+          "title": "实现确定性 World",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现 WorldInitializer 和不可变的 WorldState 状态转换。",
+            "实现生产、运输、消费和健康结算阶段。",
+            "实现 StateLedger、不变量检查、确定性 RNG 流和重放测试。"
+          ],
+          "deliverables": [
+            "真实 World",
+            "物理结算单元测试",
+            "守恒与可复现性测试套件"
+          ],
+          "dependencies": [
+            "P1-M2",
+            "P2-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/WORLD_CONFIGURATION_LAYERS.md",
+            "configs/scenarios/closed-economy-fixed-transport-v1.1.yaml"
+          ]
+        },
+        {
+          "id": "P2-M3",
+          "track": "M3",
+          "title": "支持确定性的无市场运行",
+          "status": "draft",
+          "completed": 0,
+          "total": 2,
+          "responsibilities": [
+            "保持固定结果或 no-op 市场实现与真实 World 兼容。",
+            "验证市场 StateView 不包含可变的 WorldState 引用。",
+            "为空订单、固定交易和被拒绝结算编写契约测试。"
+          ],
+          "deliverables": [
+            "No-op/固定市场适配器",
+            "Engine 与市场之间的契约测试"
+          ],
+          "dependencies": [
+            "P1-M3",
+            "P2-M2"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P2-M4",
+          "track": "M4",
+          "title": "支持确定性的固定计划",
+          "status": "draft",
+          "completed": 0,
+          "total": 2,
+          "responsibilities": [
+            "保持固定计划和集中式劳动分配实现与真实 World 兼容。",
+            "与 M2 一起验证 World 的拒绝语义，以及部分失败或原子失败语义。",
+            "为空计划和固定计划编写契约测试。"
+          ],
+          "deliverables": [
+            "固定计划适配器",
+            "Engine 与计划模块之间的契约测试"
+          ],
+          "dependencies": [
+            "P1-M4",
+            "P2-M2"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P2-X",
+          "track": "X",
+          "title": "实现多轮 Engine 并集成确定性世界",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "将 Engine 从单轮扩展为多轮 episode，并组织终止条件。",
+            "保存每轮事件、快照、失败信息和最小指标，支持重放。",
+            "确认结算顺序，组织 Gate 2 集成并记录未通过的不变量。"
+          ],
+          "deliverables": [
+            "多轮 Engine 与可重放运行产物",
+            "经批准的确定性测试夹具和 Gate 2 报告",
+            "更新后的任务和依赖状态"
+          ],
+          "dependencies": [
+            "P1-X"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/meetings/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "number": 3,
+      "title": "三个简化机制",
+      "summary": "实现最小商品市场、分散式劳动力市场、Lange、Cockshott 和集中式劳动分配，并使用可手算案例进行验证。",
+      "gate": "每个简化机制都与独立编写的手算结果一致，并能通过同一个 World 完成多轮运行。",
+      "tasks": [
+        {
+          "id": "P3-M1",
+          "track": "M1",
+          "title": "提供机制场景的通用决策能力",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "为市场主体、企业和计划相关主体提供固定或规则化 Decision 适配。",
+            "从各领域模块定义的上下文生成结构化决策，不定义市场或计划算法。",
+            "为后续接入 LLM 保持统一 Harness 和 Decision Memory 边界。"
+          ],
+          "deliverables": [
+            "机制场景的规则 Decision",
+            "通用 Harness 适配",
+            "Decision 到各领域模块的契约测试"
+          ],
+          "dependencies": [
+            "P2-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P3-M2",
+          "track": "M2",
+          "title": "在共享 World 中执行机制结果",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "在明确的信息策略下，为三个机制提供足够的只读视图。",
+            "校验并结算交易、计划、调拨、分配和岗位安排。",
+            "提供规范的微型世界测试夹具和预期状态转换。"
+          ],
+          "deliverables": [
+            "机制所需的 StateViews",
+            "决策校验与结算",
+            "微型世界状态测试夹具"
+          ],
+          "dependencies": [
+            "P2-M2",
+            "P3-M1"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/WORLD_CONFIGURATION_LAYERS.md"
+          ]
+        },
+        {
+          "id": "P3-M3",
+          "track": "M3",
+          "title": "实现简单市场、企业问题与分散式劳动配置",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现粮食、铁等商品市场的批量订单、确定性排序、撮合和简单出清价格。",
+            "实现市场经济中的分散式劳动力市场，并定义企业需要作出的经济决策。",
+            "为 Lange 实现试探价格评估与超额需求反馈；企业决策的通用 LLM 执行由 M1 提供。",
+            "测试空订单簿、同价排序、库存不足、劳动力未匹配和手算交易。"
+          ],
+          "deliverables": [
+            "简单商品市场与分散式劳动力市场",
+            "企业决策问题定义与试探价格评估",
+            "市场单元测试与手算测试"
+          ],
+          "dependencies": [
+            "P3-M1",
+            "P3-M2"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P3-M4",
+          "track": "M4",
+          "title": "实现 Lange、Cockshott 与集中式劳动分配",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "为 Lange 实现初始价格、价格更新、收敛状态和迭代上限。",
+            "使用需求、资源、技术和劳动时间实现单步 Cockshott 计划。",
+            "实现确定性的中央劳动分配器，输出未分配原因，并编写手算测试。"
+          ],
+          "deliverables": [
+            "简单 LangePlanner",
+            "静态 CockshottPlanner",
+            "集中式劳动分配器及其单元测试"
+          ],
+          "dependencies": [
+            "P3-M1",
+            "P3-M2",
+            "P3-M3"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P3-X",
+          "track": "X",
+          "title": "组织机制选择、Lange 循环与 Gate 3 验收",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "通过 treatment 配置选择 Market、Lange 或 Cockshott，并由 Engine 组织运行。",
+            "在不导入私有实现的前提下编排 Lange 中央方与 Market 的试探价格循环。",
+            "组织 M3/M4 集成，记录每次机制迭代，并收集手算案例交由李文浩和刘充审阅。"
+          ],
+          "deliverables": [
+            "机制注册、选择与 Lange 循环编排",
+            "契约与集成报告",
+            "经评审通过的手算案例"
+          ],
+          "dependencies": [
+            "P2-X",
+            "P3-M1",
+            "P3-M2",
+            "P3-M3",
+            "P3-M4"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/meetings/",
+            "docs/decisions/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "number": 4,
+      "title": "接入 LLM",
+      "summary": "在 Decision 三层结构中加入 Observation/Context、Prompt、结构化行为、Decision Memory、预算与失败处理，同时保留规则基线。",
+      "gate": "配置好的 LLM Decision 无需修改 Engine、World 或市场/计划接口即可替换规则 Decision；格式错误、超时和预算耗尽均有经过测试的处理结果。",
+      "tasks": [
+        {
+          "id": "P4-M1",
+          "track": "M1",
+          "title": "实现完整的 LLM Decision 链路",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现 Decision、Harness/Context/Tools、Model Adapter 三层链路，包括 Prompt、解析器和 schema 校验。",
+            "实现 token、成本和延迟追踪，以及预算、重试、超时和明确的 fallback。",
+            "实现 Decision Memory/记录查询，并使用规则 Decision 与 LLM Decision 运行相同场景进行比较。"
+          ],
+          "deliverables": [
+            "带版本的 Context、Prompt 与 Action schema",
+            "LLM Decision、Harness、模型适配器与 Decision Memory",
+            "失败/预算/记录查询测试及规则基线比较"
+          ],
+          "dependencies": [
+            "P3-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/给同学的LLM社会模拟阅读材料.md"
+          ]
+        },
+        {
+          "id": "P4-M2",
+          "track": "M2",
+          "title": "提供安全世界视图并拒绝不可行的 LLM 行为",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现按角色划分的只读 StateViews 和版本检查。",
+            "使用与规则行为相同的规则校验 LLM 生成的行为。",
+            "测试过期状态、不可能的数量、未授权调拨和重放行为。"
+          ],
+          "deliverables": [
+            "主体 StateViews",
+            "LLM 行为的 World 校验测试",
+            "LLM 无法直接写入状态的证明性测试"
+          ],
+          "dependencies": [
+            "P4-M1",
+            "P3-M2"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P4-M3",
+          "track": "M3",
+          "title": "接收 Decision 产生的结构化市场行为",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "将结构化 AgentAction 映射为市场请求，不解析自由文本。",
+            "对格式错误或不可行订单返回明确的拒绝原因。",
+            "在相同市场测试夹具上比较 LLM Decision 与规则 Decision 产生的订单。"
+          ],
+          "deliverables": [
+            "AgentAction 到订单的适配器",
+            "无效订单测试",
+            "规则 Decision 与 LLM Decision 的市场比较"
+          ],
+          "dependencies": [
+            "P4-M1",
+            "P4-M2",
+            "P3-M3"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P4-M4",
+          "track": "M4",
+          "title": "接收结构化报告与岗位偏好",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "定义哪些报告、需求或岗位偏好可以来自 LLM 控制的主体。",
+            "首次接入 LLM 时保持中央计划算法确定性，除非另行批准。",
+            "针对计划和匹配接口测试缺失、不一致及对抗性报告。"
+          ],
+          "deliverables": [
+            "报告与偏好契约",
+            "计划输入校验测试",
+            "LLM 控制角色的明确范围"
+          ],
+          "dependencies": [
+            "P4-M1",
+            "P4-M2",
+            "P3-M4"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md"
+          ]
+        },
+        {
+          "id": "P4-X",
+          "track": "X",
+          "title": "协调 LLM 范围与 Gate 4 验收",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "确认哪些角色使用 LLM，哪些角色保持确定性基线。",
+            "与所有接口使用方共同评审失败、预算和隐私处理。",
+            "由 Engine 组织同场景下规则 Decision 与 LLM Decision 的对比验收运行。"
+          ],
+          "deliverables": [
+            "经批准的 LLM 角色范围",
+            "失败与预算策略",
+            "Gate 4 对比报告"
+          ],
+          "dependencies": [
+            "P4-M1",
+            "P4-M2",
+            "P4-M3",
+            "P4-M4"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/meetings/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "number": 5,
+      "title": "正式实验",
+      "summary": "开展多随机种子、公平信息条件下的实验，包含冲击、消融、置信区间、失败轨迹和完整成本记录。",
+      "gate": "带版本的实验 manifest 可以复现所有 treatments；每个报告结果都能追溯到运行记录、随机种子、失败、模型设置和成本。",
+      "tasks": [
+        {
+          "id": "P5-M1",
+          "track": "M1",
+          "title": "提供可追溯的模型调用与决策记录",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "记录模型、Prompt、Context 和 Decision schema 版本，以及 token、成本与延迟。",
+            "保存每次决策的结构化结果、重试、fallback 和原始失败轨迹。",
+            "向实验产物系统提供可序列化的 LLM 调用与 Decision Memory 摘要。"
+          ],
+          "deliverables": [
+            "完整的 LLM 调用与成本溯源",
+            "决策结果与失败轨迹记录",
+            "可供实验汇总的序列化记录"
+          ],
+          "dependencies": [
+            "P4-X"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "experiments/manifests/RUN-000-template.json",
+            "docs/RESEARCH_CHECKLIST.md"
+          ]
+        },
+        {
+          "id": "P5-M2",
+          "track": "M2",
+          "title": "提供公平冲击与可复现世界随机流",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "为所有机制创建共享的实现样本、冲击日程和 RNG 子流。",
+            "保证不同 treatments 使用相同的物理规则和结算方式。",
+            "为实验运行提供重放、不变量和状态差异诊断。"
+          ],
+          "deliverables": [
+            "共享样本与冲击库",
+            "跨 treatment 可复现性测试",
+            "状态与不变量诊断"
+          ],
+          "dependencies": [
+            "P5-X",
+            "P4-M2"
+          ],
+          "documents": [
+            "docs/WORLD_CONFIGURATION_LAYERS.md",
+            "configs/",
+            "docs/RESEARCH_CHECKLIST.md"
+          ]
+        },
+        {
+          "id": "P5-M3",
+          "track": "M3",
+          "title": "参数化并诊断市场 treatments",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "通过 treatment 配置公开已批准的市场参数。",
+            "记录价格、成交量、未成交订单、超额需求和确定性同序处理证据。",
+            "在不改变 World 规则的前提下支持市场专项消融。"
+          ],
+          "deliverables": [
+            "市场 treatment schema",
+            "市场事件诊断",
+            "市场消融测试"
+          ],
+          "dependencies": [
+            "P5-X",
+            "P5-M2",
+            "P4-M3"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/RESEARCH_CHECKLIST.md"
+          ]
+        },
+        {
+          "id": "P5-M4",
+          "track": "M4",
+          "title": "参数化并诊断计划 treatments",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "通过 treatment 配置公开已批准的 Lange、Cockshott 和岗位匹配参数。",
+            "记录收敛、不可行性、分配、未匹配劳动力和计算诊断。",
+            "在保持共享信息预算的前提下支持计划机制专项消融。"
+          ],
+          "deliverables": [
+            "计划 treatment schema",
+            "收敛与可行性诊断",
+            "计划机制消融测试"
+          ],
+          "dependencies": [
+            "P5-X",
+            "P5-M2",
+            "P4-M4"
+          ],
+          "documents": [
+            "architecture-v0-1.html",
+            "docs/interfaces.md",
+            "docs/RESEARCH_CHECKLIST.md"
+          ]
+        },
+        {
+          "id": "P5-X",
+          "track": "X",
+          "title": "实现实验编排并协调最终集成",
+          "status": "draft",
+          "completed": 0,
+          "total": 3,
+          "responsibilities": [
+            "实现 ExperimentRunner，用于 treatment 矩阵、多随机种子执行、断点恢复和失败统计；每次运行均委托给 Engine。",
+            "验证不同机制之间的信息、资源、冲击、随机种子和预算具有可比性。",
+            "协调李文浩的技术评审、刘充的经济学评审和最终证据审计。"
+          ],
+          "deliverables": [
+            "实验 manifest、ExperimentRunner 与运行索引",
+            "经批准的实验矩阵和跨机制公平性检查清单",
+            "最终集成与证据报告"
+          ],
+          "dependencies": [
+            "P4-X"
+          ],
+          "documents": [
+            "implementation-roadmap.html",
+            "docs/RESEARCH_CHECKLIST.md",
+            "docs/decisions/",
+            "docs/meetings/"
+          ]
+        }
+      ]
+    }
+  ]
+};

@@ -45,7 +45,7 @@ a { color: inherit; }
 .project-snapshot b { color: var(--ink); font-weight: 500; }
 .snapshot-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
 .tabs { display: flex; gap: 30px; min-height: 76px; align-items: end; border-bottom: 1px solid var(--line); }
-.tab { position: relative; border: 0; background: transparent; padding: 0 3px 20px; color: var(--muted); cursor: pointer; font-weight: 650; letter-spacing: .01em; }
+.tab { position: relative; border: 0; background: transparent; padding: 0 3px 20px; color: var(--muted); cursor: pointer; font-weight: 650; letter-spacing: .01em; text-decoration: none; }
 .tab span { margin-right: 7px; color: var(--faint); font: .7rem/1 ui-monospace, monospace; }
 .tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--cyan); transform: scaleX(0); transition: transform .18s ease; }
 .tab:hover, .tab.is-active { color: var(--ink); }

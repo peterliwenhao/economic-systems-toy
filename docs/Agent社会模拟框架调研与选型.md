@@ -1,5 +1,7 @@
 # Agent 社会模拟框架调研与选型
 
+> **调研参考。** 本文保留框架调研时的候选架构与术语，不代表当前实现定稿。当前分工、Engine/World 边界和本周任务以 [1123任务文档](tasks/T-008.md) 为准。
+
 ## 执行摘要
 
 本报告调查截至 2026 年 9 月仍具代表性、公开代码、明确论文或持续维护迹象的 LLM agent 社会模拟框架。主比较对象为 **Concordia、SOTOPIA/SOTOPIA-S4、OASIS、AgentSociety 2、Generative Agents**；同时纳入 **Mesa、NetLogo、GAMA** 三类传统 agent-based modeling（ABM）平台，以及 **CAMEL、AgentScope、AgentVerse、AutoGen/Microsoft Agent Framework** 等相邻的通用多智能体框架。
