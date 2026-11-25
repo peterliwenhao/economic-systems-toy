@@ -1,51 +1,65 @@
 # 项目交接入口
 
-更新时间：2026-09-21
+更新时间：2026-11-24
+
+> **当前任务金标准：[1123任务文档](tasks/T-008.md)。** 本文件负责帮助新成员和新 Codex 会话找到入口。当前分工、交付物、类图、接口草案和时序图要求发生冲突时，执行 1123任务文档。
 
 ## 当前状态
 
-- 已有一批 LLM 社会模拟、Agent 框架和记忆系统调研材料；
-- 已建立三人团队角色、Git/Codex 协作规范、Dashboard、决策/会议模板和实验 manifest；
-- 当前任务包括张馨月负责的 **T-001：形成研究设计草案 v0.1**，以及李文浩负责的 GitHub 建仓与项目启动任务 T-002/T-003；
-- 尚未进入正式代码实现或实验阶段；
-- Dashboard 已部署至 `https://118.178.235.171:9003/projects/economic-systems-toy/`；
-- GitHub 仓库信息将在创建后写回本文件与 `project/project.json`。
+- 项目处于 Phase 0：模块设计与首次接口对齐准备；
+- 张馨月担任项目负责人，负责 backbone、`Engine`、整体架构、运行时序、接口对齐与集成；
+- 李文浩担任技术顾问，负责 LLM、软件架构、计算实验与关键技术评审；
+- 刘充担任经济学研究顾问；
+- 杜芃烨、张津阁、王逸忱、郝依琳分别负责 Decision/LLM/Memory、World、Market/Firm、Planning/Labor Allocation；
+- 当前尚未进入本轮生产功能实现；
+- 本轮不要求测试用例、正常/边界/失败样例、公共对象字段定稿或实现代码；
+- Dashboard 地址：<https://118.178.235.171:9003/projects/economic-systems-toy/>。
 
-## 新会话应该先做什么
-
-任何成员或新的 Codex 会话进入本目录后：
+## 新会话首先执行
 
 1. 读取根目录 `AGENTS.md`；
-2. 读取 `docs/team.md` 与 `docs/project.md`；
-   - 张馨月另读 `docs/onboarding/张馨月.md`；刘充另读 `docs/onboarding/刘充.md`；
-3. 如果执行 T-001，完整读取 `docs/tasks/T-001.md`；
-4. 检查当前 Git 分支、工作区状态和最新历史记录；
-5. 完整阅读 `docs/git-workflow.md`；任何成员及其 AI 都不得在 `main` 上直接工作；
-6. 不依赖之前聊天中的隐含信息；缺失内容应写回仓库。
+2. 完整读取 [1123任务文档](tasks/T-008.md)；
+3. 读取 [团队与职责](team.md) 和 [项目说明](project.md)；
+4. 只阅读与自己负责模块有关的参考文档；张馨月另读 1123任务文档第五部分；
+5. 检查当前 Git 分支和工作区状态；
+6. 阅读 [Git 工作流](git-workflow.md)，不得直接在受保护分支开发；
+7. 发现其他材料与 1123任务文档冲突时，执行 1123任务文档并记录冲突。
 
-## 张馨月当前任务
+## 当前交付物
 
-- 任务说明：`docs/tasks/T-001.md`
-- 推荐分支：`task/T-001-research-design-v0`
-- 主要交付：`docs/research-design-v0.1.md`
-- 评审点：研究边界、环境形式化、机制可比性、指标和待确认问题。
+每位子系统负责人完成：
 
-## 项目负责人后续事项
+1. 一张可讨论的类图草案；
+2. 一份能够讲清模块内部组成和运作方式的说明材料；
+3. 本模块每个准备提供的接口各一份接口文档；
+4. 本模块每个希望其他模块提供的接口各一份接口需求文档。
 
-- 完成 `docs/tasks/T-002.md`：创建私有 GitHub 仓库、邀请成员并保护 `main`；
-- 完成 `docs/tasks/T-003.md` 与 `docs/PROJECT_STARTUP.md`：确认访问、资源、评审节奏并召开启动会议；
-- T-001 草案完成后组织一次短评审，分别确认计算/LLM 与经济学问题；
-- 不在研究设计通过前要求张馨月同时推进大规模编码和 LLM 实验。
+张馨月额外完成系统运行时序图。详细要求只需张馨月阅读 1123任务文档第五部分。
 
-GitHub 的具体创建与推送步骤见 `docs/GITHUB_SETUP.md`。目前本地仓库已经初始化并有完整提交，不要在 GitHub 创建仓库时额外生成 README、许可证或 `.gitignore`。
+本轮接口文档只要求基本功能、提供方、使用方、暂定 Python 形式、输入、输出和未决问题。测试与失败样例安排在接口对齐后的后续任务中。
+
+## 当前工作方式
+
+- 各负责人先独立完成本模块设计材料；
+- 下一次会议进行接口对齐，匹配提供接口和所需接口；
+- 对齐后形成共同维护的正式接口，再进入测试设计和实现；
+- `Engine` 主动推进实验并调用其他模块；
+- World 维护权威物理状态并执行确定性验证与结算；
+- Decision、Market 和 Planning 返回行动或机制结果，不直接改写世界状态。
+
+## 重要入口
+
+- 当前任务：[1123任务文档](tasks/T-008.md)
+- 团队职责：[team.md](team.md)
+- 项目长期目标：[project.md](project.md)
+- Git 规则：[git-workflow.md](git-workflow.md)
+- 项目管理：[project/README.md](../project/README.md)
+- 受控提案双人评审：[gated-proposal-review.md](../project/workflows/gated-proposal-review.md)
 
 ## 验证命令
 
 ```bash
-npm run dashboard:build
 npm run validate
 ```
 
-公开 Dashboard：<https://118.178.235.171:9003/projects/economic-systems-toy/>
-
-部署维护说明见 `deploy/README.md`。GitHub 地址仍待仓库创建后补充。
+部署与展示维护见 `deploy/README.md`。展示和运维不属于张馨月、刘充及四位模块负责人的本轮任务。
