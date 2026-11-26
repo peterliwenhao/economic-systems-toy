@@ -15,7 +15,12 @@ const requiredFiles = [
   "dist/styles.css",
   "dist/app.js",
   "dist/data.js",
+  "dist/implementation-roadmap.html",
+  "dist/roadmap.css",
+  "dist/roadmap.js",
+  "dist/roadmap-data.js",
   "project/project.json",
+  "project/implementation-roadmap.json",
   "records/history.json",
   "docs/project.md",
   "docs/interfaces.md",
@@ -43,9 +48,41 @@ const readJson = async (file) => {
 };
 
 const project = await readJson("project/project.json");
+const roadmap = await readJson("project/implementation-roadmap.json");
 const tasks = await readJson("examples/tasks.json");
 const history = await readJson("records/history.json");
 await readJson("experiments/manifests/RUN-000-template.json");
+
+const taskStatuses = new Set(["proposed", "ready", "in_progress", "review", "blocked", "done"]);
+const taskStatusesForRoadmap = new Set(["draft", "ready", "in_progress", "review", "blocked", "done"]);
+
+if (roadmap) {
+  if (!Array.isArray(roadmap.tracks) || roadmap.tracks.length !== 5) errors.push("implementation roadmap 必须定义 5 条责任轨");
+  if (!Array.isArray(roadmap.phases) || roadmap.phases.length !== 6) errors.push("implementation roadmap 必须定义 Phase 0 和 5 个实现阶段");
+  const roadmapTaskIds = new Set();
+  const trackIds = new Set((roadmap.tracks || []).map((track) => track.id));
+  for (const phase of roadmap.phases || []) {
+    if (!phase.id || !phase.title || !phase.gate || !Array.isArray(phase.tasks)) errors.push(`roadmap 阶段结构无效: ${phase.id || "unknown"}`);
+    for (const task of phase.tasks || []) {
+      if (roadmapTaskIds.has(task.id)) errors.push(`roadmap 任务 ID 重复: ${task.id}`);
+      roadmapTaskIds.add(task.id);
+      if (!trackIds.has(task.track)) errors.push(`${task.id} 使用未知责任轨: ${task.track}`);
+      if (!taskStatusesForRoadmap.has(task.status)) errors.push(`${task.id} roadmap 状态无效: ${task.status}`);
+      if (!Number.isInteger(task.completed) || !Number.isInteger(task.total) || task.completed < 0 || task.completed > task.total) errors.push(`${task.id} 完成度无效`);
+      for (const field of ["responsibilities", "deliverables", "dependencies", "documents"]) {
+        if (!Array.isArray(task[field])) errors.push(`${task.id}.${field} 必须是数组`);
+      }
+      if (Array.isArray(task.deliverables) && task.total !== task.deliverables.length) errors.push(`${task.id}.total 必须等于 deliverables 数量`);
+    }
+  }
+  for (const phase of roadmap.phases || []) {
+    for (const task of phase.tasks || []) {
+      for (const dependency of task.dependencies || []) {
+        if (!roadmapTaskIds.has(dependency)) errors.push(`${task.id} 引用了不存在的 roadmap 依赖: ${dependency}`);
+      }
+    }
+  }
+}
 
 if (project) {
   for (const key of ["name", "branch", "question", "updatedAt", "repositoryUrl"]) {
@@ -53,7 +90,6 @@ if (project) {
   }
 }
 
-const taskStatuses = new Set(["proposed", "ready", "in_progress", "review", "blocked", "done"]);
 if (tasks) {
   checkUnique(tasks, "id", "examples/tasks.json");
   const taskIds = new Set(tasks.map((item) => item.id));
@@ -97,6 +133,23 @@ try {
 } catch (error) {
   errors.push(`dist/data.js 无法执行: ${error.message}`);
 }
+
+try {
+  const sandbox = { window: {} };
+  vm.runInNewContext(await readFile(resolve(root, "dist/roadmap-data.js"), "utf8"), sandbox, { filename: "dist/roadmap-data.js" });
+  if (!Array.isArray(sandbox.window.ROADMAP_DATA?.tracks) || !Array.isArray(sandbox.window.ROADMAP_DATA?.phases)) {
+    errors.push("dist/roadmap-data.js 没有提供有效的 window.ROADMAP_DATA");
+  }
+} catch (error) {
+  errors.push(`dist/roadmap-data.js 无法执行: ${error.message}`);
+}
+
+try {
+  const html = await readFile(resolve(root, "dist/implementation-roadmap.html"), "utf8");
+  for (const asset of ["roadmap.css", "roadmap-data.js", "roadmap.js"]) {
+    if (!html.includes(asset)) errors.push(`dist/implementation-roadmap.html 没有引用 ${asset}`);
+  }
+} catch {}
 
 try {
   const html = await readFile(resolve(root, "dist/index.html"), "utf8");
